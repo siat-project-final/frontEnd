@@ -68,3 +68,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+resourceTimelinePlugin: 시간 리소스 기반 스케줄링. 멘토별 스케줄 타임라인에 유용.
+
+timeGridPlugin: 시간 단위 주간/일간 스케줄 보기.
+
+listPlugin: 일정을 리스트 형태로 보여주는 뷰.
+
+event/resource: 실제 백엔드에서 불러올 수 있도록 API 연동 가능 (추후 fetchEvents 설정 가능).
