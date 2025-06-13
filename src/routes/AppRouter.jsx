@@ -25,6 +25,7 @@ function AppRouter() {
         <Route path="/events" element={<Events />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/starter" element={<Starter />} />
+        <Route path="/courses" element={<CourseDetail />} />
         <Route path="/contact" element={<Contact />} /> {/* Contact 라우팅 */}
       </Routes>
     </BrowserRouter>

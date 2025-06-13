@@ -11,9 +11,9 @@ const Header = () => (
       <nav id="navmenu" className="navmenu">
         <ul>
           <li><Link to="/" className="active">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/courses">Courses</Link></li>
-          <li><Link to="/trainers">Trainers</Link></li>
+          <li><Link to="/mypage">MyPage</Link></li>
+          <li><Link to="/challenge/list">DayChallengeList</Link></li>
+          <li><Link to="/mentoring/mentors">mentoring</Link></li>
           <li><Link to="/events">Events</Link></li>
           <li><Link to="/pricing">Pricing</Link></li>
           <li><Link to="/contact">Contact</Link></li>
