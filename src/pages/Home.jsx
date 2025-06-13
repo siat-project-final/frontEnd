@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
 
 const Home = () => {
   return (
@@ -21,7 +20,6 @@ const Home = () => {
 
         {/* About, Counts, Why Us, Features, Courses, Trainers 영역도 별도 컴포넌트화 가능 */}
       </main>
-      <footer />
     </>
   );
 };
