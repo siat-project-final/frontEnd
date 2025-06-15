@@ -11,19 +11,29 @@ const Header = () => (
       <nav id="navmenu" className="navmenu">
         <ul>
           <li>
-            <NavLink to="/home">Home</NavLink>
+            <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>
+              Home
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/challenge">Challenge</NavLink>
+            <NavLink to="/challenge" className={({ isActive }) => isActive ? 'active' : ''}>
+              Challenge
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/mentoring/mentors">Mentoring</NavLink>
+            <NavLink to="/mentoring/mentors" className={({ isActive }) => isActive ? 'active' : ''}>
+              Mentoring
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/study">Studylog</NavLink>
+            <NavLink to="/study" className={({ isActive }) => isActive ? 'active' : ''}>
+              Studylog
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/mypage">MyPage</NavLink>
+            <NavLink to="/mypage" className={({ isActive }) => isActive ? 'active' : ''}>
+              MyPage
+            </NavLink>
           </li>
           <li>
             <NavLink to="/notifications">

@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
+import './MyPageMain.css';
 
 const MyPageMain = () => {
   return (
@@ -10,98 +12,97 @@ const MyPageMain = () => {
       <div className="container-flex">
         <Sidebar />
         <main className="main">
-          {/* Page Title */}
-          <div className="page-title" data-aos="fade">
-            <div className="heading">
-              <div className="container">
-                <div className="row d-flex justify-content-center text-center">
-                  <div className="col-lg-8">
-                    <h1>About Us</h1>
-                    <p className="mb-0">Odio et unde deleniti. Deserunt numquam exercitationem...</p>
+          {/* 사용자 정보 영역 */}
+          <section className="profile-section" data-aos="fade-up">
+            <div className="profile-content">
+              <div className="profile-left">
+                <div className="profile-image">
+                  <div className="image-placeholder">프로필 이미지</div>
+                </div>
+                <button className="upload-btn">upload</button>
+                <div className="profile-stats">
+                  <div className="stat-item">
+                    <div className="stat-icon">P</div>
+                    <p className="stat-value">8,750</p>
                   </div>
-                </div>
-              </div>
-            </div>
-            <nav className="breadcrumbs">
-              <div className="container">
-                <ol>
-                  <li><a href="/">Home</a></li>
-                  <li className="current">About Us</li>
-                </ol>
-              </div>
-            </nav>
-          </div>
-
-          {/* About Us Section */}
-          <section className="section about-us">
-            <div className="container">
-              <div className="row gy-4">
-                <div className="col-lg-6 order-1 order-lg-2" data-aos="fade-up">
-                  <img src="/assets/img/about-2.jpg" className="img-fluid" alt="" />
-                </div>
-                <div className="col-lg-6 order-2 order-lg-1 content" data-aos="fade-up">
-                  <h3>Voluptatem dignissimos provident quasi corporis</h3>
-                  <p className="fst-italic">Lorem ipsum dolor sit amet...</p>
-                  <ul>
-                    <li><i className="bi bi-check-circle"></i> Ullamco laboris nisi...</li>
-                    <li><i className="bi bi-check-circle"></i> Duis aute irure dolor...</li>
-                    <li><i className="bi bi-check-circle"></i> Ullamco laboris nisi...</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Counts Section */}
-          <section className="section counts light-background">
-            <div className="container" data-aos="fade-up">
-              <div className="row gy-4">
-                {/* 반복되는 Stats 아이템 */}
-                {[1232, 64, 42, 24].map((count, index) => (
-                  <div key={index} className="col-lg-3 col-md-6">
-                    <div className="stats-item text-center w-100 h-100">
-                      <span className="purecounter">{count}</span>
-                      <p>{['Students', 'Courses', 'Events', 'Trainers'][index]}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Testimonials Section */}
-          <section className="testimonials section">
-            <div className="container section-title" data-aos="fade-up">
-              <h2>Testimonials</h2>
-              <p>What are they saying</p>
-            </div>
-
-            <div className="container" data-aos="fade-up">
-              <div className="swiper">
-                <div className="swiper-wrapper">
-                  {/* 반복 예시 */}
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <div key={n} className="swiper-slide">
-                      <div className="testimonial-wrap">
-                        <div className="testimonial-item">
-                          <img src={`/assets/img/testimonials/testimonials-${n}.jpg`} className="testimonial-img" alt="" />
-                          <h3>사용자 이름</h3>
-                          <h4>직함</h4>
-                          <div className="stars">★★★★★</div>
-                          <p>
-                            <i className="bi bi-quote quote-icon-left"></i>
-                            <span>피드백 내용 요약...</span>
-                            <i className="bi bi-quote quote-icon-right"></i>
-                          </p>
-                        </div>
+                  <div className="stat-item">
+                    <div className="level-info">
+                      <p className="level-value">12</p>
+                      <p className="level-label">Level</p>
+                      <div className="progress-bar">
+                        <div className="progress-fill"></div>
                       </div>
+                      <p className="xp-value">8000 / 8750</p>
                     </div>
-                  ))}
+                  </div>
+                  <div className="stat-item">
+                    <div className="badge-info">
+                      <p className="badge-value">5</p>
+                      <p className="badge-label">Badges</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="swiper-pagination"></div>
               </div>
+
+              <form className="profile-form">
+                <div className="form-group">
+                  <label htmlFor="id">ID</label>
+                  <input id="id" type="text" defaultValue="ID" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="password">PASSWORD</label>
+                  <input id="password" type="password" defaultValue="PASSWORD" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="name">NAME</label>
+                  <input id="name" type="text" defaultValue="NAME" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="nickname">NICKNAME</label>
+                  <input id="nickname" type="text" defaultValue="NICKNAME" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="phone">PHONE</label>
+                  <input id="phone" type="text" defaultValue="PHONE" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="status">STATUS (수정불가)</label>
+                  <input id="status" type="text" defaultValue="훈련생 / 수료생" readOnly />
+                </div>
+                <button className="submit-btn" type="submit">
+                  수정하기
+                </button>
+              </form>
             </div>
           </section>
+
+          {/* Todo Section */}
+          <aside className="todo-section" data-aos="fade-up">
+            <div className="todo-container">
+              <div className="todo-header">
+                <h3>ToDo List</h3>
+                <button className="settings-btn">설정</button>
+              </div>
+              <div className="todo-input-group">
+                <input type="text" placeholder="Add your items" />
+                <button className="add-btn">추가</button>
+              </div>
+              <div className="alert-success">New item created successfully!</div>
+              <ul className="todo-list">
+                {[1, 2, 3, 4, 5, 6].map((index) => (
+                  <li key={index} className="todo-item">
+                    <span className="todo-text">
+                      {index % 2 === 0 ? 'Alert Message Sets' : 'Complete the Blog Today'}
+                    </span>
+                    <div className="todo-actions">
+                      <button className="edit-btn">수정</button>
+                      <button className="delete-btn">삭제</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
         </main>
       </div>
       <Footer />
