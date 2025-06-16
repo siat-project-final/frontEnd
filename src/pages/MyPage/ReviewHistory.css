@@ -181,8 +181,7 @@
 .stat-item {
   flex: 1;
 }
-
-.stat-icon {
+git checkout -b feature/mypage .stat-icon {
   width: 2rem;
   height: 2rem;
   background-color: #84cc16;
