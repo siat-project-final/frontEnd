@@ -13,3 +13,17 @@ instance.interceptors.request.use(config => {
 
 
 export default instance;
+
+// src/api/axios.js
+// import axios from 'axios';
+// import { getAuthHeader } from '../utils/auth';
+
+// const api = axios.create({
+//   baseURL: 'http://your-backend-url/api',
+//   headers: {
+//     'Content-Type': 'application/json',
+//     ...getAuthHeader(), // 이 부분이 핵심
+//   },
+// });
+
+// export default api;

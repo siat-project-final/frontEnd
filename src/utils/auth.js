@@ -1,22 +1,21 @@
 // JWT 토큰 저장
 export const setToken = (token) => {
-  localStorage.setItem('token', token);
+  sessionStorage.setItem('accessToken', token);
 };
 
 // JWT 토큰 가져오기
 export const getToken = () => {
-  return localStorage.getItem('token');
+  return sessionStorage.getItem('accessToken');
 };
 
 // JWT 토큰 삭제
 export const removeToken = () => {
-  localStorage.removeItem('token');
+  sessionStorage.removeItem('accessToken');
 };
 
 // 인증 상태 확인
 export const isAuthenticated = () => {
-  const token = getToken();
-  return !!token;
+  return !!getToken();
 };
 
 // API 요청 헤더에 토큰 추가
