@@ -65,9 +65,6 @@ import Home from './pages/Home';
 import MyPageMain from './pages/MyPage/MyPageMain';
 import DayChallengeList from './pages/Challenge/DayChallengeList';
 import CourseDetail from './pages/Challenge/CourseDetail';
-import MentoringList from './pages/Mentoring/MentoringList';
-import MentoringDetail from './pages/Mentoring/MentoringDetail';
-import MentoringApply from './pages/Mentoring/MentoringApply';
 import Pricing from './pages/Pricing/Pricing';
 import Starter from './pages/Starter/Starter';
 import Contact from './pages/Contact/Contact';
@@ -77,6 +74,16 @@ import EditStudyLogPage from './pages/study/EditStudyLogPage';
 import StudyLogPublic from './pages/study/StudyLogPublic';
 import StudyLogPublicDetail from './pages/study/StudyLogPublicDetail';
 import { isAuthenticated } from './utils/auth';
+import MentoringList from './pages/Mentoring/common/MentoringList';
+import OtherMentoringDetail from './pages/Mentoring/Mentor/OtherMentoringDetail';
+import MentoringApply from './pages/Mentoring/Mentee/MentoringApply';
+import RegisterCancel from './pages/Mentoring/common/RegisterCancel';
+import MentoringReject from './pages/Mentoring/Mentor/MentoringReject';
+import MentorRegister from './pages/Mentoring/Mentor/MentorRegister';
+import MentorRegisterCard from './pages/Mentoring/Mentor/MentorRegisterCard';
+import MentoringDetail from './pages/Mentoring/Mentee/MentoringDetail';
+import MenteeRegister from './pages/Mentoring/Mentee/MenteeRegister';
+import MenteeRegisterCard from './pages/Mentoring/Mentee/MenteeRegisterCard';
 
 function App() {
   useEffect(() => {
@@ -105,9 +112,9 @@ function App() {
         <Route path="/mypage" element={<PrivateRoute><MyPageMain /></PrivateRoute>} />
         <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
         <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} />
-        <Route path="/mentoring/mentors" element={<PrivateRoute><MentoringList /></PrivateRoute>} />
+        {/* <Route path="/mentoring/mentors" element={<PrivateRoute><MentoringList /></PrivateRoute>} />
         <Route path="/mentoring/:id" element={<PrivateRoute><MentoringDetail /></PrivateRoute>} />
-        <Route path="/mentoring/apply" element={<PrivateRoute><MentoringApply /></PrivateRoute>} />
+        <Route path="/mentoring/apply" element={<PrivateRoute><MentoringApply /></PrivateRoute>} /> */}
         <Route path="/pricing" element={<PrivateRoute><Pricing /></PrivateRoute>} />
         <Route path="/starter" element={<PrivateRoute><Starter /></PrivateRoute>} />
         <Route path="/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
@@ -116,6 +123,19 @@ function App() {
         <Route path="/study/edit/:id" element={<PrivateRoute><EditStudyLogPage /></PrivateRoute>} />
         <Route path="/study/public" element={<PrivateRoute><StudyLogPublic /></PrivateRoute>} />
         <Route path="/study/public/:id" element={<PrivateRoute><StudyLogPublicDetail /></PrivateRoute>} />
+
+        <Route path="/mentoring/mentors" element={<PrivateRoute><MentoringList /></PrivateRoute>} />
+        <Route path="/mentoring/mentor/detail" element={<PrivateRoute><OtherMentoringDetail /></PrivateRoute>} />
+        <Route path="/mentoring/apply" element={<PrivateRoute><MentoringApply /></PrivateRoute>} />
+        <Route path="/mentoring/cancel" element={<PrivateRoute><RegisterCancel /></PrivateRoute>} />
+        <Route path="/mentoring/mentor/reject" element={<PrivateRoute><MentoringReject /></PrivateRoute>} />
+        <Route path="/mentoring/mentor/register" element={<PrivateRoute><MentorRegister /></PrivateRoute>} />
+        {/* <Route path="/mentoring/mentor/register" element={<MentorRegister />} /> */}
+        <Route path="/mentoring/mentor/register/card" element={<PrivateRoute><MentorRegisterCard /></PrivateRoute>} />
+        <Route path="/mentoring/detail" element={<PrivateRoute><MentoringDetail /></PrivateRoute>} />
+        <Route path="/mentoring/mentee/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
+        <Route path="/mentoring/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
+        <Route path="/mentoring/mentee/register/card" element={<PrivateRoute><MenteeRegisterCard /></PrivateRoute>} />
       </Routes>
     </Router>
   );

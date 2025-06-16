@@ -37,3 +37,33 @@
   }
 }
 
+/* 캘린더 */
+.react-calendar {
+  background: #ffffff;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Noto Sans KR', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.react-calendar__tile {
+  padding: 12px 0;
+  font-size: 14px;
+  color: #334155;
+}
+
+.react-calendar__tile--active {
+  background: #5fcf80;
+  color: white;
+  border-radius: 50%;
+}
+
+.react-calendar__tile--now {
+  background: #fef9c3;
+  border-radius: 50%;
+}
+
+.react-calendar__navigation button {
+  color: #1e293b;
+  font-weight: 600;
+}
