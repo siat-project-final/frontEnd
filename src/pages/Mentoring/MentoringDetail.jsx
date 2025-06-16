@@ -24,7 +24,8 @@ const MentoringDetail = () => {
     <>
       <Header />
       <div className="container-flex">
-        <Sidebar />
+        <Sidebar menuType="mentoring" />
+
         <main className="main" style={{ background: '#f8fafc', minHeight: '100vh', flex: 1 }}>
           <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 0' }}>
             <div style={{ fontSize: 14, color: '#7b8bb2', marginBottom: 16 }}>

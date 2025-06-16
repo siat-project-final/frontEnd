@@ -6,13 +6,14 @@ import CourseDetail from "../pages/Challenge/CourseDetail";
 import MentoringList from "../pages/Mentoring/MentoringList";
 import MentoringDetail from "../pages/Mentoring/MentoringDetail";
 import MentoringApply from "../pages/Mentoring/MentoringApply";
-import Events from "../pages/Events/Events";
 import Pricing from "../pages/Pricing/Pricing";
 import Starter from "../pages/Starter/Starter";
 import Contact from "../pages/Contact/Contact"; // ✅ Contact 페이지 추가
 import StudyLogPage from "../pages/study/StudyLogPage";
 import WriteStudyLogPage from "../pages/study/WriteStudyLogPage";
 import EditStudyLogPage from "../pages/study/EditStudyLogPage";
+import StudyLogPublic from "../pages/study/StudyLogPublic";
+import StudyLogPublicDetail from "../pages/study/StudyLogPublicDetail";
 
 function AppRouter() {
   return (
@@ -28,6 +29,8 @@ function AppRouter() {
         <Route path="/study" element={<StudyLogPage />} />
         <Route path="/study/write" element={<WriteStudyLogPage />} />
         <Route path="/study/edit/:id" element={<EditStudyLogPage />} />
+        <Route path="/study/public" element={<StudyLogPublic />} />
+        <Route path="/study/public/:id" element={<StudyLogPublicDetail />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/starter" element={<Starter />} />
         <Route path="/courses" element={<CourseDetail />} />

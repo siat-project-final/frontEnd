@@ -47,7 +47,8 @@ const MentoringList = () => {
     <>
       <Header />
       <div className="container-flex">
-        <Sidebar />
+        <Sidebar menuType="mentoring" />
+
         <main className="main">
           {/* Page Title */}
           <div className="page-title" data-aos="fade">

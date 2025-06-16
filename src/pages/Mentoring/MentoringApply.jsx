@@ -37,7 +37,7 @@ const MentoringApply = () => {
     <>
       <Header />
       <div className="container-flex">
-        <Sidebar />
+        <Sidebar menuType="mentoring" />
         <main className="prewrite-main">
           <h1>대화내용 사전작성</h1>
           <form onSubmit={handleSubmit}>

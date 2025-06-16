@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
+import Sidebar from '../../components/common/Sidebar';
 
 // 임시 데이터
 const dummyLogs = [
@@ -43,51 +44,56 @@ const EditStudyLogPage = () => {
   return (
     <>
       <Header />
-      <main className="main">
-        <div className="container py-5">
-          <h1 className="h3 fw-bold mb-4">학습일지 수정</h1>
-          <form onSubmit={handleSubmit}>
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">학습일지 제목</label>
-                <input name="title" type="text" className="form-control" value={formData.title} onChange={handleChange} />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">공개 여부</label>
-                <select className="form-select">
-                  <option>공개</option>
-                  <option>비공개</option>
-                </select>
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">날짜</label>
-                <input name="date" type="date" className="form-control" value={formData.date} onChange={handleChange} />
-              </div>
-            </div>
+      <div className="container-flex" style={{ display: 'flex' }}>
+        <Sidebar menuType="studylog" />
 
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">과목</label>
-                <input name="subject" type="text" className="form-control" value={formData.subject} onChange={handleChange} />
+        <main className="main">
+          
+          <div className="container py-5">
+            <h1 className="h3 fw-bold mb-4">학습일지 수정</h1>
+            <form onSubmit={handleSubmit}>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">학습일지 제목</label>
+                  <input name="title" type="text" className="form-control" value={formData.title} onChange={handleChange} />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">공개 여부</label>
+                  <select className="form-select">
+                    <option>공개</option>
+                    <option>비공개</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">날짜</label>
+                  <input name="date" type="date" className="form-control" value={formData.date} onChange={handleChange} />
+                </div>
               </div>
-            </div>
 
-            <div className="mb-3">
-              <label className="form-label">학습일지 내용</label>
-              <textarea name="content" className="form-control" rows="5" value={formData.content} onChange={handleChange}></textarea>
-            </div>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">과목</label>
+                  <input name="subject" type="text" className="form-control" value={formData.subject} onChange={handleChange} />
+                </div>
+              </div>
 
-            <div className="mb-3">
-              <label className="form-label">AI 요약</label>
-              <textarea name="summary" className="form-control" rows="3" value={formData.summary} readOnly></textarea>
-            </div>
+              <div className="mb-3">
+                <label className="form-label">학습일지 내용</label>
+                <textarea name="content" className="form-control" rows="5" value={formData.content} onChange={handleChange}></textarea>
+              </div>
 
-            <div className="d-flex justify-content-end gap-3">
-              <button type="submit" className="btn btn-primary">수정 완료</button>
-            </div>
-          </form>
-        </div>
-      </main>
+              <div className="mb-3">
+                <label className="form-label">AI 요약</label>
+                <textarea name="summary" className="form-control" rows="3" value={formData.summary} readOnly></textarea>
+              </div>
+
+              <div className="d-flex justify-content-end gap-3">
+                <button type="submit" className="btn btn-primary">수정 완료</button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
       <Footer />
     </>
   );
