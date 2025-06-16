@@ -84,6 +84,13 @@ import MentorRegisterCard from './pages/Mentoring/Mentor/MentorRegisterCard';
 import MentoringDetail from './pages/Mentoring/Mentee/MentoringDetail';
 import MenteeRegister from './pages/Mentoring/Mentee/MenteeRegister';
 import MenteeRegisterCard from './pages/Mentoring/Mentee/MenteeRegisterCard';
+import ChallengeInfo from './pages/Challenge/Daily/ChallengeInfo';
+import ChallengeSolve from './pages/Challenge/Daily/ChallengeSolve';
+import ChallengeRanking from './pages/Challenge/ChallengeRanking';
+import ReviewMain from './pages/Challenge/Review/ReviewMain';
+import ReviewSolve from './pages/Challenge/Review/ReviewSolve';
+import ChallengeMain from './pages/Challenge/ChallengeMain';
+import ChallengeResult from './pages/Challenge/Daily/ChallengeResult';
 
 function App() {
   useEffect(() => {
@@ -110,8 +117,8 @@ function App() {
         {/* 로그인 후 접근 가능한 라우트 */}
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/mypage" element={<PrivateRoute><MyPageMain /></PrivateRoute>} />
-        <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
-        <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} />
+        {/* <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
+        <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} /> */}
         {/* <Route path="/mentoring/mentors" element={<PrivateRoute><MentoringList /></PrivateRoute>} />
         <Route path="/mentoring/:id" element={<PrivateRoute><MentoringDetail /></PrivateRoute>} />
         <Route path="/mentoring/apply" element={<PrivateRoute><MentoringApply /></PrivateRoute>} /> */}
@@ -136,6 +143,17 @@ function App() {
         <Route path="/mentoring/mentee/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
         <Route path="/mentoring/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
         <Route path="/mentoring/mentee/register/card" element={<PrivateRoute><MenteeRegisterCard /></PrivateRoute>} />
+
+
+        <Route path="/challenge/daily" element={<PrivateRoute><ChallengeInfo /></PrivateRoute>} />
+        <Route path="/challenge/daily/solve" element={<PrivateRoute><ChallengeSolve /></PrivateRoute>} />
+        <Route path="/challenge/daily/result" element={<PrivateRoute><ChallengeResult /></PrivateRoute>} />
+        <Route path="/challenge/ranking" element={<PrivateRoute><ChallengeRanking /></PrivateRoute>} />
+        <Route path="/challenge/review" element={<PrivateRoute><ReviewMain /></PrivateRoute>} />
+        <Route path="/challenge/review/solve" element={<PrivateRoute><ReviewSolve /></PrivateRoute>} />
+        <Route path="/challenge" element={<PrivateRoute><ChallengeMain /></PrivateRoute>} />
+
+
       </Routes>
     </Router>
   );

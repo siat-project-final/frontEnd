@@ -78,8 +78,10 @@ const menuMap = {
   challenge: {
     title: 'Challenge',
     items: [
-      { label: '챌린지 목록', to: '/challenge/list' },
-      { label: '과정 상세', to: '/challenge/detail' },
+      { label: '일일 챌린지', to: '/challenge/list' },
+      { label: '챌린지 랭킹', to: '/challenge/detail' },
+      { label: '종합 챌린지', to: '/challenge/list' },
+      { label: '챌린지 히스토리', to: '/challenge/list' },
     ],
   },
 };

@@ -12,7 +12,7 @@ const Header = () => (
         <ul>
           <li><Link to="/" className="active">Home</Link></li>
           <li><Link to="/mypage">MyPage</Link></li>
-          <li><Link to="/challenge/list">DayChallengeList</Link></li>
+          <li><Link to="/challenge">DayChallengeList</Link></li>
           <li><Link to="/mentoring/mentors">mentoring</Link></li>
           <li><Link to="/study">Study</Link></li>
           <li><Link to="/pricing">Pricing</Link></li>
