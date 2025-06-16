@@ -159,7 +159,6 @@ const ChallengeHistory = () => {
               })}
             </div>
           </div>
-
           <div className="todo-container">
             <h3 className="todo-title">ToDo List</h3>
             <div className="todo-input-group">

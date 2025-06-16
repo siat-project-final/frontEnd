@@ -108,8 +108,11 @@
 
 /* 메인 컨텐츠 영역 */
 .main-content {
-  flex: 1;
+  background-color: white;
   padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid red;
 }
 
 .page-header {
@@ -210,11 +213,10 @@
 
 /* 캘린더 섹션 */
 .calendar-section {
-  width: 18rem;
-  background-color: #f9fafb;
-  padding: 1.25rem;
-  border-left: 1px solid #e5e7eb;
-  margin-left: -0.5rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-container {
