@@ -2,8 +2,10 @@ import React from 'react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
+import { useNavigate } from 'react-router-dom';
 
 const MentoringList = () => {
+  const navigate = useNavigate();
   const mentors = [
     {
       name: 'Walter White',
@@ -23,7 +25,7 @@ const MentoringList = () => {
       intro: 'AWS | 서울',
       img: '../../assets/img/mentors/mentor3.jpg',
     },
-    {  
+    {
       name: 'Amanda Jepson',
       field: 'Software Developer',
       intro: 'TVING | 서울',
@@ -41,6 +43,42 @@ const MentoringList = () => {
       intro: 'AWS | 서울',
       img: '../../assets/img/mentors/mentor3.jpg',
     },
+    {
+      name: 'Emily Chen',
+      field: 'Data Scientist',
+      intro: 'Google | 서울',
+      img: '../../assets/img/mentors/mentor1.jpg',
+    },
+    {
+      name: 'Michael Park',
+      field: 'AI Engineer',
+      intro: 'Naver | 판교',
+      img: '../../assets/img/mentors/mentor2.jpg',
+    },
+    {
+      name: 'Sophie Kim',
+      field: 'Frontend Developer',
+      intro: 'Kakao | 제주',
+      img: '../../assets/img/mentors/mentor3.jpg',
+    },
+    {
+      name: 'David Lee',
+      field: 'Backend Developer',
+      intro: 'LINE | 판교',
+      img: '../../assets/img/mentors/mentor1.jpg',
+    },
+    {
+      name: 'Lisa Wang',
+      field: 'DevOps Engineer',
+      intro: 'Coupang | 서울',
+      img: '../../assets/img/mentors/mentor2.jpg',
+    },
+    {
+      name: 'James Kim',
+      field: 'Security Engineer',
+      intro: 'Kakao Security | 판교',
+      img: '../../assets/img/mentors/mentor3.jpg',
+    },
   ];
 
   return (
@@ -51,20 +89,22 @@ const MentoringList = () => {
         <main className="main">
           {/* Page Title */}
           <div className="page-title" data-aos="fade">
-              <div className="heading">
-                <div className="container">
-                  <div className="row d-flex justify-content-center text-center">
-                    <div className="col-lg-8">
-                      <h1>멘토 목록</h1>
-                      <p className="mb-0">다양한 분야의 전문가들과 함께하는 멘토링을 경험해보세요.</p>
-                    </div>
+            <div className="heading">
+              <div className="container">
+                <div className="row d-flex justify-content-center text-center">
+                  <div className="col-lg-8">
+                    <h1>멘토 목록</h1>
+                    <p className="mb-0">다양한 분야의 전문가들과 함께하는 멘토링을 경험해보세요.</p>
                   </div>
                 </div>
               </div>
+            </div>
             <nav className="breadcrumbs">
               <div className="container">
                 <ol>
-                  <li><a href="/">Home</a></li>
+                  <li>
+                    <a href="/">Home</a>
+                  </li>
                   <li className="current">Mentoring</li>
                 </ol>
               </div>
@@ -76,11 +116,37 @@ const MentoringList = () => {
             <div className="container">
               <div className="row gy-5">
                 {mentors.map((mentor, index) => (
-                  <div key={index} className="col-lg-4 col-md-6 member" data-aos="fade-up" data-aos-delay={100 * (index + 1)}>
+                  <div
+                    key={index}
+                    className="col-lg-4 col-md-6 member"
+                    data-aos="fade-up"
+                    data-aos-delay={100 * (index + 1)}
+                  >
                     <div className="member-img">
-                      <img src={mentor.img} className="img-fluid" alt={mentor.name} />
+                      <img
+                        src={mentor.img}
+                        className="img-fluid"
+                        alt={mentor.name}
+                        style={{
+                          width: '250px',
+                          height: '250px',
+                          objectFit: 'cover',
+                          borderRadius: '50%',
+                          margin: '0 auto',
+                          display: 'block',
+                        }}
+                      />
                       <div className="social">
-                        <a href="/mentoring/apply"><i className="bi bi-twitter-x"></i></a>
+                        <a
+                          onClick={() => navigate('/mentoring/detail', { state: { mentor } })}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <i className="bi bi-twitter-x"></i>
+                          {/* <span style={{ fontWeight: 600, fontSize: '16px', color: '#1e293b' }}>
+                            {' '}
+                            멘토링 신청{' '}
+                          </span> */}
+                        </a>
                       </div>
                     </div>
                     <div className="member-info text-center">
