@@ -21,7 +21,7 @@ function Login() {
 
     if (id === validId && pwd === validPwd) {
       try {
-        // API 호출 시에는 여기서 서버로부터 JWT 토큰을 받아옴
+        // 실제 API 호출 시에는 여기서 서버로부터 JWT 토큰을 받아옵니다
         const mockToken = 'mock.jwt.token'; // 실제로는 서버에서 받은 토큰
         setToken(mockToken);
 
@@ -50,7 +50,7 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="lox">
+      <div className="login-box">
         <h1 className="login-title">로그인</h1>
         <div className="login-form">
           <form onSubmit={(event) => loginHandler(event, id, pwd)}>

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import PrivateRoute from './components/PrivateRoute';
-// import Home from './pages/Home'; // 실제 Home 컴포넌트가 있다면 import
+import Home from './pages/Home'; // 실제 Home 컴포넌트가 있다면 import
 
 function App() {
   return (
@@ -16,8 +16,7 @@ function App() {
           path="/home"
           element={
             <PrivateRoute>
-              {/* <Home /> */}
-              <div>로그인 성공! (Home 컴포넌트 자리)</div>
+              <Home />
             </PrivateRoute>
           }
         />
