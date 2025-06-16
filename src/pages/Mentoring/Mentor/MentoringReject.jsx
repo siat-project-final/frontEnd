@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
 import Footer from '../../../components/common/Footer';
-import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const rejectReasons = [
   '갑작스러운 일정 변경이 생겼어요.',
@@ -18,7 +15,6 @@ const rejectReasons = [
 const MentoringReject = () => {
   const [selected, setSelected] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
 
   const handleCheck = (idx) => {
     setSelected((prev) => (prev.includes(idx) ? prev.filter((v) => v !== idx) : [...prev, idx]));
@@ -26,31 +22,14 @@ const MentoringReject = () => {
 
   const handleReject = (e) => {
     e.preventDefault();
-    if (selected.length === 0) {
-      alert('거절 사유를 하나 이상 선택해주세요.');
-      return;
-    }
     setShowModal(true);
   };
 
-  const handleConfirm = async () => {
-    try {
-      const selectedReasons = selected.map((idx) => rejectReasons[idx]).join(', ');
-
-      const response = await axios.put('/api/reject', {
-        reason: selectedReasons,
-      });
-
-      if (response.status === 200) {
-        alert('예약이 거절되었습니다.');
-        navigate('/mentoring/list');
-      }
-    } catch (error) {
-      console.error('예약 거절 중 오류 발생:', error);
-      alert('예약 거절 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      setShowModal(false);
-    }
+  const handleConfirm = () => {
+    // 실제 거절 처리 로직 추가 가능
+    setShowModal(false);
+    // 예시: 거절 후 목록 페이지로 이동 등
+    window.location.href = '/mentoring/mentors';
   };
 
   const handleClose = () => {
@@ -62,66 +41,34 @@ const MentoringReject = () => {
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
-        <main className="main" style={{ minHeight: '100vh' }}>
+        <main className="main" style={{ background: '#f8fafc', minHeight: '100vh', flex: 1 }}>
           <div className="max-w-md mx-auto pt-12 pb-16">
-            {/* 제목 */}
-            <div className="mb-4" style={{ paddingLeft: '200px', marginTop: '80px' }}>
-              <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>
-                예약 거절 사유{' '}
-                <span style={{ fontSize: '14px', fontWeight: 500, color: 'red' }}>(필수)</span>
-              </h4>
-              {selected.length === 0 && (
-                <p style={{ fontSize: '14px', color: '#e11d48' }}>
-                  거절 사유를 하나 이상 선택해주세요.
-                </p>
-              )}
+            <div className="mb-8">
+              <span className="text-lg font-bold text-slate-900">
+                예약 거절 사유 <span className="text-red-500">(필수)</span>
+              </span>
             </div>
-
-            {/* 체크박스 리스트 */}
-            <form onSubmit={handleReject} style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  marginBottom: '24px',
-                  alignItems: 'center',
-                }}
-              >
+            <form onSubmit={handleReject}>
+              <div className="space-y-3 mb-8">
                 {rejectReasons.map((reason, idx) => (
                   <label
                     key={idx}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: '15px',
-                      color: '#334155',
-                      justifyContent: 'flex-start',
-                      width: '100%',
-                      paddingLeft: '200px',
-                    }}
+                    className="flex items-center cursor-pointer text-base text-slate-700"
                   >
                     <input
                       type="checkbox"
                       checked={selected.includes(idx)}
                       onChange={() => handleCheck(idx)}
-                      style={{
-                        marginRight: '12px',
-                        width: '18px',
-                        height: '18px',
-                        accentColor: '#94a3b8',
-                      }}
+                      className="mr-3 w-5 h-5 accent-slate-400"
                     />
                     {reason}
                   </label>
                 ))}
               </div>
-
-              {/* 버튼 */}
               <button
                 type="submit"
                 style={{
-                  background: '#5fcf80',
+                  background: '#ff4500',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 24,
@@ -129,23 +76,79 @@ const MentoringReject = () => {
                   fontWeight: 600,
                   fontSize: 16,
                   cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
-                  width: 'auto',
+                  boxShadow: '0 2px 8px rgba(255, 69, 0, 0.08)',
+                  width: '100%',
+                  maxWidth: 180,
                 }}
               >
                 예약 거절
               </button>
             </form>
-
-            {/* 모달 */}
-            <ConfirmCancelModal
-              visible={showModal}
-              message="예약을 거절하시겠습니까? 
-              이 작업은 되돌릴 수 없습니다."
-              onConfirm={handleConfirm}
-              onCancel={handleClose}
-            />
           </div>
+          {/* 팝업 모달 */}
+          {showModal && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                background: 'rgba(0,0,0,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+              }}
+            >
+              <div
+                style={{
+                  background: '#fff',
+                  borderRadius: 12,
+                  padding: '32px 24px',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+                  textAlign: 'center',
+                  minWidth: 320,
+                }}
+              >
+                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>
+                  정말로 거절하겠습니까?
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
+                  <button
+                    onClick={handleConfirm}
+                    style={{
+                      background: '#ff4500',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 24,
+                      padding: '12px 32px',
+                      fontWeight: 600,
+                      fontSize: 16,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    예
+                  </button>
+                  <button
+                    onClick={handleClose}
+                    style={{
+                      background: '#eee',
+                      color: '#222',
+                      border: 'none',
+                      borderRadius: 24,
+                      padding: '12px 32px',
+                      fontWeight: 600,
+                      fontSize: 16,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    아니오
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
       <Footer />
