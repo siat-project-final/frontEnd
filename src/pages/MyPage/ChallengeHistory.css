@@ -4,7 +4,6 @@
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid red;
 }
 
 .page-header {
@@ -97,10 +96,18 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
 
 .detail-btn:hover {
   background-color: #65a30d;
+}
+
+.detail-btn.active {
+  background-color: #1e293b;
+  color: white;
 }
 
 /* 캘린더 섹션 */

@@ -9,7 +9,7 @@ const MentoringHistory = () => {
         <div className="header-content">
           <div className="logo">SIAT</div>
           <nav className="main-nav">
-            <a className="nav-link active" href="#">
+            <a className="nav-link" href="/">
               Home
             </a>
             <a className="nav-link" href="#">
@@ -21,7 +21,7 @@ const MentoringHistory = () => {
             <a className="nav-link" href="#">
               Studylog
             </a>
-            <a className="nav-link" href="#">
+            <a className="nav-link active" href="#">
               Mypage
             </a>
           </nav>
@@ -39,19 +39,48 @@ const MentoringHistory = () => {
             <Link to="/mypage/challenge-history" className="sidebar-link">
               챌린지 히스토리
             </Link>
-            <Link to="/mypage/mentoring-history" className="sidebar-link">
+            <Link to="/mypage/mentoring-history" className="sidebar-link active">
               멘토링 히스토리
+            </Link>
+            <Link to="/mypage/statistics" className="sidebar-link">
+              통계
             </Link>
           </nav>
         </aside>
 
-        <main className="review-section">
+        <main className="mentoring-section">
           <div className="page-header">
             <h1 className="page-title">MENTORING HISTORY</h1>
           </div>
-          <div className="review-boxes">
-            <div className="review-box">{/* 첫 번째 박스 내용 */}</div>
-            <div className="review-box">{/* 두 번째 박스 내용 */}</div>
+          <div className="mentoring-boxes">
+            <div className="mentoring-box">
+              <h3 className="mentoring-date">6/6 (금)</h3>
+              <div className="mentoring-content">
+                <div className="mentor-image">
+                  <div className="mentoring-image-placeholder">멘토 이미지</div>
+                </div>
+                <div className="mentoring-form-group">
+                  <label htmlFor="status">대화주제</label>
+                  <input id="status" type="text" defaultValue="선택한 항목대로" readOnly />
+                  <label htmlFor="status">획득 xp</label>
+                  <input id="status" type="text" defaultValue="바꾸는 게 어떨까" readOnly />
+                </div>
+              </div>
+            </div>
+            <div className="mentoring-box">
+              <h3 className="mentoring-date">6/5 (목)</h3>
+              <div className="mentoring-content">
+                <div className="mentor-image">
+                  <div className="mentoring-image-placeholder">멘토 이미지</div>
+                </div>
+                <div className="mentoring-form-group">
+                  <label htmlFor="status">대화주제</label>
+                  <input id="status" type="text" defaultValue="선택한 항목대로" readOnly />
+                  <label htmlFor="status">획득 xp</label>
+                  <input id="status" type="text" defaultValue="바꾸는 게 어떨까" readOnly />
+                </div>
+              </div>
+            </div>
           </div>
         </main>
 

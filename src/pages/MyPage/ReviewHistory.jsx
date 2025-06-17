@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './MyPageMain.css';
+import './ReviewHistory.css';
 
 const ReviewHistory = () => {
   return (
@@ -9,7 +9,7 @@ const ReviewHistory = () => {
         <div className="header-content">
           <div className="logo">SIAT</div>
           <nav className="main-nav">
-            <a className="nav-link active" href="#">
+            <a className="nav-link" href="/">
               Home
             </a>
             <a className="nav-link" href="#">
@@ -21,7 +21,7 @@ const ReviewHistory = () => {
             <a className="nav-link" href="#">
               Studylog
             </a>
-            <a className="nav-link" href="#">
+            <a className="nav-link active" href="#">
               Mypage
             </a>
           </nav>
@@ -42,6 +42,9 @@ const ReviewHistory = () => {
             <Link to="/mypage/mentoring-history" className="sidebar-link">
               멘토링 히스토리
             </Link>
+            <Link to="/mypage/statistics" className="sidebar-link">
+              통계
+            </Link>
           </nav>
         </aside>
 
@@ -49,7 +52,7 @@ const ReviewHistory = () => {
           <div className="page-header">
             <h1 className="page-title">CHALLENGE HISTORY</h1>
           </div>
-          <div className="review-box">{/* 여기에 리뷰 내용이 들어갈 예정입니다 */}</div>
+          <div className="review-box">{'challenge쪽 형식에 맞춰서'}</div>
         </section>
 
         <aside className="calendar-section">

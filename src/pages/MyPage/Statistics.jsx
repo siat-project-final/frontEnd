@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './ChallengeHistory.css';
+import './Statistics.css';
 
-const ChallengeHistory = () => {
+const Statistics = () => {
   return (
     <div className="mypage-container">
       <header className="header">
@@ -29,100 +29,56 @@ const ChallengeHistory = () => {
         </div>
       </header>
 
-      <main className="content-wrapper">
+      <div className="content-wrapper">
         <aside className="sidebar">
           <h2 className="sidebar-title">마이 프로필</h2>
           <nav className="sidebar-nav">
             <Link to="/mypage" className="sidebar-link">
               프로필 변경
             </Link>
-            <Link to="/mypage/challenge-history" className="sidebar-link active">
+            <Link to="/mypage/challenge-history" className="sidebar-link">
               챌린지 히스토리
             </Link>
             <Link to="/mypage/mentoring-history" className="sidebar-link">
               멘토링 히스토리
             </Link>
-            <Link to="/mypage/statistics" className="sidebar-link">
+            <Link to="/mypage/statistics" className="sidebar-link active">
               통계
             </Link>
           </nav>
         </aside>
 
-        <section className="main-content">
+        <main className="main-content">
           <div className="page-header">
-            <h1 className="page-title">CHALLENGE HISTORY</h1>
-            <div className="month-selector">
-              <span className="current-month">6월</span>
-              <button className="month-btn">이전</button>
-              <button className="month-btn">다음</button>
-            </div>
+            <h1 className="page-title">STATICS</h1>
           </div>
 
-          <div className="challenge-list">
-            <div className="challenge-card">
-              <span className="challenge-date">6/7</span>
-              <div className="challenge-info">
-                <div className="info-item">
-                  <p className="info-label">MY RANK</p>
-                  <p className="info-value">3.</p>
-                </div>
-                <div className="info-item">
-                  <p className="info-label">SUBJECT</p>
-                  <p className="info-value">JAVA</p>
-                </div>
-                <div className="info-item">
-                  <p className="info-label">TOTAL SCORE</p>
-                  <p className="info-value">10 / 15</p>
-                </div>
-              </div>
-              <Link to="/mypage/review-history" className="detail-btn">
-                상세보기
-              </Link>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stats-icon">📝</div>
+              <p className="stats-value">120</p>
+              <p className="stats-label">learning journals created</p>
             </div>
 
-            <div className="challenge-card">
-              <span className="challenge-date">6/3</span>
-              <div className="challenge-info">
-                <div className="info-item">
-                  <p className="info-label">MY RANK</p>
-                  <p className="info-value">3.</p>
-                </div>
-                <div className="info-item">
-                  <p className="info-label">SUBJECT</p>
-                  <p className="info-value">REACT</p>
-                </div>
-                <div className="info-item">
-                  <p className="info-label">TOTAL SCORE</p>
-                  <p className="info-value">10 / 15</p>
-                </div>
-              </div>
-              <Link to="/mypage/review-history" className="detail-btn">
-                상세보기
-              </Link>
+            <div className="stat-card">
+              <div className="stats-icon">🏆</div>
+              <p className="stats-value">10</p>
+              <p className="stats-label">challenges completed</p>
             </div>
 
-            <div className="challenge-card">
-              <span className="challenge-date">6/3</span>
-              <div className="challenge-info">
-                <div className="info-item">
-                  <p className="info-label">MY RANK</p>
-                  <p className="info-value">5.</p>
-                </div>
-                <div className="info-item">
-                  <p className="info-label">SUBJECT</p>
-                  <p className="info-value">AWS</p>
-                </div>
-                <div className="info-item">
-                  <p className="info-label">TOTAL SCORE</p>
-                  <p className="info-value">10 / 15</p>
-                </div>
-              </div>
-              <Link to="/mypage/review-history" className="detail-btn">
-                상세보기
-              </Link>
+            <div className="stat-card">
+              <h2 className="stat-title">Mentoring Stats</h2>
+              <div className="stats-icon">💬</div>
+              <p className="stats-label">5 sessions total</p>
+            </div>
+
+            <div className="stat-card">
+              <div className="stats-icon">⭐</div>
+              <p className="stats-value">5000</p>
+              <p className="stats-label">total points earned</p>
             </div>
           </div>
-        </section>
+        </main>
 
         <aside className="calendar-section">
           <div className="calendar-container">
@@ -184,9 +140,9 @@ const ChallengeHistory = () => {
             </ul>
           </div>
         </aside>
-      </main>
+      </div>
     </div>
   );
 };
 
-export default ChallengeHistory;
+export default Statistics;

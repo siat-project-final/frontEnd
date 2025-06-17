@@ -79,7 +79,6 @@
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid red;
 }
 .sidebar-title {
   font-size: 1.25rem;
@@ -121,7 +120,6 @@
   padding: 1rem;
   max-width: 1400px;
   margin: 0 auto;
-  border: 1px solid blue;
 }
 
 /* 프로필 섹션 */
@@ -130,7 +128,6 @@
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid red;
 }
 
 .profile-content {
@@ -392,13 +389,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.settings-btn {
-  color: #84cc16;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
 .todo-input-group {
   display: flex;
   margin-bottom: 1rem;
@@ -499,37 +489,5 @@
 
   .main-nav {
     display: none;
-  }
-}
-
-.review-section {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 860px;
-  margin: 0 auto;
-}
-
-.review-boxes {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.review-box {
-  background-color: white;
-  border: 2px solid #1e293b;
-  border-radius: 0.5rem;
-  padding: 2rem;
-  min-height: 300px;
-  width: 100%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 1000px) {
-  .review-section {
-    width: 100%;
   }
 }
