@@ -63,29 +63,7 @@
   background-color: #65a30d;
 }
 
-/* 메인 컨텐츠 레이아웃 */
-.content-wrapper {
-  flex: 1;
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
 /* 사이드바 스타일 */
-.sidebar {
-  width: 14rem;
-  background-color: white;
-  padding: 1.25rem;
-  border-right: 1px solid #e5e7eb;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
 .sidebar-link {
   color: #4b5563;
@@ -104,6 +82,17 @@
   color: #84cc16;
   background-color: #f0fdf4;
   font-weight: 600;
+}
+
+/* 메인 컨텐츠 레이아웃 */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  border: 1px solid blue;
 }
 
 /* 메인 컨텐츠 영역 */

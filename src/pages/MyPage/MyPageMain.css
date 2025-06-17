@@ -65,12 +65,6 @@
 }
 
 /* 메인 컨텐츠 */
-.content-wrapper {
-  flex-grow: 1;
-  max-width: 1800px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-}
 
 .grid-container {
   display: grid;
@@ -81,13 +75,13 @@
 
 /* 사이드바 */
 .sidebar {
+  width: 14rem;
   background-color: white;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid red;
 }
-
 .sidebar-title {
   font-size: 1.25rem;
   font-weight: 600;
@@ -107,12 +101,6 @@
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   transition: all 0.2s;
-}
-
-.sidebar-link:hover,
-.sidebar-link.active {
-  color: #84cc16;
-  background-color: #f0fdf4;
 }
 
 /* 프로필 섹션 */
