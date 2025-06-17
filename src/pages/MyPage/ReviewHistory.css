@@ -113,75 +113,50 @@
   color: #84cc16;
   background-color: #f0fdf4;
 }
-
-/* 프로필 섹션 */
-.profile-section {
+/* 리뷰 섹션 */
+.review-section {
   background-color: white;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 810px;
+  margin: 0 auto;
 }
 
-.profile-content {
-  display: flex;
-  gap: 2rem;
-  width: 100%;
+.page-header {
+  margin-bottom: 2rem;
 }
 
-.profile-left {
+.page-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.review-boxes {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 2rem;
+  gap: 2rem;
+}
+
+.review-box {
   background-color: white;
+  border: 2px solid #1e293b;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 250px;
-  margin-right: 2rem;
+  padding: 2rem;
+  min-height: 300px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.profile-image {
-  width: 128px;
-  height: 128px;
-  background-color: #f3f4f6;
-  border: 2px dashed #d1d5db;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  margin-left: 1px;
+/* 반응형 디자인 */
+@media (max-width: 1400px) {
+  .review-section {
+    width: 100%;
+  }
 }
 
-.image-placeholder {
-  color: #9ca3af;
-  font-size: 0.875rem;
-}
-
-.upload-btn {
-  width: 60%;
-  background-color: #1e293b;
-  color: white;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-}
-
-.profile-stats {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.stat-item {
-  flex: 1;
-}
-git checkout -b feature/mypage .stat-icon {
+.stat-icon {
   width: 2rem;
   height: 2rem;
   background-color: #84cc16;
@@ -290,31 +265,12 @@ git checkout -b feature/mypage .stat-icon {
 }
 
 /* ToDo 섹션 */
-.todo-section {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
 
 .todo-container {
   background-color: white;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.todo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.todo-header h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
 }
 
 .settings-btn {
@@ -402,10 +358,6 @@ git checkout -b feature/mypage .stat-icon {
   .grid-container {
     grid-template-columns: 250px 1fr;
   }
-
-  .todo-section {
-    grid-column: 1 / -1;
-  }
 }
 
 @media (max-width: 768px) {
@@ -414,8 +366,7 @@ git checkout -b feature/mypage .stat-icon {
   }
 
   .sidebar,
-  .profile-section,
-  .todo-section {
+  .profile-section {
     grid-column: 1 / -1;
   }
 

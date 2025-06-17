@@ -1,10 +1,10 @@
 import React from 'react';
-import './ChallengeHistory.css';
 import { Link } from 'react-router-dom';
+import './ChallengeHistory.css';
 
 const ChallengeHistory = () => {
   return (
-    <div className="challenge-container">
+    <div className="mypage-container">
       <header className="header">
         <div className="header-content">
           <div className="logo">SIAT</div>
