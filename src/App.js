@@ -107,7 +107,7 @@ function App() {
 
         {/* 로그인 후 접근 가능한 라우트 */}
         <Route
-          path="/home"
+          path="/"
           element={
             <PrivateRoute>
               <Home />
@@ -115,7 +115,7 @@ function App() {
           }
         />
         <Route
-          path="/calendar"
+          path="/home"
           element={
             <PrivateRoute>
               <CalenderView />
