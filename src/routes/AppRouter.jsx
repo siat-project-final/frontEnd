@@ -28,6 +28,7 @@ import MentorRegister from '../pages/Mentoring/Mentor/MentorRegister';
 import MentorRegisterCard from '../pages/Mentoring/Mentor/MentorRegisterCard';
 import MenteeRegister from '../pages/Mentoring/Mentee/MenteeRegister';
 import MenteeRegisterCard from '../pages/Mentoring/Mentee/MenteeRegisterCard';
+import CalenderView from '../components/calendar/CalenderView';
 
 function AppRouter() {
   return (
@@ -50,10 +51,11 @@ function AppRouter() {
           path="/calendar"
           element={
             <PrivateRoute>
-              <CalendarView />
+              <CalenderView />
             </PrivateRoute>
           }
         />
+
         <Route
           path="/mypage"
           element={

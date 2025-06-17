@@ -10,18 +10,36 @@ const Header = () => (
 
       <nav id="navmenu" className="navmenu">
         <ul>
-          <li><Link to="/" className="active">Home</Link></li>
-          <li><Link to="/mypage">MyPage</Link></li>
-          <li><Link to="/challenge/list">DayChallengeList</Link></li>
-          <li><Link to="/mentoring/mentors">mentoring</Link></li>
-          <li><Link to="/study">Study</Link></li>
-          <li><Link to="/pricing">Pricing</Link></li>
-          <li><Link to="/contact">Contact</Link></li>
+          <li>
+            <Link to="/" className="active">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/mypage">MyPage</Link>
+          </li>
+          <li>
+            <Link to="/challenge/list">DayChallengeList</Link>
+          </li>
+          <li>
+            <Link to="/mentoring/mentors">mentoring</Link>
+          </li>
+          <li>
+            <Link to="/study">Study</Link>
+          </li>
+          <li>
+            <Link to="/pricing">Pricing</Link>
+          </li>
+          <li>
+            <Link to="/contact">Contact</Link>
+          </li>
         </ul>
         <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <Link className="btn-getstarted" to="/courses">Get Started</Link>
+      <Link className="btn-getstarted" to="/courses">
+        Get Started
+      </Link>
     </div>
   </header>
 );
