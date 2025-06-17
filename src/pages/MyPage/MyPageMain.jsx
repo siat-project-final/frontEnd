@@ -76,20 +76,50 @@ const MyPageMain = () => {
             </div>
           </section>
 
-          {/* Todo Section */}
-          <aside className="todo-section" data-aos="fade-up">
-            <div className="todo-container">
-              <div className="todo-header">
-                <h3>ToDo List</h3>
-                <button className="settings-btn">설정</button>
+          {/* 캘린더 & ToDo */}
+          <aside className="calendar-section">
+            <div className="calendar-container">
+              <div className="calendar-header">
+                <h2 className="calendar-title">2025년 06월</h2>
+                <div className="calendar-nav">
+                  <button className="calendar-nav-btn">이전</button>
+                  <button className="calendar-nav-btn">다음</button>
+                </div>
               </div>
+
+              <div className="weekdays">
+                <span>일</span><span>월</span><span>화</span>
+                <span>수</span><span>목</span><span>금</span><span>토</span>
+              </div>
+
+              <div className="calendar-grid">
+                {Array.from({ length: 35 }, (_, i) => {
+                  const day = i + 1;
+                  const isCurrentMonth = day <= 30;
+                  const isToday = day === 10;
+                  return (
+                    <span
+                      key={i}
+                      className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${
+                        isToday ? 'today' : ''
+                      }`}
+                    >
+                      {day}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="todo-container">
+              <h3 className="todo-title">ToDo List</h3>
               <div className="todo-input-group">
                 <input type="text" placeholder="Add your items" />
                 <button className="add-btn">추가</button>
               </div>
               <div className="alert-success">New item created successfully!</div>
               <ul className="todo-list">
-                {[1, 2, 3, 4, 5, 6].map((index) => (
+                {[1, 2, 3, 4, 5].map((index) => (
                   <li key={index} className="todo-item">
                     <span className="todo-text">
                       {index % 2 === 0 ? 'Alert Message Sets' : 'Complete the Blog Today'}

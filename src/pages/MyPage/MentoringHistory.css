@@ -68,11 +68,14 @@
 }
 
 /* 메인 컨텐츠 */
-.main-content {
-  flex-grow: 1;
-  max-width: 1800px;
+.main-content2 {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  border: 1px solid blue;
 }
 
 .grid-container {
@@ -123,7 +126,7 @@
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 1200px;
+  width: 810px;
   margin: 0 auto;
 }
 

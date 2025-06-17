@@ -29,7 +29,7 @@ const ChallengeHistory = () => {
         </div>
       </header>
 
-      <div className="content-wrapper">
+      <main className="content-wrapper">
         <aside className="sidebar">
           <h2 className="sidebar-title">마이 프로필</h2>
           <nav className="sidebar-nav">
@@ -45,7 +45,7 @@ const ChallengeHistory = () => {
           </nav>
         </aside>
 
-        <main className="main-content">
+        <section className="main-content">
           <div className="page-header">
             <h1 className="page-title">CHALLENGE HISTORY</h1>
             <div className="month-selector">
@@ -119,7 +119,7 @@ const ChallengeHistory = () => {
               </button>
             </div>
           </div>
-        </main>
+        </section>
 
         <aside className="calendar-section">
           <div className="calendar-container">
@@ -165,6 +165,7 @@ const ChallengeHistory = () => {
               <input type="text" placeholder="Add your items" />
               <button className="add-btn">추가</button>
             </div>
+            <div className="alert-success">New item created successfully!</div>
             <ul className="todo-list">
               {[1, 2, 3, 4, 5].map((index) => (
                 <li key={index} className="todo-item">
@@ -180,7 +181,7 @@ const ChallengeHistory = () => {
             </ul>
           </div>
         </aside>
-      </div>
+      </main>
     </div>
   );
 };
