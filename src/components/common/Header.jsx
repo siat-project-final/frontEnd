@@ -33,6 +33,7 @@ const Header = () => (
                 style={{ width: '20px', height: '20px', marginLeft: '12px' }}
               />
             </NavLink>
+
           </li>
         </ul>
         <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -40,6 +41,7 @@ const Header = () => (
       <NavLink className="btn-getstarted" to="/login" style={{ fontSize: '16px' }}>
         <b>Logout</b>
       </NavLink>
+
     </div>
   </header>
 );
