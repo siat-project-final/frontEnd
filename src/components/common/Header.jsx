@@ -1,45 +1,47 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => (
   <header id="header" className="header d-flex align-items-center sticky-top">
     <div className="container-fluid container-xl position-relative d-flex align-items-center">
-      <Link to="/" className="logo d-flex align-items-center me-auto">
+      <NavLink to="/" className="logo d-flex align-items-center me-auto">
         <h1 className="sitename">Mentor</h1>
-      </Link>
+      </NavLink>
 
       <nav id="navmenu" className="navmenu">
         <ul>
           <li>
-            <Link to="/" className="active">
-              Home
-            </Link>
+            <NavLink to="/home">Home</NavLink>
           </li>
           <li>
-            <Link to="/mypage">MyPage</Link>
+            <NavLink to="/challenge/list">Challenge</NavLink>
           </li>
           <li>
-            <Link to="/challenge/list">DayChallengeList</Link>
+            <NavLink to="/mentoring/mentors">Mentoring</NavLink>
           </li>
           <li>
-            <Link to="/mentoring/mentors">mentoring</Link>
+            <NavLink to="/study">Studylog</NavLink>
           </li>
           <li>
-            <Link to="/study">Study</Link>
+            <NavLink to="/mypage">MyPage</NavLink>
           </li>
           <li>
-            <Link to="/pricing">Pricing</Link>
-          </li>
-          <li>
-            <Link to="/contact">Contact</Link>
+            <NavLink to="/notifications">
+              <img
+                src="/assets/img/mentors/bell.png"
+                alt="Notifications"
+                style={{ width: '20px', height: '20px', marginLeft: '12px' }}
+              />
+            </NavLink>
+
           </li>
         </ul>
         <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
+      <NavLink className="btn-getstarted" to="/login" style={{ fontSize: '16px' }}>
+        <b>Logout</b>
+      </NavLink>
 
-      <Link className="btn-getstarted" to="/courses">
-        Get Started
-      </Link>
     </div>
   </header>
 );
