@@ -5,7 +5,7 @@ const Header = () => (
   <header id="header" className="header d-flex align-items-center sticky-top">
     <div className="container-fluid container-xl position-relative d-flex align-items-center">
       <NavLink to="/" className="logo d-flex align-items-center me-auto">
-        <h1 className="sitename">Mentor</h1>
+        <h1 className="sitename">SIAT</h1>
       </NavLink>
 
       <nav id="navmenu" className="navmenu">

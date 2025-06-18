@@ -17,6 +17,7 @@ import MyPageMain from './pages/MyPage/MyPageMain';
 import ChallengeHistory from './pages/MyPage/ChallengeHistory';
 import MentoringHistory from './pages/MyPage/MentoringHistory';
 import ReviewHistory from './pages/MyPage/ReviewHistory';
+import Statistics from './pages/MyPage/Statistics';
 
 import Pricing from './pages/Pricing/Pricing';
 import Starter from './pages/Starter/Starter';
@@ -76,6 +77,7 @@ function App() {
         <Route path="/mypage/challenge-history" element={<PrivateRoute><ChallengeHistory /></PrivateRoute>} />
         <Route path="/mypage/mentoring-history" element={<PrivateRoute><MentoringHistory /></PrivateRoute>} />
         <Route path="/mypage/review-history" element={<PrivateRoute><ReviewHistory /></PrivateRoute>} />
+        <Route path="/mypage/statistics" element={<PrivateRoute><Statistics /></PrivateRoute>} />
 
         {/* Study Log */}
         <Route path="/study" element={<PrivateRoute><StudyLogPage /></PrivateRoute>} />
