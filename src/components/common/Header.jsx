@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const Header = () => (
   <header id="header" className="header d-flex align-items-center sticky-top">
@@ -33,15 +33,14 @@ const Header = () => (
                 style={{ width: '20px', height: '20px', marginLeft: '12px' }}
               />
             </NavLink>
-
           </li>
         </ul>
         <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
+
       <NavLink className="btn-getstarted" to="/login" style={{ fontSize: '16px' }}>
         <b>Logout</b>
       </NavLink>
-
     </div>
   </header>
 );
