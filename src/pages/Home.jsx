@@ -10,7 +10,6 @@ const Home = () => {
         <section id="hero" className="hero section dark-background">
           <img src="/assets/img/hero-bg.jpg" alt="" data-aos="fade-in" />
           <div className="container">
-<<<<<<< HEAD
             <h2 data-aos="fade-up">
               Learning Today,
               <br />
@@ -23,12 +22,6 @@ const Home = () => {
               <a href="/courses" className="btn-get-started">
                 Get Started
               </a>
-=======
-            <h2 data-aos="fade-up">Learning Today,<br />Leading Tomorrow</h2>
-            <p data-aos="fade-up" data-aos-delay="200">We are team of talented designers making websites with Bootstrap</p>
-            <div className="d-flex mt-4" data-aos="fade-up" data-aos-delay="300">
-              <a href="/courses" className="btn-get-started">Get Started</a>
->>>>>>> 3b929a2 (feat: 마이페이지 UI 작업업)
             </div>
           </div>
         </section>
@@ -39,8 +32,4 @@ const Home = () => {
   );
 };
 
-<<<<<<< HEAD
 export default Home;
-=======
-export default Home;
->>>>>>> 3b929a2 (feat: 마이페이지 UI 작업업)

@@ -10,7 +10,7 @@ const MyPageMain = () => {
     <>
       <Header />
       <div className="container-flex">
-        <Sidebar />
+        <Sidebar menuType="mypage"/>
         <main className="main">
           {/* 사용자 정보 영역 */}
           <section className="profile-section" data-aos="fade-up">

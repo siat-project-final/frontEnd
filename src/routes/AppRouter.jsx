@@ -1,53 +1,9 @@
-<<<<<<< HEAD
 // import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import PrivateRoute from '../components/PrivateRoute';
 
 // // 인증 없이 접근 가능한 페이지
 // import Login from '../pages/Login';
 // import SignUp from '../pages/SignUp';
-=======
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Home from '../pages/Home';
-import MyPageMain from '../pages/MyPage/MyPageMain';
-import DayChallengeList from '../pages/Challenge/DayChallengeList';
-import CourseDetail from '../pages/Challenge/CourseDetail';
-import MentoringList from '../pages/Mentoring/MentoringList';
-import MentoringDetail from '../pages/Mentoring/MentoringDetail';
-import MentoringApply from '../pages/Mentoring/MentoringApply';
-import Events from '../pages/Events/Events';
-import Pricing from '../pages/Pricing/Pricing';
-import Starter from '../pages/Starter/Starter';
-import Contact from '../pages/Contact/Contact'; // ✅ Contact 페이지 추가
-import ChallengeHistory from '../pages/MyPage/ChallengeHistory';
-import MentoringHistory from '../pages/MyPage/MentoringHistory';
-import ReviewHistory from '../pages/MyPage/ReviewHistory';
-import Statistics from '../pages/MyPage/Statistics';
-
-function AppRouter() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/mypage" element={<MyPageMain />} />
-        <Route path="/mypage/challenge-history" element={<ChallengeHistory />} />
-        <Route path="/mypage/mentoring-history" element={<MentoringHistory />} />
-        <Route path="/mypage/review-history" element={<ReviewHistory />} />
-        <Route path="/mypage/statistics" element={<Statistics />} />
-        <Route path="/challenge/list" element={<DayChallengeList />} />
-        <Route path="/challenge/detail" element={<CourseDetail />} />
-        <Route path="/mentoring/mentors" element={<MentoringList />} />
-        <Route path="/mentoring/:id" element={<MentoringDetail />} />
-        <Route path="/mentoring/apply" element={<MentoringApply />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/starter" element={<Starter />} />
-        <Route path="/courses" element={<CourseDetail />} />
-        <Route path="/contact" element={<Contact />} /> {/* Contact 라우팅 */}
-      </Routes>
-    </BrowserRouter>
-  );
-}
->>>>>>> 755ecf8 (feature: MyPageUI 디자인 완료)
 
 // // 인증 필요 페이지
 // import Home from '../pages/Home';
