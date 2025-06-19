@@ -59,28 +59,6 @@ import ChallengeMain from './pages/Challenge/ChallengeMain';
 import DayChallengeList from './pages/Challenge/DayChallengeList';
 import CourseDetail from './pages/Challenge/CourseDetail';
 
-function App() {
-  useLayoutEffect(() => {
-    AOS.init();
-    const preloader = document.getElementById('preloader');
-    if (preloader) preloader.style.display = 'none';
-  }, []);
-
-  return (
-    <Router>
-      <AppLayout />
-      <a
-        href="#"
-        id="scroll-top"
-        className="scroll-top d-flex align-items-center justify-content-center"
-      >
-        <i className="bi bi-arrow-up-short"></i>
-      </a>
-      <div id="preloader"></div>
-    </Router>
-  );
-}
-
 function AppLayout() {
   const { pathname } = useLocation();
   // const hideTodo = pathname === '/login' || pathname === '/signup';
@@ -154,5 +132,29 @@ function AppLayout() {
     </div>
   );
 }
+
+function App() {
+  useLayoutEffect(() => {
+    AOS.init();
+    const preloader = document.getElementById('preloader');
+    if (preloader) preloader.style.display = 'none';
+  }, []);
+
+  return (
+    <Router>
+      <AppLayout />
+      <a
+        href="#"
+        id="scroll-top"
+        className="scroll-top d-flex align-items-center justify-content-center"
+      >
+        <i className="bi bi-arrow-up-short"></i>
+      </a>
+      <div id="preloader"></div>
+    </Router>
+  );
+}
+
+
 
 export default App;

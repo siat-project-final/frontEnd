@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -7,23 +7,112 @@ import interactionPlugin from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 
 import Header from '../common/Header';
+import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
-import Todo from '../common/Todo'
+
+import { getEvents } from '../../api/schedule';
+import { getTodos } from '../../api/todo';
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
+  const [calendarEvents, setCalendarEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [lastClickedDate, setLastClickedDate] = useState(null);
   const [clickTimeout, setClickTimeout] = useState(null);
+  const [localTodoTrigger, setLocalTodoTrigger] = useState(Date.now()); // ✅ local todo 변경 감지
+
+  const memberId = sessionStorage.getItem('memberId');
+
+  // ✅ localStorage 기반 Todo도 캘린더에 표시
+  const getLocalTodos = () => {
+    const data = JSON.parse(localStorage.getItem('todo-list')) || [];
+    return data.map((todo) => ({
+      title: `[TODO] ${todo.item}`,
+      start: todo.date,
+      end: todo.date,
+      backgroundColor: '#F9E79F',
+      borderColor: '#F9E79F',
+      textColor: '#000',
+      extendedProps: {
+        type: 'LOCAL_TODO',
+        isChecked: todo.status,
+      },
+    }));
+  };
+
+  useEffect(() => {
+  const fetchCalendarData = async () => {
+    try {
+      const today = new Date();
+      const startDate = today.toISOString().slice(0, 10);
+      const endDate = new Date(today.setDate(today.getDate() + 30)).toISOString().slice(0, 10);
+
+      const [eventRes /* , todoRes */] = await Promise.all([
+        getEvents(memberId, startDate, endDate),
+        // getTodos(memberId, startDate, null), // ✅ 서버 연동용 (2안)
+      ]);
+
+      const calendarMapped = eventRes.data.map((event) => ({
+        title: event.title,
+        start: event.date,
+        end: event.date,
+        extendedProps: {
+          type: event.type,
+          contents: event.contents,
+          relatedId: event.relatedId,
+          redirectUrl: event.redirectUrl,
+        },
+      }));
+
+      // ✅ 1안: localStorage 기반 todo 가져오기
+      const todoLocal = JSON.parse(localStorage.getItem('todo-list')) || [];
+      const todoMapped = todoLocal.map((todo) => ({
+        title: `[TODO] ${todo.item}`,
+        start: todo.date,
+        end: todo.date,
+        backgroundColor: '#F8C471',
+        borderColor: '#F8C471',
+        textColor: '#000',
+        extendedProps: {
+          type: 'TODO',
+          isChecked: todo.status,
+        },
+      }));
+
+      // ✅ 2안: 서버에서 받은 투두 (추후 연동 시 사용)
+      // const todoMapped = todoRes.data.map((todo) => ({
+      //   title: `[TODO] ${todo.contents}`,
+      //   start: todo.date,
+      //   end: todo.date,
+      //   backgroundColor: '#F8C471',
+      //   borderColor: '#F8C471',
+      //   textColor: '#000',
+      //   extendedProps: {
+      //     type: 'TODO',
+      //     isChecked: todo.isChecked,
+      //   },
+      // }));
+
+      setCalendarEvents([...calendarMapped, ...todoMapped]);
+    } catch (error) {
+      console.error('일정 및 투두 불러오기 실패:', error);
+    }
+  };
+
+  if (memberId) fetchCalendarData();
+}, [memberId, localTodoTrigger]);
+
 
   const handleDateClick = (info) => {
     const clickedDate = info.dateStr;
+    setSelectedDate(clickedDate);
+    sessionStorage.setItem('selectedDate', clickedDate);
+
     if (lastClickedDate === clickedDate && clickTimeout) {
       clearTimeout(clickTimeout);
       setClickTimeout(null);
       setLastClickedDate(null);
-      setSelectedDate(clickedDate);
       setIsModalOpen(true);
     } else {
       const timeout = setTimeout(() => {
@@ -37,16 +126,13 @@ const CalendarView = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedDate(null);
   };
 
   return (
     <div>
-      <Header/>
+      <Header />
       <div style={{ display: 'flex' }}>
-        {/* 왼쪽: 캘린더 + 모달 */}
         <div style={{ flex: 1 }}>
-          
           <FullCalendar
             plugins={[
               dayGridPlugin,
@@ -71,31 +157,7 @@ const CalendarView = () => {
               center: 'title',
               right: 'myNext today',
             }}
-            views={{
-              resourceTimelineDay: {
-                type: 'resourceTimeline',
-                duration: { days: 1 },
-                buttonText: 'Mentoring Timeline',
-              },
-            }}
-            resources={[
-              { id: '1', title: '멘토 김코딩' },
-              { id: '2', title: '멘토 이자바' },
-            ]}
-            events={[
-              {
-                title: '멘토링 세션 A',
-                start: '2025-06-14T10:00:00',
-                end: '2025-06-14T11:00:00',
-                resourceId: '1',
-              },
-              {
-                title: '멘토링 세션 B',
-                start: '2025-06-14T13:00:00',
-                end: '2025-06-14T14:00:00',
-                resourceId: '2',
-              },
-            ]}
+            events={calendarEvents}
             selectable={true}
             dateClick={handleDateClick}
             eventClick={(info) => {
@@ -105,93 +167,19 @@ const CalendarView = () => {
             height="auto"
           />
 
-          <CalendarModal isOpen={isModalOpen} onClose={handleCloseModal} selectedDate={selectedDate} />
-
-          {/* 인라인 스타일은 별도 파일로 분리 권장 */}
-          <style>
-            {`
-              .fc .fc-col-header-cell {
-                background-color: #5FCF80 !important;
-                text-align: center;
-              }
-              .fc .fc-col-header-cell a {
-                color: #ffffff !important;
-                font-weight: bold;
-                text-decoration: none;
-              }
-              .fc .fc-col-header-cell-cushion {
-                padding: 8px 0;
-                font-size: 14px;
-              }
-              .fc .fc-day-today {
-                background-color: #f0f0f0 !important;
-              }
-              .fc .fc-daygrid-day-frame {
-                min-height: 100px;
-                height: 100px;
-              }
-              .fc .fc-day-today .fc-daygrid-day-frame {
-                min-height: 100px;
-                height: 100px;
-              }
-              .fc .fc-toolbar {
-                display: grid;
-                grid-template-columns: 1fr auto 1fr;
-                align-items: center;
-                justify-items: center;
-              }
-              .fc .fc-toolbar-title {
-                text-align: center;
-              }
-              .fc-myPrev-button,
-              .fc-myNext-button {
-                background: none !important;
-                border: none !important;
-                width: 30px !important;
-                height: 30px !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                margin: 0 !important;
-                position: relative;
-              }
-              .fc-myPrev-button::before,
-              .fc-myNext-button::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 20px;
-                height: 20px;
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-position: center;
-              }
-              .fc-myPrev-button::before {
-                background-image: url('/assets/img/mentors/chevron-left.png');
-              }
-              .fc-myNext-button::before {
-                background-image: url('/assets/img/mentors/chevron-right.png');
-              }
-              .fc-today-button {
-                background-color: #5FCF80 !important;
-                border-color: #5FCF80 !important;
-                color: white !important;
-                padding: 4px 12px !important;
-                font-size: 14px !important;
-              }
-              .fc-today-button:hover {
-                background-color: #4db870 !important;
-                border-color: #4db870 !important;
-              }
-            `}
-          </style>
+          <CalendarModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            selectedDate={selectedDate}
+          />
         </div>
-      <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
-        <Todo />
+
+        {/* ⬇️ local todo 변경 감지 props도 같이 전달 (선택사항) */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo selectedDate={selectedDate} onTodoChange={() => setLocalTodoTrigger(Date.now())} />
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 

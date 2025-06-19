@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signIn } from '../api/auth';
 import { setToken } from '../utils/auth';
 import './Login.css';
 
@@ -14,16 +15,31 @@ function Login() {
     const validId = 'admin';
     const validPwd = '1234';
 
+    // ✅ MOCK 로그인 (삭제 예정)
     if (id === validId && pwd === validPwd) {
       try {
         const mockToken = 'mock.jwt.token';
         setToken(mockToken);
-        navigate('/home'); // ✅ 홈으로 이동
+        sessionStorage.setItem('memberId', 1); // mock userId
+        navigate('/home');
       } catch (error) {
-        console.error('로그인 실패:', error);
+        console.error('MOCK 로그인 실패:', error);
         alert('로그인에 실패했습니다.');
       }
-    } else {
+      return;
+    }
+
+    // ✅ 실제 로그인 API 연동
+    try {
+      const res = await signIn({ id, password: pwd });
+      const { accessToken, memberId } = res.data;
+
+      setToken(accessToken);
+      sessionStorage.setItem('memberId', memberId);
+
+      navigate('/home');
+    } catch (error) {
+      console.error('API 로그인 실패:', error);
       alert('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
   };
