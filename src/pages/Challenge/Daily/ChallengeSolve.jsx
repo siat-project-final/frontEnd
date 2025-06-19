@@ -3,100 +3,76 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
+import { getTodayChallenge, submitChallenge } from '../../../api/challenge'; // ✅ axios 기반 함수
 import '../../../App.css';
 
 const ChallengeSolve = () => {
-    const dummyProblem = {
-        id: 1,
-        difficulty: 2,
-        type: 'text',
-        text: `여기 간단한 Java 문제를 제시해드리겠습니다:
-
-        문제: 사칙연산 계산기 만들기
-
-        두 개의 정수와 연산자(+, -, *, /)를 입력받아 계산 결과를 출력하는 프로그램을 작성하세요.
-
-        요구사항:
-        1. 사용자로부터 첫 번째 숫자, 연산자, 두 번째 숫자를 순서대로 입력받습니다.
-        2. 입력받은 연산자에 따라 적절한 계산을 수행합니다.
-        3. 계산 결과를 출력합니다.
-        4. 나눗셈의 경우 두 번째 숫자가 0이면 "0으로 나눌 수 없습니다"라는 메시지를 출력합니다.
-
-        입력 예시:
-        첫 번째 숫자를 입력하세요: 10
-        연산자를 입력하세요(+,-,*,/): +
-        두 번째 숫자를 입력하세요: 5
-
-        출력 예시:
-        계산 결과: 10 + 5 = 15
-
-        다음은 문제 해결을 위한 코드 템플릿입니다:
-
-        import java.util.Scanner;
-
-        public class SimpleCalculator {
-            public static void main(String[] args) {
-                Scanner scanner = new Scanner(System.in);
-                
-                // 여기에 코드를 작성하세요
-                
-            }
-        }
-        `,
-        correctAnswer: '정답',
-    };
-
-
   const navigate = useNavigate();
+  const memberId = sessionStorage.getItem('memberId');
+
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
 
-//   useEffect(() => {
-//     const today = new Date().toISOString().split('T')[0];
+  // ✅ 더미 문제
+  const dummyProblem = {
+    id: 1,
+    difficulty: 2,
+    type: 'text',
+    text: `문제: 사칙연산 계산기 만들기
 
-//     fetch(/api/problems?date=${today}, {
-//       method: 'GET',
-//       headers: {
-//         Authorization: Bearer ${sessionStorage.getItem('token')},
-//       },
-//     })
-//       .then((res) => res.json())
-//       .then((data) => setProblems([dummyProblem]))
-//       .catch((err) => console.error('문제 불러오기 실패:', err));
-//   }, []);
+두 개의 정수와 연산자(+, -, *, /)를 입력받아 계산 결과를 출력하는 프로그램을 작성하세요.
+
+요구사항:
+1. 사용자로부터 첫 번째 숫자, 연산자, 두 번째 숫자를 입력받습니다.
+2. 연산자에 따라 계산을 수행합니다.
+3. 나눗셈의 경우 0으로 나누면 예외 처리합니다.
+
+입력 예시:
+10 + 5 → 출력: 15
+`,
+    correctAnswer: '정답',
+  };
 
   useEffect(() => {
-    setProblems([dummyProblem]); // 테스트 목적
-  }, []);
+    const today = new Date().toISOString().split('T')[0];
+
+    // ✅ 실제 API 호출
+    // getTodayChallenge(memberId)
+    //   .then(res => {
+    //     setProblems(res.data);
+    //   })
+    //   .catch(err => console.error('문제 불러오기 실패:', err));
+
+    // ✅ 더미로 세팅
+    setProblems([dummyProblem]);
+  }, [memberId]);
 
   const handleChange = (problemId, value) => {
-    setAnswers((prev) => ({ ...prev, [problemId]: value }));
+    setAnswers(prev => ({ ...prev, [problemId]: value }));
   };
 
   const handleSubmit = () => {
-    const submissionData = {
-      answers: problems.map((p) => ({
-        problemId: p.id,
-        answer: answers[p.id] || '',
-      })),
-    };
+    const submissionData = problems.map(p => ({
+      problemId: p.id,
+      submitAnswer: answers[p.id] || '',
+      memberId: memberId,
+    }));
 
-    fetch('/api/submissions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(submissionData),
-    })
-      .then((res) => {
-        if (res.ok) {
-          navigate('/challenge/daily/result');
-        } else {
-          alert('제출에 실패했습니다.');
-        }
-      })
-      .catch((err) => console.error('제출 실패:', err));
+    // ✅ 실제 API 연결 시
+    // submissionData.forEach(data => {
+    //   submitChallenge(data.problemId, data.memberId, data.submitAnswer)
+    //     .then(() => {
+    //       // 성공시
+    //       navigate('/challenge/daily/result');
+    //     })
+    //     .catch(err => {
+    //       console.error('제출 실패:', err);
+    //       alert('제출에 실패했습니다.');
+    //     });
+    // });
+
+    console.log('제출된 데이터 (dummy):', submissionData);
+    navigate('/challenge/daily/result');
   };
 
   return (
@@ -115,26 +91,25 @@ const ChallengeSolve = () => {
             <div className="container" style={{ padding: '40px 20px' }}>
               {problems.map((problem, index) => (
                 <div key={problem.id} className="mb-4">
-                  <h5>
-                    Q. {index + 1} @@@ ({problem.difficulty}점)
+                  <h5 className="mb-2">
+                    Q{index + 1}. (난이도: {problem.difficulty})
                   </h5>
-                  <div><pre
+                  <pre
                     style={{
-                        background: '#f8f9fa',
-                        padding: '20px',
-                        borderRadius: '10px',
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'inherit',
-                        fontSize: '15px',
-                        marginTop: '10px',
+                      background: '#f8f9fa',
+                      padding: '20px',
+                      borderRadius: '10px',
+                      whiteSpace: 'pre-wrap',
+                      fontFamily: 'inherit',
+                      fontSize: '15px',
                     }}
-                    >
+                  >
                     {problem.text}
-                    </pre></div>
+                  </pre>
                   <input
                     type="text"
-                    className="form-control"
-                    placeholder="정답 입력"
+                    className="form-control mt-2"
+                    placeholder="정답을 입력하세요"
                     onChange={(e) => handleChange(problem.id, e.target.value)}
                   />
                 </div>

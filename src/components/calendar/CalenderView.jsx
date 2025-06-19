@@ -10,21 +10,37 @@ import Header from '../common/Header';
 import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
 
-import { getEvents } from '../../api/schedule';
-import { getTodos } from '../../api/todo';
-
 const CalendarView = () => {
   const calendarRef = useRef(null);
   const [calendarEvents, setCalendarEvents] = useState([]);
+  const [calendarKey, setCalendarKey] = useState(Date.now()); // ✅ 강제 리렌더 키
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(() => {
+  //   // 🗓 오늘 날짜 yyyy-MM-dd 포맷
+  //   const today = new Date();
+  //   const yyyy = today.getFullYear();
+  //   const mm = String(today.getMonth() + 1).padStart(2, '0');
+  //   const dd = String(today.getDate()).padStart(2, '0');
+  //   return `${yyyy}-${mm}-${dd}`;
+  // });
+  const getTodayString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  
+  const [selectedDate, setSelectedDate] = useState(() => {
+    return sessionStorage.getItem('selectedDate') || getTodayString();
+  });
   const [lastClickedDate, setLastClickedDate] = useState(null);
   const [clickTimeout, setClickTimeout] = useState(null);
-  const [localTodoTrigger, setLocalTodoTrigger] = useState(Date.now()); // ✅ local todo 변경 감지
+  const [localTodoTrigger, setLocalTodoTrigger] = useState(Date.now());
 
   const memberId = sessionStorage.getItem('memberId');
 
-  // ✅ localStorage 기반 Todo도 캘린더에 표시
   const getLocalTodos = () => {
     const data = JSON.parse(localStorage.getItem('todo-list')) || [];
     return data.map((todo) => ({
@@ -35,74 +51,35 @@ const CalendarView = () => {
       borderColor: '#F9E79F',
       textColor: '#000',
       extendedProps: {
-        type: 'LOCAL_TODO',
+        type: 'TODO',
         isChecked: todo.status,
       },
     }));
   };
 
   useEffect(() => {
-  const fetchCalendarData = async () => {
-    try {
-      const today = new Date();
-      const startDate = today.toISOString().slice(0, 10);
-      const endDate = new Date(today.setDate(today.getDate() + 30)).toISOString().slice(0, 10);
+    const fetchCalendarData = async () => {
+      try {
+        // 👉 백엔드 API 호출 막아둠
+        // const today = new Date();
+        // const startDate = today.toISOString().slice(0, 10);
+        // const endDate = new Date(today.setDate(today.getDate() + 30)).toISOString().slice(0, 10);
+        // const [eventRes] = await Promise.all([
+        //   getEvents(memberId, startDate, endDate),
+        // ]);
 
-      const [eventRes /* , todoRes */] = await Promise.all([
-        getEvents(memberId, startDate, endDate),
-        // getTodos(memberId, startDate, null), // ✅ 서버 연동용 (2안)
-      ]);
+        const calendarMapped = []; // 임시로 이벤트 없음
+        const localTodos = getLocalTodos();
 
-      const calendarMapped = eventRes.data.map((event) => ({
-        title: event.title,
-        start: event.date,
-        end: event.date,
-        extendedProps: {
-          type: event.type,
-          contents: event.contents,
-          relatedId: event.relatedId,
-          redirectUrl: event.redirectUrl,
-        },
-      }));
+        setCalendarEvents([...calendarMapped, ...localTodos]);
+        setCalendarKey(Date.now()); // ✅ 리렌더링 트리거
+      } catch (error) {
+        console.error('일정 및 투두 불러오기 실패:', error);
+      }
+    };
 
-      // ✅ 1안: localStorage 기반 todo 가져오기
-      const todoLocal = JSON.parse(localStorage.getItem('todo-list')) || [];
-      const todoMapped = todoLocal.map((todo) => ({
-        title: `[TODO] ${todo.item}`,
-        start: todo.date,
-        end: todo.date,
-        backgroundColor: '#F8C471',
-        borderColor: '#F8C471',
-        textColor: '#000',
-        extendedProps: {
-          type: 'TODO',
-          isChecked: todo.status,
-        },
-      }));
-
-      // ✅ 2안: 서버에서 받은 투두 (추후 연동 시 사용)
-      // const todoMapped = todoRes.data.map((todo) => ({
-      //   title: `[TODO] ${todo.contents}`,
-      //   start: todo.date,
-      //   end: todo.date,
-      //   backgroundColor: '#F8C471',
-      //   borderColor: '#F8C471',
-      //   textColor: '#000',
-      //   extendedProps: {
-      //     type: 'TODO',
-      //     isChecked: todo.isChecked,
-      //   },
-      // }));
-
-      setCalendarEvents([...calendarMapped, ...todoMapped]);
-    } catch (error) {
-      console.error('일정 및 투두 불러오기 실패:', error);
-    }
-  };
-
-  if (memberId) fetchCalendarData();
-}, [memberId, localTodoTrigger]);
-
+    if (memberId) fetchCalendarData();
+  }, [memberId, localTodoTrigger]); // ✅ todo 바뀌면 다시 불러옴
 
   const handleDateClick = (info) => {
     const clickedDate = info.dateStr;
@@ -124,9 +101,7 @@ const CalendarView = () => {
     }
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const handleCloseModal = () => setIsModalOpen(false);
 
   return (
     <div>
@@ -134,6 +109,7 @@ const CalendarView = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <FullCalendar
+            key={calendarKey} // ✅ 핵심!
             plugins={[
               dayGridPlugin,
               timeGridPlugin,
@@ -174,9 +150,11 @@ const CalendarView = () => {
           />
         </div>
 
-        {/* ⬇️ local todo 변경 감지 props도 같이 전달 (선택사항) */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
-          <Todo selectedDate={selectedDate} onTodoChange={() => setLocalTodoTrigger(Date.now())} />
+          <Todo
+            selectedDate={selectedDate}
+            onTodoChange={() => setLocalTodoTrigger(Date.now())}
+          />
         </div>
       </div>
     </div>

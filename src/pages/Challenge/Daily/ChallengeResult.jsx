@@ -3,28 +3,49 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
+import { getSubmissionResult } from '../../../api/challenge'; // ✅ axios 연동 주석
 import '../../../App.css';
 
 const ChallengeResult = () => {
   const navigate = useNavigate();
   const [resultData, setResultData] = useState([]);
   const [totalScore, setTotalScore] = useState(0);
+  const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
-    fetch(`/api/submissions/result?date=${today}`, {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    // ✅ 실제 API 호출 시
+    // getSubmissionResult(memberId, today)
+    //   .then(res => {
+    //     setResultData(res.data.results);
+    //     setTotalScore(res.data.totalScore);
+    //   })
+    //   .catch(err => console.error('결과 불러오기 실패:', err));
+
+    // ✅ dummy 데이터
+    const dummyResults = [
+      {
+        problemId: 1,
+        content: 'Java에서 사칙연산 계산기 만들기',
+        difficulty: 2,
+        correct: true,
       },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setResultData(data.results);
-        setTotalScore(data.totalScore);
-      })
-      .catch((err) => console.error('결과 불러오기 실패:', err));
-  }, []);
+      {
+        problemId: 2,
+        content: 'Spring에서 @Service의 역할',
+        difficulty: 3,
+        correct: false,
+      },
+    ];
+    const dummyScore = dummyResults.reduce(
+      (sum, item) => sum + (item.correct ? item.difficulty : 0),
+      0
+    );
+
+    setResultData(dummyResults);
+    setTotalScore(dummyScore);
+  }, [memberId]);
 
   return (
     <>
@@ -43,12 +64,12 @@ const ChallengeResult = () => {
               {resultData.map((item, index) => (
                 <div key={item.problemId} className="mb-4">
                   <h5>
-                    Q. {index + 1} @@@ ({item.difficulty}점) {item.correct ? '(O)' : '(X)'}
+                    Q{index + 1}. ({item.difficulty}점) {item.correct ? '✔ 정답' : '✘ 오답'}
                   </h5>
-                  <p>{item.content}</p>
+                  <p className="text-muted">{item.content}</p>
                 </div>
               ))}
-              <div className="text-end" style={{ fontWeight: 'bold', fontSize: '18px' }}>
+              <div className="text-end mt-4" style={{ fontWeight: 'bold', fontSize: '18px' }}>
                 총점: {totalScore}점
               </div>
 

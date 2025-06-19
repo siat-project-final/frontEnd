@@ -3,6 +3,7 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useLocation } from 'react-router-dom';
+import { getReviewProblems } from '../../../api/challenge'; // ✅ axios 통신 주석
 import '../../../App.css';
 
 const ReviewSolve = () => {
@@ -12,21 +13,18 @@ const ReviewSolve = () => {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState(null);
 
-//   useEffect(() => {
-//     if (!subjectId) return;
-//     // 예시로 난이도 3 고정 (또는 서버에서 결정)
-//     fetch(`/api/review/problems?difficulty=3&subjectId=${subjectId}`, {
-//       headers: {
-//         Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-//       },
-//     })
-//       .then((res) => res.json())
-//       .then((data) => setProblem(data))
-//       .catch((err) => console.error('문제 불러오기 실패:', err));
-//   }, [subjectId]);
-
   useEffect(() => {
-    // ✅ 백엔드 없이 더미 문제 세팅
+    if (!subjectId) return;
+
+    // ✅ 실제 통신 시
+    // const memberId = sessionStorage.getItem('memberId');
+    // getReviewProblems(memberId, subjectId)
+    //   .then(res => {
+    //     setProblem(res.data);
+    //   })
+    //   .catch(err => console.error('문제 불러오기 실패:', err));
+
+    // ✅ dummy 문제
     const dummyProblem = {
       id: 1,
       subjectId,
@@ -58,7 +56,8 @@ public class Main {
   };
 
   const handleRetry = () => {
-    window.location.reload(); // 새로고침 = 새 문제 (지금은 dummy 고정)
+    // ✅ 새 문제 받아오기용 - 현재는 dummy 고정이라 새로고침
+    window.location.reload();
   };
 
   return (
@@ -70,6 +69,9 @@ public class Main {
           <div className="page-title" data-aos="fade">
             <div className="heading text-center">
               <h2>복습 문제 풀이</h2>
+              <p className="text-muted" style={{ fontSize: '14px' }}>
+                주어진 문제를 읽고 정답을 입력하세요.
+              </p>
             </div>
           </div>
 
@@ -77,21 +79,20 @@ public class Main {
             <div className="container" style={{ padding: '40px 20px' }}>
               {problem ? (
                 <>
-                  <div>
-                    <pre
-                      style={{
-                        background: '#f8f9fa',
-                        padding: '20px',
-                        borderRadius: '10px',
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'inherit',
-                        fontSize: '15px',
-                        marginTop: '10px',
-                      }}
-                    >
-                      {problem.text}
-                    </pre>
-                  </div>
+                  <pre
+                    style={{
+                      background: '#f8f9fa',
+                      padding: '20px',
+                      borderRadius: '10px',
+                      whiteSpace: 'pre-wrap',
+                      fontFamily: 'inherit',
+                      fontSize: '15px',
+                      marginTop: '10px',
+                    }}
+                  >
+                    {problem.text}
+                  </pre>
+
                   <input
                     type="text"
                     className="form-control mt-3"
@@ -100,6 +101,7 @@ public class Main {
                     onChange={(e) => setAnswer(e.target.value)}
                     disabled={!!result}
                   />
+
                   <div className="text-center mt-4">
                     {!result ? (
                       <button className="btn btn-dark" onClick={handleSubmit}>
@@ -136,6 +138,3 @@ public class Main {
 };
 
 export default ReviewSolve;
-
-
-

@@ -1,100 +1,135 @@
 import React, { useState, useEffect } from 'react';
 
-const Todo = ({ selectedDate: propDate, onTodoChange }) => {
-  const [todos, setTodos] = useState(() => JSON.parse(localStorage.getItem('todo-list')) || []);
-  const [inputValue, setInputValue] = useState('');
-  const [editMode, setEditMode] = useState(null);
+const Todo = ({ selectedDate, onTodoChange }) => {
+  const [input, setInput] = useState('');
+  const [todos, setTodos] = useState([]);
 
-  // ✅ 날짜 우선순위: props → session → 오늘
-  const selectedDate = propDate || sessionStorage.getItem('selectedDate') || new Date().toISOString().slice(0, 10);
+  // 🗓 selectedDate가 없을 경우 기본값을 오늘로
+  const getEffectiveDate = () => {
+    if (selectedDate) return selectedDate;
 
-  useEffect(() => {
-    localStorage.setItem('todo-list', JSON.stringify(todos));
-    onTodoChange && onTodoChange(); // ✅ 캘린더 리프레시 트리거
-  }, [todos, onTodoChange]);
-
-  useEffect(() => {
-    const updated = todos.map((todo) => ({ ...todo, justAdded: false }));
-    setTodos(updated);
-  }, []);
-
-  const handleAddOrUpdate = () => {
-    if (!inputValue.trim()) return;
-
-    if (editMode !== null) {
-      const updated = todos.map((todo, idx) =>
-        idx === editMode ? { ...todo, item: inputValue } : todo
-      );
-      setTodos(updated);
-      setEditMode(null);
-    } else {
-      setTodos([
-        { item: inputValue, date: selectedDate, status: false, justAdded: true },
-        ...todos,
-      ]);
-    }
-    setInputValue('');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   };
 
-  const handleDelete = (index) => {
-    const updated = todos.filter((_, i) => i !== index);
-    setTodos(updated);
+  const dateToUse = getEffectiveDate(); // ✅ 여기서 안전하게 처리
+
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
+    const filtered = storedTodos.filter(todo => todo.date === dateToUse);
+    setTodos(filtered);
+  }, [selectedDate]);
+
+  const handleAdd = () => {
+    if (!input.trim()) return;
+
+    const newTodo = {
+      id: Date.now(),
+      date: dateToUse,
+      item: input.trim(),
+      status: false,
+    };
+
+    const currentTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
+    const updatedTodos = [...currentTodos, newTodo];
+
+    localStorage.setItem('todo-list', JSON.stringify(updatedTodos));
+    setTodos(updatedTodos.filter(todo => todo.date === dateToUse));
+    setInput('');
+    onTodoChange?.();
   };
 
-  const toggleComplete = (index) => {
-    const updated = todos.map((todo, i) =>
-      i === index ? { ...todo, status: !todo.status } : todo
+  const toggleTodo = (id) => {
+    const currentTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
+    const updatedTodos = currentTodos.map(todo =>
+      todo.id === id ? { ...todo, status: !todo.status } : todo
     );
-    setTodos(updated);
+
+    localStorage.setItem('todo-list', JSON.stringify(updatedTodos));
+    setTodos(updatedTodos.filter(todo => todo.date === dateToUse));
+    onTodoChange?.();
   };
 
-  const handleEdit = (index) => {
-    setInputValue(todos[index].item);
-    setEditMode(index);
+  const deleteTodo = (id) => {
+    const currentTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
+    const updatedTodos = currentTodos.filter(todo => todo.id !== id);
+
+    localStorage.setItem('todo-list', JSON.stringify(updatedTodos));
+    setTodos(updatedTodos.filter(todo => todo.date === dateToUse));
+    onTodoChange?.();
   };
 
-  // ✅ 날짜 필터링 + 인덱스 보존
-  const filteredTodos = todos
-    .map((todo, index) => ({ ...todo, originalIndex: index }))
-    .filter((todo) => todo.date === selectedDate);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleAdd();
+  };
 
   return (
-    <aside className="todo-section">
-      <div className="todo-container">
-        <h3 className="todo-title">ToDo List ({selectedDate})</h3>
-        <div className="todo-input-group">
-          <input
-            type="text"
-            placeholder="할 일을 입력하세요"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAddOrUpdate()}
-          />
-          <button className="add-btn" onClick={handleAddOrUpdate}>
-            {editMode !== null ? '수정' : '추가'}
-          </button>
-        </div>
-
-        {filteredTodos.length === 0 && <p>할 일이 없습니다.</p>}
-        <ul className="todo-list">
-          {filteredTodos.map((todo) => (
-            <li key={todo.originalIndex} className={`todo-item${todo.status ? ' completed' : ''}`}>
+    <div style={{ padding: '20px', fontSize: '14px' }}>
+      <h3 style={{ fontSize: '16px' }}>ToDo List ({dateToUse})</h3>
+      <div style={{ display: 'flex', marginBottom: '10px' }}>
+        <input
+          type="text"
+          placeholder="할 일을 입력하세요"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          style={{ flex: 1, padding: '8px', fontSize: '13px' }}
+        />
+        <button
+          onClick={handleAdd}
+          style={{
+            marginLeft: '8px',
+            backgroundColor: '#7ED321',
+            color: 'white',
+            padding: '8px 12px',
+            fontSize: '13px',
+          }}
+        >
+          추가
+        </button>
+      </div>
+      {todos.length === 0 ? (
+        <p style={{ fontSize: '13px' }}>할 일이 없습니다.</p>
+      ) : (
+        <ul>
+          {todos.map(todo => (
+            <li
+              key={todo.id}
+              style={{
+                marginBottom: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: '13px',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={todo.status}
+                onChange={() => toggleTodo(todo.id)}
+                style={{ marginRight: '8px' }}
+              />
               <span
-                className="todo-text"
-                style={{ textDecoration: todo.status ? 'line-through' : 'none', cursor: 'pointer' }}
-                onClick={() => toggleComplete(todo.originalIndex)}
+                style={{
+                  textDecoration: todo.status ? 'line-through' : 'none',
+                  flex: 1,
+                }}
               >
                 {todo.item}
               </span>
-              <div className="todo-actions">
-                <button onClick={() => handleEdit(todo.originalIndex)}>수정</button>
-                <button onClick={() => handleDelete(todo.originalIndex)}>삭제</button>
-              </div>
+              <button
+                onClick={() => deleteTodo(todo.id)}
+                style={{ marginLeft: '8px', color: 'red', fontSize: '12px' }}
+              >
+                삭제
+              </button>
             </li>
           ))}
         </ul>
-      </div>
-    </aside>
+      )}
+    </div>
   );
 };
 

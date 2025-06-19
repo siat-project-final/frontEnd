@@ -3,24 +3,29 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
+import { checkParticipation } from '../../../api/challenge'; // ✅ axios 함수 주석 처리
 import '../../../App.css';
 
 const ChallengeInfo = () => {
   const navigate = useNavigate();
-  const [hasParticipated, setHasParticipated] = useState(false); // 🔧 더미로 false
+  const [hasParticipated, setHasParticipated] = useState(false); // ✅ 기본값: 참여 안함
+  const memberId = sessionStorage.getItem('memberId');
 
-  // 🔥 백엔드 없으면 fetch 지워야 에러 안 남
-  // useEffect(() => {
-  //   const today = new Date().toISOString().split('T')[0];
-  //   fetch(`/api/submissions/check?date=${today}`, {
-  //     headers: {
-  //       Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => setHasParticipated(data.participated))
-  //     .catch((err) => console.error('참여 여부 확인 실패:', err));
-  // }, []);
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+
+    // ✅ 실제 백엔드 연동 시 주석 해제
+    // checkParticipation(memberId, today)
+    //   .then(res => {
+    //     setHasParticipated(res.data.participated); // 예: { participated: true }
+    //   })
+    //   .catch(err => {
+    //     console.error('참여 여부 확인 실패:', err);
+    //   });
+
+    // ✅ 현재는 dummy
+    setHasParticipated(false);
+  }, [memberId]);
 
   return (
     <>
