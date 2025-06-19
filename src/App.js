@@ -9,7 +9,7 @@ import './assets/css/main.css';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import PrivateRoute from './components/PrivateRoute';
-import Home from './pages/Home';
+import Home from './pages/Home'; // (참고: Home 대신 CalenderView 쓰시는 걸로 보입니다)
 import { isAuthenticated } from './utils/auth';
 
 import CalenderView from './components/calendar/CalenderView';
@@ -22,8 +22,11 @@ import Statistics from './pages/MyPage/Statistics';
 import Pricing from './pages/Pricing/Pricing';
 import Starter from './pages/Starter/Starter';
 import Contact from './pages/Contact/Contact';
-import MentorAlarm from './pages/Events/MentorAlarm';
-import MenteeAlarm from './pages/Events/MenteeAlarm';
+
+import Events from './pages/Events/Events';            // devMY
+import Todo from './components/common/Todo';            // devMY
+import MentorAlarm from './pages/Events/MentorAlarm';  // feature/notice
+import MenteeAlarm from './pages/Events/MenteeAlarm';  // feature/notice
 
 import StudyLogPage from './pages/study/StudyLogPage';
 import WriteStudyLogPage from './pages/study/WriteStudyLogPage';
@@ -61,322 +64,342 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isAuthenticated() ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <Routes>
+            {/* 기본 라우팅 */}
+            <Route
+              path="/"
+              element={
+                isAuthenticated()
+                  ? <Navigate to="/home" replace />
+                  : <Navigate to="/login" replace />
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
 
-        {/* Home 및 공통 페이지 */}
-        <Route
-          path="/home"
-          element={
-            <PrivateRoute>
-              <CalenderView />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/pricing"
-          element={
-            <PrivateRoute>
-              <Pricing />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/starter"
-          element={
-            <PrivateRoute>
-              <Starter />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/contact"
-          element={
-            <PrivateRoute>
-              <Contact />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentor-alarm"
-          element={
-            <PrivateRoute>
-              <MentorAlarm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentee-alarm"
-          element={
-            <PrivateRoute>
-              <MenteeAlarm />
-            </PrivateRoute>
-          }
-        />
+            {/* Home 및 공통 페이지 */}
+            <Route
+              path="/home"
+              element={
+                <PrivateRoute>
+                  <CalenderView />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pricing"
+              element={
+                <PrivateRoute>
+                  <Pricing />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/starter"
+              element={
+                <PrivateRoute>
+                  <Starter />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/contact"
+              element={
+                <PrivateRoute>
+                  <Contact />
+                </PrivateRoute>
+              }
+            />
 
-        {/* 마이페이지 */}
-        <Route
-          path="/mypage"
-          element={
-            <PrivateRoute>
-              <MyPageMain />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mypage/challenge-history"
-          element={
-            <PrivateRoute>
-              <ChallengeHistory />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mypage/mentoring-history"
-          element={
-            <PrivateRoute>
-              <MentoringHistory />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mypage/review-history"
-          element={
-            <PrivateRoute>
-              <ReviewHistory />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mypage/statistics"
-          element={
-            <PrivateRoute>
-              <Statistics />
-            </PrivateRoute>
-          }
-        />
+            {/* devMY의 Events & Todo */}
+            <Route
+              path="/events"
+              element={
+                <PrivateRoute>
+                  <Events />
+                </PrivateRoute>
+              }
+            />
 
-        {/* Study Log */}
-        <Route
-          path="/study"
-          element={
-            <PrivateRoute>
-              <StudyLogPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/study/write"
-          element={
-            <PrivateRoute>
-              <WriteStudyLogPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/study/edit/:id"
-          element={
-            <PrivateRoute>
-              <EditStudyLogPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/study/public"
-          element={
-            <PrivateRoute>
-              <StudyLogPublic />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/study/public/:id"
-          element={
-            <PrivateRoute>
-              <StudyLogPublicDetail />
-            </PrivateRoute>
-          }
-        />
+            {/* feature/notice의 알람 기능 */}
+            <Route
+              path="/mentor-alarm"
+              element={
+                <PrivateRoute>
+                  <MentorAlarm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentee-alarm"
+              element={
+                <PrivateRoute>
+                  <MenteeAlarm />
+                </PrivateRoute>
+              }
+            />
 
-        {/* Challenge */}
-        <Route
-          path="/challenge"
-          element={
-            <PrivateRoute>
-              <ChallengeMain />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/daily"
-          element={
-            <PrivateRoute>
-              <ChallengeInfo />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/daily/solve"
-          element={
-            <PrivateRoute>
-              <ChallengeSolve />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/daily/result"
-          element={
-            <PrivateRoute>
-              <ChallengeResult />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/ranking"
-          element={
-            <PrivateRoute>
-              <ChallengeRanking />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/review"
-          element={
-            <PrivateRoute>
-              <ReviewMain />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/review/solve"
-          element={
-            <PrivateRoute>
-              <ReviewSolve />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/list"
-          element={
-            <PrivateRoute>
-              <DayChallengeList />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenge/detail"
-          element={
-            <PrivateRoute>
-              <CourseDetail />
-            </PrivateRoute>
-          }
-        />
+            {/* 마이페이지 */}
+            <Route
+              path="/mypage"
+              element={
+                <PrivateRoute>
+                  <MyPageMain />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mypage/challenge-history"
+              element={
+                <PrivateRoute>
+                  <ChallengeHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mypage/mentoring-history"
+              element={
+                <PrivateRoute>
+                  <MentoringHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mypage/review-history"
+              element={
+                <PrivateRoute>
+                  <ReviewHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mypage/statistics"
+              element={
+                <PrivateRoute>
+                  <Statistics />
+                </PrivateRoute>
+              }
+            />
 
-        {/* Mentoring */}
-        <Route
-          path="/mentoring/mentors"
-          element={
-            <PrivateRoute>
-              <MentoringList />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/:id"
-          element={
-            <PrivateRoute>
-              <MentoringDetail />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/mentor/detail"
-          element={
-            <PrivateRoute>
-              <OtherMentoringDetail />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/apply"
-          element={
-            <PrivateRoute>
-              <MentoringApply />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/cancel"
-          element={
-            <PrivateRoute>
-              <RegisterCancel />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/mentor/reject"
-          element={
-            <PrivateRoute>
-              <MentoringReject />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/mentor/register"
-          element={
-            <PrivateRoute>
-              <MentorRegister />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/mentor/register/card"
-          element={
-            <PrivateRoute>
-              <MentorRegisterCard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/detail"
-          element={
-            <PrivateRoute>
-              <MentoringDetail />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/mentee/register"
-          element={
-            <PrivateRoute>
-              <MenteeRegister />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/register"
-          element={
-            <PrivateRoute>
-              <MenteeRegister />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/mentoring/mentee/register/card"
-          element={
-            <PrivateRoute>
-              <MenteeRegisterCard />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+            {/* Study Log */}
+            <Route
+              path="/study"
+              element={
+                <PrivateRoute>
+                  <StudyLogPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/study/write"
+              element={
+                <PrivateRoute>
+                  <WriteStudyLogPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/study/edit/:id"
+              element={
+                <PrivateRoute>
+                  <EditStudyLogPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/study/public"
+              element={
+                <PrivateRoute>
+                  <StudyLogPublic />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/study/public/:id"
+              element={
+                <PrivateRoute>
+                  <StudyLogPublicDetail />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Challenge */}
+            <Route
+              path="/challenge"
+              element={
+                <PrivateRoute>
+                  <ChallengeMain />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/daily"
+              element={
+                <PrivateRoute>
+                  <ChallengeInfo />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/daily/solve"
+              element={
+                <PrivateRoute>
+                  <ChallengeSolve />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/daily/result"
+              element={
+                <PrivateRoute>
+                  <ChallengeResult />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/ranking"
+              element={
+                <PrivateRoute>
+                  <ChallengeRanking />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/review"
+              element={
+                <PrivateRoute>
+                  <ReviewMain />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/review/solve"
+              element={
+                <PrivateRoute>
+                  <ReviewSolve />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/list"
+              element={
+                <PrivateRoute>
+                  <DayChallengeList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/challenge/detail"
+              element={
+                <PrivateRoute>
+                  <CourseDetail />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Mentoring */}
+            <Route
+              path="/mentoring/mentors"
+              element={
+                <PrivateRoute>
+                  <MentoringList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/:id"
+              element={
+                <PrivateRoute>
+                  <MentoringDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/mentor/detail"
+              element={
+                <PrivateRoute>
+                  <OtherMentoringDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/apply"
+              element={
+                <PrivateRoute>
+                  <MentoringApply />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/cancel"
+              element={
+                <PrivateRoute>
+                  <RegisterCancel />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/mentor/reject"
+              element={
+                <PrivateRoute>
+                  <MentoringReject />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/mentor/register"
+              element={
+                <PrivateRoute>
+                  <MentorRegister />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/mentor/register/card"
+              element={
+                <PrivateRoute>
+                  <MentorRegisterCard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/detail"
+              element={
+                <PrivateRoute>
+                  <MentoringDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/mentee/register"
+              element={
+                <PrivateRoute>
+                  <MenteeRegister />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/register"
+              element={
+                <PrivateRoute>
+                  <MenteeRegister />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentoring/mentee/register/card"
+              element={
+                <PrivateRoute>
+                  <MenteeRegisterCard />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </div>
+        <Todo />
+      </div>
 
       {/* Scroll-top + preloader */}
       <a
