@@ -4,6 +4,7 @@ import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import '../../../App.css';
+import Todo from '../../../components/common/Todo';
 
 const MentoringList = () => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const MentoringList = () => {
   ];
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
@@ -165,9 +166,12 @@ const MentoringList = () => {
             </div>
           </section>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo />
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

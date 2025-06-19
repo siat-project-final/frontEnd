@@ -4,10 +4,11 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import './MyPageMain.css';
+import Todo from '../../components/common/Todo';
 
 const MyPageMain = () => {
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mypage"/>
@@ -75,68 +76,13 @@ const MyPageMain = () => {
               </form>
             </div>
           </section>
-
-          {/* 캘린더 & ToDo */}
-          <aside className="calendar-section">
-            <div className="calendar-container">
-              <div className="calendar-header">
-                <h2 className="calendar-title">2025년 06월</h2>
-                <div className="calendar-nav">
-                  <button className="calendar-nav-btn">이전</button>
-                  <button className="calendar-nav-btn">다음</button>
-                </div>
-              </div>
-
-              <div className="weekdays">
-                <span>일</span><span>월</span><span>화</span>
-                <span>수</span><span>목</span><span>금</span><span>토</span>
-              </div>
-
-              <div className="calendar-grid">
-                {Array.from({ length: 35 }, (_, i) => {
-                  const day = i + 1;
-                  const isCurrentMonth = day <= 30;
-                  const isToday = day === 10;
-                  return (
-                    <span
-                      key={i}
-                      className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${
-                        isToday ? 'today' : ''
-                      }`}
-                    >
-                      {day}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="todo-container">
-              <h3 className="todo-title">ToDo List</h3>
-              <div className="todo-input-group">
-                <input type="text" placeholder="Add your items" />
-                <button className="add-btn">추가</button>
-              </div>
-              <div className="alert-success">New item created successfully!</div>
-              <ul className="todo-list">
-                {[1, 2, 3, 4, 5].map((index) => (
-                  <li key={index} className="todo-item">
-                    <span className="todo-text">
-                      {index % 2 === 0 ? 'Alert Message Sets' : 'Complete the Blog Today'}
-                    </span>
-                    <div className="todo-actions">
-                      <button className="edit-btn">수정</button>
-                      <button className="delete-btn">삭제</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </aside>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+            <Todo />
+          </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

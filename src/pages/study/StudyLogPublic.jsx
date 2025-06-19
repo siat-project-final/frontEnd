@@ -3,6 +3,7 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { Link } from 'react-router-dom';
+import Todo from '../../components/common/Todo';
 
 const StudyLogPublic = () => {
   const studyLogs = [
@@ -40,7 +41,7 @@ const StudyLogPublic = () => {
   ];
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex" style={{ display: 'flex' }}>
         <Sidebar menuType="studylog" />
@@ -82,9 +83,12 @@ const StudyLogPublic = () => {
             ))}
           </div>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo />
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

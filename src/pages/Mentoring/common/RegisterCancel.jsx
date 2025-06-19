@@ -5,6 +5,7 @@ import Footer from '../../../components/common/Footer';
 import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Todo from '../../../components/common/Todo';
 
 const cancelReasons = [
   '갑작스러운 일정 변경이 생겼어요.',
@@ -73,7 +74,7 @@ const RegisterCancel = () => {
   };
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex">
         <Sidebar />
@@ -183,9 +184,12 @@ const RegisterCancel = () => {
             />
           </div>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo />
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Todo from '../../components/common/Todo';
 
 const StudyLogPublicDetail = () => {
   const { id } = useParams();
@@ -33,7 +33,7 @@ const StudyLogPublicDetail = () => {
   };
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex" style={{ display: 'flex' }}>
         <Sidebar menuType="studylog" />
@@ -75,9 +75,12 @@ const StudyLogPublicDetail = () => {
             </div>
           </div>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo />
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

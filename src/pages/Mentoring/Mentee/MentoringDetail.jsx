@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../../../App.css';
+import Todo from '../../../components/common/Todo';
 
 const MentoringDetail = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const MentoringDetail = () => {
   };
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
@@ -173,9 +174,12 @@ const MentoringDetail = () => {
             </div>
           </div>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo />
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

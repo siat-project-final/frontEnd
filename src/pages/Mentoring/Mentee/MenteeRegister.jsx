@@ -4,6 +4,7 @@ import Sidebar from '../../../components/common/Sidebar';
 import Footer from '../../../components/common/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MenteeRegisterCard from './MenteeRegisterCard';
+import Todo from '../../../components/common/Todo';
 
 // 멘토링 내역 확인 페이지
 
@@ -62,7 +63,7 @@ const MenteeRegister = () => {
   };
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
@@ -84,9 +85,12 @@ const MenteeRegister = () => {
             </div>
           </div>
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+            <Todo />
+          </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

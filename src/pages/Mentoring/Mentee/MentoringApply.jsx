@@ -5,6 +5,7 @@ import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
 import '../../../App.css';
+import Todo from '../../../components/common/Todo';
 
 // 멘토링 사전 작성 페이지
 
@@ -72,7 +73,7 @@ const MentoringApply = () => {
   };
 
   return (
-    <>
+    <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
@@ -214,9 +215,12 @@ const MentoringApply = () => {
             onClose={handleCloseModal}
           />
         </main>
+        {/* 오른쪽: Todo 사이드바 */}
+        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+          <Todo />
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 
