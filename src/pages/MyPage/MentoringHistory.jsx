@@ -22,10 +22,10 @@ const MentoringHistory = () => {
                     <div className="mentoring-image-placeholder">멘토 이미지</div>
                   </div>
                   <div className="mentoring-form-group">
-                    <label>대화주제</label>
-                    <input type="text" defaultValue="선택한 항목대로" readOnly />
-                    <label>획득 xp</label>
-                    <input type="text" defaultValue="바꾸는 게 어떨까" readOnly />
+                    <label>멘토 성함</label>
+                    <input type="text" defaultValue="홍길동" readOnly />
+                    <label>대화 주제</label>
+                    <input type="text" defaultValue="진로 상담" readOnly />
                   </div>
                 </div>
               </div>
@@ -37,10 +37,10 @@ const MentoringHistory = () => {
                     <div className="mentoring-image-placeholder">멘토 이미지</div>
                   </div>
                   <div className="mentoring-form-group">
-                    <label>대화주제</label>
-                    <input type="text" defaultValue="선택한 항목대로" readOnly />
-                    <label>획득 xp</label>
-                    <input type="text" defaultValue="바꾸는 게 어떨까" readOnly />
+                    <label>멘토 성함</label>
+                    <input type="text" defaultValue="홍길동" readOnly />
+                    <label>대화 주제</label>
+                    <input type="text" defaultValue="진로 상담" readOnly />
                   </div>
                 </div>
               </div>

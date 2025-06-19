@@ -11,7 +11,7 @@ const MyPageMain = () => {
     <div>
       <Header />
       <div className="container-flex">
-        <Sidebar menuType="mypage"/>
+        <Sidebar menuType="mypage" />
         <main className="main">
           {/* 사용자 정보 영역 */}
           <section className="profile-section" data-aos="fade-up">
@@ -67,6 +67,10 @@ const MyPageMain = () => {
                   <input id="phone" type="text" defaultValue="PHONE" />
                 </div>
                 <div className="form-group">
+                  <label htmlFor="email">EMAIL</label>
+                  <input id="email" type="text" defaultValue="EMAIL" />
+                </div>
+                <div className="form-group">
                   <label htmlFor="status">STATUS (수정불가)</label>
                   <input id="status" type="text" defaultValue="훈련생 / 수료생" readOnly />
                 </div>
@@ -79,8 +83,8 @@ const MyPageMain = () => {
         </main>
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
-            <Todo />
-          </div>
+          <Todo />
+        </div>
       </div>
     </div>
   );
