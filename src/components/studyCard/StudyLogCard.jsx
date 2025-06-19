@@ -13,12 +13,21 @@ const StudyLogCard = ({ log }) => {
             <input type="text" className="form-control" defaultValue={log.subject} readOnly />
           </div>
           <div className="col-md-2">
-            <Link to={`/study/edit/${log.id}`} className="btn btn-outline-secondary w-100">
+            <Link
+              to={`/study/edit/${log.id}`}
+              className="btn border-0 text-white w-100"
+              style={{ backgroundColor: '#84cc16' }}
+            >
               수정
             </Link>
           </div>
           <div className="col-md-2">
-            <button className="btn btn-outline-danger w-100">삭제</button>
+            <button
+              className="btn border-0 w-100"
+              style={{ backgroundColor: '#ced4da', color: '#fff' }}
+            >
+              삭제
+            </button>
           </div>
         </div>
         <textarea className="form-control" rows="3" defaultValue={log.summary} readOnly></textarea>

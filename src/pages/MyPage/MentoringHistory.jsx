@@ -12,7 +12,18 @@ const MentoringHistory = () => {
         <Sidebar menuType="mypage" />
         <main className="main">
           <section className="mentoring-section" data-aos="fade-up">
-            <h1 className="page-title">MENTORING HISTORY</h1>
+            <h1
+              className="page-title"
+              style={{
+                backgroundColor: '#84cc16',
+                color: '#fff',
+                width: '100%',
+                padding: '0.75rem 1rem',
+                borderRadius: '0.5rem',
+              }}
+            >
+              MENTORING HISTORY
+            </h1>
 
             <div className="mentoring-boxes">
               <div className="mentoring-box">

@@ -15,7 +15,11 @@ const StudyLogPublic = () => {
       author: '이수현',
       likes: 45,
       comments: [
-        { user: '최은정', text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아', date: '2025.06.13' },
+        {
+          user: '최은정',
+          text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아',
+          date: '2025.06.13',
+        },
       ],
     },
     {
@@ -26,7 +30,11 @@ const StudyLogPublic = () => {
       author: '이수현',
       likes: 20,
       comments: [
-        { user: '최은정', text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다fff아', date: '2025.06.13' },
+        {
+          user: '최은정',
+          text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다fff아',
+          date: '2025.06.13',
+        },
       ],
     },
     {
@@ -49,17 +57,22 @@ const StudyLogPublic = () => {
         <main className="main" style={{ flex: 1 }}>
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="h3 fw-bold">공유 학습일지</h1>
-              <Link to="/studylog/write" className="btn btn-primary">일지 작성하기</Link>
+              <h1 className="h3 fw-bold page-title">공유 학습일지</h1>
+              <div className="d-flex align-items-center">
+                <select className="form-select w-auto d-inline-block me-2">
+                  <option>과목</option>
+                </select>
+                <Link
+                  to="./write"
+                  className="btn border-0 text-white"
+                  style={{ backgroundColor: '#84cc16' }}
+                >
+                  일지 작성하기
+                </Link>
+              </div>
             </div>
 
-            <div className="mb-4 text-end">
-              <select className="form-select w-auto d-inline-block">
-                <option>과목</option>
-              </select>
-            </div>
-
-            {studyLogs.map(log => (
+            {studyLogs.map((log) => (
               <div key={log.id} className="card mb-4">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-2">
@@ -76,7 +89,12 @@ const StudyLogPublic = () => {
                   </div>
                   <p>{log.summary}</p>
                   <div className="text-end">
-                    <Link to={`/study/public/${log.id}`} className="btn btn-outline-secondary btn-sm">상세 보기</Link>
+                    <Link
+                      to={`/study/public/${log.id}`}
+                      className="btn btn-outline-secondary btn-sm"
+                    >
+                      상세 보기
+                    </Link>
                   </div>
                 </div>
               </div>

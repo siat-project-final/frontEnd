@@ -13,9 +13,19 @@ const WriteStudyLogPage = () => {
         <Sidebar menuType="studylog" />
 
         <main className="main">
-        
           <div className="container py-5">
-            <h1 className="h3 fw-bold mb-4">학습일지 작성</h1>
+            <h1
+              className="h3 fw-bold mb-4 page-title"
+              style={{
+                backgroundColor: '#84cc16',
+                color: '#fff',
+                width: '100%',
+                padding: '0.75rem 1rem',
+                borderRadius: '0.5rem',
+              }}
+            >
+              학습일지 작성
+            </h1>
 
             <form>
               <div className="row mb-3">
@@ -54,8 +64,18 @@ const WriteStudyLogPage = () => {
               </div>
 
               <div className="d-flex justify-content-end gap-3">
-                <button type="button" className="btn btn-secondary">AI 요약 실행</button>
-                <button type="submit" className="btn btn-primary"><Link to="../study">제출</Link></button>
+                <button type="button" className="btn btn-secondary">
+                  AI 요약 실행
+                </button>
+                <button
+                  type="submit"
+                  className="btn border-0 text-white"
+                  style={{ backgroundColor: '#84cc16' }}
+                >
+                  <Link to="../study" className="text-white text-decoration-none">
+                    제출
+                  </Link>
+                </button>
               </div>
             </form>
           </div>
