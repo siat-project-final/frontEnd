@@ -2,35 +2,40 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import Todo from '../../components/common/Todo';
+// ✅ axios 연동 주석 처리
+// import { getPublicStudyLogDetail } from '../../api/studyLog';
 
 const StudyLogPublicDetail = () => {
   const { id } = useParams();
+  const [log, setLog] = useState(null);
 
-//    const [log, setLog] = useState(null);
+  useEffect(() => {
+    // ✅ 실제 API 연동 시 사용
+    // getPublicStudyLogDetail(id)
+    //   .then(res => setLog(res.data))
+    //   .catch(err => console.error('공유 학습일지 상세 조회 실패:', err));
 
-//   useEffect(() => {
-//     axios.get(`/api/studylog/public/${id}`)
-//       .then(res => setLog(res.data))
-//       .catch(err => console.error(err));
-//   }, [id]);
+    // ✅ 현재는 dummy 데이터 사용
+    setLog({
+      id: id,
+      title: 'AI 요약',
+      date: '2025-06-13',
+      subject: 'AI 개론',
+      author: '이수현',
+      likes: 45,
+      content: 'BERT 구조를 학습하고 관련 논문을 리뷰함.',
+      comments: [
+        {
+          user: '최은정',
+          text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아',
+          date: '2025.06.13',
+        },
+      ],
+    });
+  }, [id]);
 
-//   if (!log) return <div>로딩 중...</div>;
-
-
-  const log = {
-    id: 1,
-    title: 'AI 요약',
-    date: '2025-06-13',
-    subject: 'AI 개론',
-    author: '이수현',
-    likes: 45,
-    content: 'BERT 구조를 학습하고 관련 논문을 리뷰함.',
-    comments: [
-      { user: '최은정', text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아', date: '2025.06.13' },
-    ],
-  };
+  if (!log) return <div>로딩 중...</div>;
 
   return (
     <div>
@@ -48,7 +53,7 @@ const StudyLogPublicDetail = () => {
                 <div className="d-flex align-items-center">
                   <span className="me-2">작성자: {log.author}</span>
                   <button className="btn btn-outline-success">
-                    <i className="bi bi-heart"></i>
+                    <i className="bi bi-heart"></i> {log.likes}
                   </button>
                 </div>
               </div>
@@ -75,6 +80,7 @@ const StudyLogPublicDetail = () => {
             </div>
           </div>
         </main>
+
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />

@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import StudyLogCard from '../../components/studyCard/StudyLogCard';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
+// ✅ axios 함수 주석 처리
+// import { getMyStudyLogs } from '../../api/studyLog';
 
 const StudyLogPage = () => {
-  const studyLogs = [
-    { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
-    { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
-    { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
-  ];
+  const [studyLogs, setStudyLogs] = useState([]);
+  const memberId = sessionStorage.getItem('memberId');
+
+  useEffect(() => {
+    // ✅ 실제 API 연동 시 사용
+    // getMyStudyLogs({ memberId })
+    //   .then(res => setStudyLogs(res.data))
+    //   .catch(err => console.error('학습일지 목록 불러오기 실패:', err));
+
+    // ✅ 현재는 dummy 데이터 사용
+    setStudyLogs([
+      { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
+      { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
+      { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
+    ]);
+  }, [memberId]);
 
   return (
     <div>

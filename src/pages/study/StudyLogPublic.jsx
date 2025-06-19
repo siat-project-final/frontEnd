@@ -1,52 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
+// ✅ axios 연동 주석
+// import { getPublicStudyLogs } from '../../api/studyLog';
 
 const StudyLogPublic = () => {
-  const studyLogs = [
-    {
-      id: 1,
-      date: '2025-06-13',
-      subject: 'AI 개론',
-      summary: 'BERT 구조 학습함',
-      author: '이수현',
-      likes: 45,
-      comments: [
-        {
-          user: '최은정',
-          text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아',
-          date: '2025.06.13',
-        },
-      ],
-    },
-    {
-      id: 2,
-      date: '2025-06-12',
-      subject: 'React',
-      summary: 'useEffect 훅 정리함',
-      author: '이수현',
-      likes: 20,
-      comments: [
-        {
-          user: '최은정',
-          text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다fff아',
-          date: '2025.06.13',
-        },
-      ],
-    },
-    {
-      id: 3,
-      date: '2025-06-11',
-      subject: 'Spring Boot',
-      summary: 'JPA fetch 전략 학습함',
-      author: '이수현',
-      likes: 30,
-      comments: [],
-    },
-  ];
+  const [studyLogs, setStudyLogs] = useState([]);
+
+  useEffect(() => {
+    // ✅ 실제 API 연동 시 사용
+    // getPublicStudyLogs({ isPublic: true })
+    //   .then(res => setStudyLogs(res.data))
+    //   .catch(err => console.error('공유 일지 조회 실패:', err));
+
+    // ✅ 현재는 dummy 사용
+    setStudyLogs([
+      {
+        id: 1,
+        date: '2025-06-13',
+        subject: 'AI 개론',
+        summary: 'BERT 구조 학습함',
+        author: '이수현',
+        likes: 45,
+        comments: [
+          {
+            user: '최은정',
+            text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아',
+            date: '2025.06.13',
+          },
+        ],
+      },
+      {
+        id: 2,
+        date: '2025-06-12',
+        subject: 'React',
+        summary: 'useEffect 훅 정리함',
+        author: '이수현',
+        likes: 20,
+        comments: [
+          {
+            user: '최은정',
+            text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다fff아',
+            date: '2025.06.13',
+          },
+        ],
+      },
+      {
+        id: 3,
+        date: '2025-06-11',
+        subject: 'Spring Boot',
+        summary: 'JPA fetch 전략 학습함',
+        author: '이수현',
+        likes: 30,
+        comments: [],
+      },
+    ]);
+  }, []);
 
   return (
     <div>
@@ -101,6 +113,7 @@ const StudyLogPublic = () => {
             ))}
           </div>
         </main>
+
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />

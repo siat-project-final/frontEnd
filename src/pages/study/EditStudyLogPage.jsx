@@ -4,8 +4,9 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
+// ✅ axios 연동 주석 처리
+// import { getMyStudyLogById, updateStudyLog } from '../../api/studyLog';
 
-// 임시 데이터
 const dummyLogs = [
   {
     id: 1,
@@ -28,6 +29,8 @@ const dummyLogs = [
 const EditStudyLogPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const memberId = sessionStorage.getItem('memberId');
+
   const [formData, setFormData] = useState({
     title: '',
     subject: '',
@@ -37,6 +40,15 @@ const EditStudyLogPage = () => {
   });
 
   useEffect(() => {
+    // ✅ 실제 API 연동 시
+    // getMyStudyLogById(id)
+    //   .then(res => setFormData(res.data))
+    //   .catch(() => {
+    //     alert('해당 일지를 불러올 수 없습니다.');
+    //     navigate('/study');
+    //   });
+
+    // ✅ 더미 데이터 기반
     const log = dummyLogs.find((item) => item.id === parseInt(id));
     if (log) {
       setFormData(log);
@@ -47,12 +59,24 @@ const EditStudyLogPage = () => {
   }, [id, navigate]);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('수정된 데이터:', formData);
+
+    const updateData = {
+      ...formData,
+      memberId,
+    };
+
+    // ✅ 실제 API 연동 시
+    // await updateStudyLog(id, updateData);
+    // navigate('/study');
+
+    // ✅ 로컬 테스트용 출력
+    console.log('수정된 데이터:', updateData);
     navigate('/study');
   };
 
@@ -90,7 +114,7 @@ const EditStudyLogPage = () => {
                 </div>
                 <div className="col-md-3">
                   <label className="form-label">공개 여부</label>
-                  <select className="form-select">
+                  <select className="form-select" disabled>
                     <option>공개</option>
                     <option>비공개</option>
                   </select>
@@ -154,6 +178,7 @@ const EditStudyLogPage = () => {
             </form>
           </div>
         </main>
+
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
