@@ -36,13 +36,17 @@ const menuMap = {
       { label: '챌린지 히스토리', to: '/mypage/challenge-history' },
     ],
   },
+  alarm: {
+    title: 'Alarm',
+    items: [{ label: '알림 내역', to: '/mentee-alarm' }],
+  },
 };
 
 const Sidebar = ({ menuType }) => {
   const location = useLocation();
   const hideSidebarPaths = ['/login', '/signup', '/starter'];
 
-  if (hideSidebarPaths.some(path => location.pathname.startsWith(path))) {
+  if (hideSidebarPaths.some((path) => location.pathname.startsWith(path))) {
     return null;
   }
 

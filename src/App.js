@@ -9,7 +9,7 @@ import './assets/css/main.css';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import PrivateRoute from './components/PrivateRoute';
-import Home from './pages/Home';
+import Home from './pages/Home'; // (참고: Home 대신 CalenderView 쓰시는 걸로 보입니다)
 import { isAuthenticated } from './utils/auth';
 
 import CalenderView from './components/calendar/CalenderView';
@@ -22,8 +22,11 @@ import Statistics from './pages/MyPage/Statistics';
 import Pricing from './pages/Pricing/Pricing';
 import Starter from './pages/Starter/Starter';
 import Contact from './pages/Contact/Contact';
-import Events from './pages/Events/Events';
-import Todo from './components/common/Todo';
+
+import Events from './pages/Events/Events';            // devMY
+import Todo from './components/common/Todo';            // devMY
+import MentorAlarm from './pages/Events/MentorAlarm';  // feature/notice
+import MenteeAlarm from './pages/Events/MenteeAlarm';  // feature/notice
 
 import StudyLogPage from './pages/study/StudyLogPage';
 import WriteStudyLogPage from './pages/study/WriteStudyLogPage';
@@ -64,14 +67,13 @@ function App() {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <Routes>
+            {/* 기본 라우팅 */}
             <Route
               path="/"
               element={
-                isAuthenticated() ? (
-                  <Navigate to="/home" replace />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
+                isAuthenticated()
+                  ? <Navigate to="/home" replace />
+                  : <Navigate to="/login" replace />
               }
             />
             <Route path="/login" element={<Login />} />
@@ -110,11 +112,31 @@ function App() {
                 </PrivateRoute>
               }
             />
+
+            {/* devMY의 Events & Todo */}
             <Route
               path="/events"
               element={
                 <PrivateRoute>
                   <Events />
+                </PrivateRoute>
+              }
+            />
+
+            {/* feature/notice의 알람 기능 */}
+            <Route
+              path="/mentor-alarm"
+              element={
+                <PrivateRoute>
+                  <MentorAlarm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/mentee-alarm"
+              element={
+                <PrivateRoute>
+                  <MenteeAlarm />
                 </PrivateRoute>
               }
             />
@@ -378,6 +400,7 @@ function App() {
         </div>
         <Todo />
       </div>
+
       {/* Scroll-top + preloader */}
       <a
         href="#"
