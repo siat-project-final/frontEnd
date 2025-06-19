@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const Header = () => (
+const Header = ({ menuType }) => (
   <header id="header" className="header d-flex align-items-center sticky-top">
     <div className="container-fluid container-xl position-relative d-flex align-items-center">
       <NavLink to="/" className="logo d-flex align-items-center me-auto">
@@ -23,7 +23,7 @@ const Header = () => (
           <li>
             <NavLink
               to="/mentoring/mentors"
-              className={({ isActive }) => (isActive ? 'active' : '')}
+              className={({ isActive }) => (isActive || menuType === 'mentoring' ? 'active' : '')}
             >
               Mentoring
             </NavLink>

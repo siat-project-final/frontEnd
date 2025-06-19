@@ -74,11 +74,13 @@ const MentoringApply = () => {
 
   return (
     <div>
-      <Header />
+      <Header menuType="mentoring" />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="prewrite-main">
-          <h1>대화내용 사전작성</h1>
+          <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            대화내용 사전작성
+          </h1>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '24px' }}>
               <div
@@ -89,17 +91,19 @@ const MentoringApply = () => {
                   marginBottom: '8px',
                 }}
               >
-                <div style={{ fontWeight: 'bold' }}>자기소개 (필수)</div>
+                <div style={{ fontWeight: 'bold', fontSize: '20px', marginBottom: '8px' }}>
+                  자기소개 <span style={{ color: 'red', fontSize: '16px' }}>(필수)</span>
+                </div>
                 {showIntroError && (
                   <div style={{ color: '#dc3545', fontSize: '14px' }}>자기소개를 해주세요.</div>
                 )}
               </div>
               <textarea
                 placeholder="
-- 이름 / 소속
-- 현재 배우는 내용 / 기술 스택
-- 개발을 시작한 계기
-- 나의 강점이나 협업 스타일"
+                - 이름 / 소속
+                - 현재 배우는 내용 / 기술 스택
+                - 개발을 시작한 계기
+                - 나의 강점이나 협업 스타일"
                 value={intro}
                 onChange={handleIntroChange}
                 // required
@@ -109,6 +113,7 @@ const MentoringApply = () => {
                   borderRadius: 10,
                   resize: 'none',
                   height: '160px',
+                  padding: '5px 16px',
                 }}
               />
             </div>
@@ -122,7 +127,9 @@ const MentoringApply = () => {
                   marginTop: '15px',
                 }}
               >
-                <div style={{ fontWeight: 'bold' }}>멘토링 주제 (필수)</div>
+                <div style={{ fontWeight: 'bold', fontSize: '20px', marginBottom: '8px' }}>
+                  멘토링 주제 <span style={{ color: 'red', fontSize: '16px' }}>(필수)</span>
+                </div>
                 {showError && (
                   <div style={{ color: '#dc3545', fontSize: '14px' }}>
                     최소 1개 이상의 주제를 선택해주세요.
@@ -148,6 +155,7 @@ const MentoringApply = () => {
                           width: '18px',
                           height: '18px',
                           cursor: 'pointer',
+                          accentColor: '#e5e5e5',
                         }}
                       />
                       <span>{option.label}</span>
@@ -194,7 +202,7 @@ const MentoringApply = () => {
               <button
                 type="submit"
                 style={{
-                  background: '#5fcf80',
+                  background: '#84cc16',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 24,
@@ -211,7 +219,15 @@ const MentoringApply = () => {
           </form>
           <ConfirmOnlyModal
             visible={showModal}
-            message="멘토링 신청이 완료되었습니다!"
+            message={
+              <>
+                멘토링 신청이 완료되었습니다!
+                <br />
+                <span style={{ fontSize: '15px', display: 'inline-block', marginTop: '10px' }}>
+                  멘토 수락 후, 대화 일정이 확정됩니다. 예약목록에서 신청 현황을 확인해보세요.
+                </span>
+              </>
+            }
             onClose={handleCloseModal}
           />
         </main>

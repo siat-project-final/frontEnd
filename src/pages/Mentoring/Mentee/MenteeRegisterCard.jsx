@@ -7,6 +7,23 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
   const navigate = useNavigate();
   const isConfirmed = status === '예약 대기';
 
+  // 기본 이미지 설정 (MentoringList.jsx와 동일한 이미지들)
+  const defaultMentorImages = [
+    '/assets/img/mentors/mentor1.jpg',
+    '/assets/img/mentors/mentor2.jpg',
+    '/assets/img/mentors/mentor3.jpg',
+  ];
+
+  // mentorImg가 없거나 유효하지 않은 경우 기본 이미지 사용
+  const getMentorImage = () => {
+    if (mentorImg && mentorImg !== '') {
+      return mentorImg;
+    }
+    // 멘토 이름에 따라 다른 기본 이미지 사용 (간단한 해시)
+    const nameHash = name ? name.charCodeAt(0) % 3 : 0;
+    return defaultMentorImages[nameHash];
+  };
+
   const statusStyle = {
     backgroundColor: isConfirmed ? '#e2e8f0' : '#f1f5f9',
     color: '#475569',
@@ -56,23 +73,28 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
         {/* 멘토 이미지, 이름 */}
         <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
           <img
-            src={mentorImg}
+            src={getMentorImage()}
             alt={name}
             style={{
-              width: '20px',
-              height: '20px',
+              width: '32px',
+              height: '32px',
               borderRadius: '50%',
-              marginRight: '8px',
+              marginRight: '12px',
               objectFit: 'cover',
+              border: '2px solid #e2e8f0',
+            }}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/assets/img/mentors/mentor1.jpg';
             }}
           />
-          <span style={{ fontSize: '14px' }}>{name}</span>
+          <span style={{ fontSize: '14px', fontWeight: '500' }}>{name}</span>
         </div>
       </div>
       <button
         onClick={handleCancel}
         style={{
-          backgroundColor: '#5fcf80',
+          backgroundColor: '#84cc16',
           color: 'white',
           fontWeight: 600,
           border: 'none',

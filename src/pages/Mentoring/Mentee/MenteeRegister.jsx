@@ -6,7 +6,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MenteeRegisterCard from './MenteeRegisterCard';
 import Todo from '../../../components/common/Todo';
 
-// 멘토링 내역 확인 페이지
+// 날짜 포맷 함수 (요일 포함)
+const formatDateWithDay = (dateString) => {
+  const date = new Date(dateString);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const dayName = days[date.getDay()];
+
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+
+  return `${year}-${month}-${day} (${dayName})`;
+};
 
 const MenteeRegister = () => {
   const location = useLocation();
@@ -26,31 +37,26 @@ const MenteeRegister = () => {
     if (mentor && selectedDate) {
       const newReservation = {
         id: Date.now(),
-        date: `${selectedDate}일`,
+        date: formatDateWithDay(selectedDate), // ✅ 날짜 포맷 적용
         name: mentor.name,
         status: '예약 대기',
-        mentorImg: mentor.img,
+        mentorImg: mentor.mentor_image_url,
         intro,
         topics,
       };
 
-      // 기존 예약 목록에 새로운 예약 추가
       const updatedReservations = [...reservations, newReservation];
       setReservations(updatedReservations);
-
-      // 로컬 스토리지 업데이트
       localStorage.setItem('mentoringReservations', JSON.stringify(updatedReservations));
     }
   }, [mentor, selectedDate]);
 
-  // 예약 취소 처리
   const handleCancelReservation = (id) => {
     const updatedReservations = reservations.filter((res) => res.id !== id);
     setReservations(updatedReservations);
     localStorage.setItem('mentoringReservations', JSON.stringify(updatedReservations));
   };
 
-  // 예약 목록이 비어있을 때 표시할 메시지
   const renderEmptyMessage = () => {
     if (reservations.length === 0) {
       return (
@@ -64,14 +70,14 @@ const MenteeRegister = () => {
 
   return (
     <div>
-      <Header />
+      <Header menuType="mentoring" />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main">
           <div className="max-w-2xl mx-auto pt-10 pb-16">
-            <h4 className="text-lg font-bold mb-8 text-slate-900" style={{ textAlign: 'center' }}>
+            <h3 className="text-2xl font-bold mb-8 text-slate-900" style={{ textAlign: 'center' }}>
               예약된 멘토링
-            </h4>
+            </h3>
             <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '20px 0' }}></div>
             <div>
               {renderEmptyMessage()}
@@ -85,10 +91,9 @@ const MenteeRegister = () => {
             </div>
           </div>
         </main>
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
-            <Todo />
-          </div>
+          <Todo />
+        </div>
       </div>
     </div>
   );

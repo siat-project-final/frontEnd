@@ -1,4 +1,4 @@
-// import React, { useState } from 'react';
+// import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
 
@@ -17,6 +17,14 @@
 //   const navigate = useNavigate();
 //   const [showAcceptModal, setShowAcceptModal] = useState(false);
 //   const [showCompleteModal, setShowCompleteModal] = useState(false);
+
+//   useEffect(() => {
+//     const role = sessionStorage.getItem('userRole');
+//     if (role !== 'mentor') {
+//       alert('멘토만 접근 가능한 페이지입니다.');
+//       navigate('/');
+//     }
+//   }, [navigate]);
 
 //   const statusStyle = {
 //     backgroundColor: status === '예약 대기' ? '#f1f5f9' : '#e2e8f0',
@@ -157,7 +165,13 @@
 //         isOpen={showCompleteModal}
 //         onClose={handleCloseCompleteModal}
 //         title="멘토링 완료"
-//         message="멘토링에 참여해주셔서 감사합니다! 앞으로도 멘토님의 적극적인 참여를 기대하겠습니다:)"
+//         message={
+//           <>
+//             멘토링에 참여해주셔서 감사합니다!
+//             <br />
+//             앞으로도 멘토님의 적극적인 참여를 기대하겠습니다:)
+//           </>
+//         }
 //       />
 //     </>
 //   );
@@ -170,14 +184,14 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
 
 const MentorRegisterCard = ({
-  date,
-  name,
-  status,
-  mentorImg,
-  onCancel,
-  onAccept,
-  onReject,
-  onComplete,
+  date = '2025-06-20',
+  name = '홍길동',
+  status = '예약 대기',
+  mentorImg = '/assets/img/mentors/mentor1.jpg',
+  onCancel = () => {},
+  onAccept = () => {},
+  onReject = () => {},
+  onComplete = () => {},
 }) => {
   const navigate = useNavigate();
   const [showAcceptModal, setShowAcceptModal] = useState(false);
@@ -216,14 +230,6 @@ const MentorRegisterCard = ({
   const handleCompleteClick = () => {
     setShowCompleteModal(true);
     onComplete();
-  };
-
-  const handleCloseAcceptModal = () => {
-    setShowAcceptModal(false);
-  };
-
-  const handleCloseCompleteModal = () => {
-    setShowCompleteModal(false);
   };
 
   return (
@@ -273,7 +279,7 @@ const MentorRegisterCard = ({
           </div>
         </div>
 
-        {/* 버튼 영역 (항상 모두 보여짐) */}
+        {/* 모든 버튼 항상 표시 */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             onClick={onReject}
@@ -302,18 +308,23 @@ const MentorRegisterCard = ({
         </div>
       </div>
 
+      {/* 조건부 모달 표시 */}
       <ConfirmOnlyModal
-        isOpen={showAcceptModal}
-        onClose={handleCloseAcceptModal}
-        title="멘토링 예약 완료"
+        visible={showAcceptModal}
+        onClose={() => setShowAcceptModal(false)}
         message="멘토링이 예약되었습니다"
       />
 
       <ConfirmOnlyModal
-        isOpen={showCompleteModal}
-        onClose={handleCloseCompleteModal}
-        title="멘토링 완료"
-        message="멘토링에 참여해주셔서 감사합니다! 앞으로도 멘토님의 적극적인 참여를 기대하겠습니다:)"
+        visible={showCompleteModal}
+        onClose={() => setShowCompleteModal(false)}
+        message={
+          <>
+            멘토링에 참여해주셔서 감사합니다!
+            <br />
+            앞으로도 멘토님의 적극적인 참여를 기대하겠습니다:)
+          </>
+        }
       />
     </>
   );

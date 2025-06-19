@@ -61,7 +61,7 @@ const MentorRegister = () => {
         date: `${selectedDate}일`,
         name: mentor.name,
         status: '예약 대기',
-        mentorImg: mentor.img,
+        mentorImg: mentor.mentor_image_url,
         intro,
         topics,
       };
@@ -113,7 +113,7 @@ const MentorRegister = () => {
 
   return (
     <>
-      <Header />
+      <Header menuType="mentoring" />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main">

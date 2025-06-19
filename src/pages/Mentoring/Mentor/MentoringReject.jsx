@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
 import Footer from '../../../components/common/Footer';
@@ -21,6 +21,14 @@ const MentoringReject = () => {
   const [showWarning, setShowWarning] = useState(false);
   const [otherReason, setOtherReason] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const role = sessionStorage.getItem('userRole');
+    if (role !== 'mentor') {
+      alert('멘토만 접근 가능한 페이지입니다.');
+      navigate('/');
+    }
+  }, [navigate]);
 
   const handleCheck = (idx) => {
     setSelected((prev) => {

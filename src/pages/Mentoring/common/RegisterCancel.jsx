@@ -45,7 +45,6 @@ const RegisterCancel = () => {
   const handleConfirm = async () => {
     try {
       let selectedReasons = selected.map((idx) => cancelReasons[idx]);
-
       const otherIdx = cancelReasons.length - 1;
       if (selected.includes(otherIdx) && otherReason.trim() !== '') {
         selectedReasons[selectedReasons.indexOf('기타 사유')] = `기타: ${otherReason}`;
@@ -53,9 +52,7 @@ const RegisterCancel = () => {
 
       const reasonText = selectedReasons.join(', ');
 
-      const response = await axios.put('/api/cancel', {
-        reason: reasonText,
-      });
+      const response = await axios.put('/api/cancel', { reason: reasonText });
 
       if (response.status === 200) {
         alert('예약이 취소되었습니다.');
@@ -75,16 +72,23 @@ const RegisterCancel = () => {
 
   return (
     <div>
-      <Header />
+      <Header menuType="mentoring" />
       <div className="container-flex">
-        <Sidebar />
+        <Sidebar menuType="mentoring" />
         <main className="main" style={{ minHeight: '100vh' }}>
-          <div className="max-w-md mx-auto pt-12 pb-16">
+          <div style={{ paddingTop: '80px', paddingBottom: '64px' }}>
             {/* 제목 */}
-            <div className="mb-4" style={{ textAlign: 'center', marginTop: '80px' }}>
-              <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>
+            <div className="mb-4" style={{ textAlign: 'center' }}>
+              <h4
+                style={{
+                  fontSize: '30px',
+                  fontWeight: 700,
+                  color: '#1e293b',
+                  marginBottom: '60px',
+                }}
+              >
                 예약 취소 사유{' '}
-                <span style={{ fontSize: '14px', fontWeight: 500, color: 'red' }}>(필수)</span>
+                <span style={{ fontSize: '20px', fontWeight: 500, color: 'red' }}>(필수)</span>
               </h4>
               {showWarning && (
                 <p style={{ fontSize: '14px', color: '#e11d48' }}>
@@ -94,7 +98,7 @@ const RegisterCancel = () => {
             </div>
 
             {/* 리스트 & 버튼 */}
-            <form onSubmit={handleCancel} style={{ textAlign: 'left' }}>
+            <form onSubmit={handleCancel}>
               <div
                 style={{
                   display: 'flex',
@@ -102,8 +106,8 @@ const RegisterCancel = () => {
                   gap: '12px',
                   marginBottom: '24px',
                   alignItems: 'flex-start',
-                  maxWidth: '500px', // ✅ 리스트 너비 제한
-                  margin: '0 auto', // ✅ 가운데 정렬
+                  maxWidth: '500px',
+                  marginLeft: '200px', // ✅ 왼쪽 정렬 + 여백
                 }}
               >
                 {cancelReasons.map((reason, idx) => {
@@ -116,7 +120,6 @@ const RegisterCancel = () => {
                         alignItems: 'center',
                         fontSize: '15px',
                         color: '#334155',
-                        justifyContent: 'flex-start',
                         width: '100%',
                       }}
                     >
@@ -153,12 +156,12 @@ const RegisterCancel = () => {
                 })}
               </div>
 
-              {/* 버튼 가운데 정렬 */}
-              <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              {/* 버튼 */}
+              <div style={{ textAlign: 'center', marginTop: '48px', marginBottom: '40px' }}>
                 <button
                   type="submit"
                   style={{
-                    background: '#5fcf80',
+                    background: '#84cc16',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 24,
@@ -177,14 +180,14 @@ const RegisterCancel = () => {
             {/* 모달 */}
             <ConfirmCancelModal
               visible={showModal}
-              message="예약을 취소하시겠습니까?
-              이 작업은 되돌릴 수 없습니다."
+              message={`예약을 취소하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`}
               onConfirm={handleConfirm}
               onCancel={handleClose}
             />
           </div>
         </main>
-        {/* 오른쪽: Todo 사이드바 */}
+
+        {/* 오른쪽 Todo */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>

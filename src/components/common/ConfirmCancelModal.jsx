@@ -33,7 +33,7 @@ const ConfirmCancelModal = ({ visible, message, onConfirm, onCancel }) => {
           <button
             onClick={onConfirm}
             style={{
-              background: '#5fcf80',
+              background: '#84cc16',
               color: '#fff',
               border: 'none',
               borderRadius: 24,
