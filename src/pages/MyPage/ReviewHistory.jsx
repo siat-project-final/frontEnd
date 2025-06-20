@@ -1,10 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './ReviewHistory.css';
+// ✅ axios 연동 주석
+// import { getSubmissionResult } from '../../api/challenge';
 
 const ReviewHistory = () => {
+  const [reviewList, setReviewList] = useState([]);
+  const memberId = sessionStorage.getItem('memberId');
+
+  useEffect(() => {
+    // ✅ 실제 API 연동 시 사용
+    // getSubmissionResult(memberId)
+    //   .then(res => setReviewList(res.data))
+    //   .catch(err => console.error('리뷰 히스토리 불러오기 실패:', err));
+
+    // ✅ 현재는 dummy 사용
+    setReviewList([
+      {
+        date: '6/7',
+        subject: 'JAVA',
+        score: '12 / 15',
+        review: '틀린 문항 복습 완료',
+      },
+      {
+        date: '6/3',
+        subject: 'REACT',
+        score: '13 / 15',
+        review: 'DOM 구조 이슈 재확인',
+      },
+    ]);
+  }, [memberId]);
+
   return (
     <div>
       <Header />
@@ -17,42 +45,25 @@ const ReviewHistory = () => {
             </div>
 
             <div className="review-box">
-              {/* 필요하면 여기 challenge-card 형식 반복 렌더링 */}
-              <div className="challenge-card">
-                <span className="challenge-date">6/7</span>
-                <div className="challenge-info">
-                  <div className="info-item">
-                    <p className="info-label">SUBJECT</p>
-                    <p className="info-value">JAVA</p>
-                  </div>
-                  <div className="info-item">
-                    <p className="info-label">MY SCORE</p>
-                    <p className="info-value">12 / 15</p>
-                  </div>
-                  <div className="info-item">
-                    <p className="info-label">REVIEW</p>
-                    <p className="info-value">틀린 문항 복습 완료</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="challenge-card">
-                <span className="challenge-date">6/3</span>
-                <div className="challenge-info">
-                  <div className="info-item">
-                    <p className="info-label">SUBJECT</p>
-                    <p className="info-value">REACT</p>
-                  </div>
-                  <div className="info-item">
-                    <p className="info-label">MY SCORE</p>
-                    <p className="info-value">13 / 15</p>
-                  </div>
-                  <div className="info-item">
-                    <p className="info-label">REVIEW</p>
-                    <p className="info-value">DOM 구조 이슈 재확인</p>
+              {reviewList.map((item, idx) => (
+                <div className="challenge-card" key={idx}>
+                  <span className="challenge-date">{item.date}</span>
+                  <div className="challenge-info">
+                    <div className="info-item">
+                      <p className="info-label">SUBJECT</p>
+                      <p className="info-value">{item.subject}</p>
+                    </div>
+                    <div className="info-item">
+                      <p className="info-label">MY SCORE</p>
+                      <p className="info-value">{item.score}</p>
+                    </div>
+                    <div className="info-item">
+                      <p className="info-label">REVIEW</p>
+                      <p className="info-value">{item.review}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </section>
         </main>

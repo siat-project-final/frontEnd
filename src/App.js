@@ -24,9 +24,9 @@ import MentoringHistory from './pages/MyPage/MentoringHistory';
 import ReviewHistory from './pages/MyPage/ReviewHistory';
 import Statistics from './pages/MyPage/Statistics';
 
-import Pricing from './pages/Pricing/Pricing';
-import Starter from './pages/Starter/Starter';
-import Contact from './pages/Contact/Contact';
+// import Pricing from './pages/Pricing/Pricing';
+// import Starter from './pages/Starter/Starter';
+// import Contact from './pages/Contact/Contact';
 
 // import Todo from './components/common/Todo';
 import MentorAlarm from './pages/Events/MentorAlarm';
@@ -56,30 +56,8 @@ import ChallengeRanking from './pages/Challenge/ChallengeRanking';
 import ReviewMain from './pages/Challenge/Review/ReviewMain';
 import ReviewSolve from './pages/Challenge/Review/ReviewSolve';
 import ChallengeMain from './pages/Challenge/ChallengeMain';
-import DayChallengeList from './pages/Challenge/DayChallengeList';
-import CourseDetail from './pages/Challenge/CourseDetail';
-
-function App() {
-  useLayoutEffect(() => {
-    AOS.init();
-    const preloader = document.getElementById('preloader');
-    if (preloader) preloader.style.display = 'none';
-  }, []);
-
-  return (
-    <Router>
-      <AppLayout />
-      <a
-        href="#"
-        id="scroll-top"
-        className="scroll-top d-flex align-items-center justify-content-center"
-      >
-        <i className="bi bi-arrow-up-short"></i>
-      </a>
-      <div id="preloader"></div>
-    </Router>
-  );
-}
+// import DayChallengeList from './pages/Challenge/DayChallengeList';
+// import CourseDetail from './pages/Challenge/CourseDetail';
 
 function AppLayout() {
   const { pathname } = useLocation();
@@ -96,9 +74,9 @@ function AppLayout() {
 
           {/* Home 및 기타 공통 페이지 */}
           <Route path="/home" element={<PrivateRoute><CalenderView /></PrivateRoute>} />
-          <Route path="/pricing" element={<PrivateRoute><Pricing /></PrivateRoute>} />
+          {/* <Route path="/pricing" element={<PrivateRoute><Pricing /></PrivateRoute>} />
           <Route path="/starter" element={<PrivateRoute><Starter /></PrivateRoute>} />
-          <Route path="/contact" element={<PrivateRoute><Contact /></PrivateRoute>} />
+          <Route path="/contact" element={<PrivateRoute><Contact /></PrivateRoute>} /> */}
 
           {/* 알람 */}
           <Route path="/mentor-alarm" element={<PrivateRoute><MentorAlarm /></PrivateRoute>} />
@@ -126,8 +104,8 @@ function AppLayout() {
           <Route path="/challenge/ranking" element={<PrivateRoute><ChallengeRanking /></PrivateRoute>} />
           <Route path="/challenge/review" element={<PrivateRoute><ReviewMain /></PrivateRoute>} />
           <Route path="/challenge/review/solve" element={<PrivateRoute><ReviewSolve /></PrivateRoute>} />
-          <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
-          <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} />
+          {/* <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
+          <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} /> */}
 
           {/* Mentoring */}
           <Route path="/mentoring/mentors" element={<PrivateRoute><MentoringList /></PrivateRoute>} />
@@ -154,5 +132,29 @@ function AppLayout() {
     </div>
   );
 }
+
+function App() {
+  useLayoutEffect(() => {
+    AOS.init();
+    const preloader = document.getElementById('preloader');
+    if (preloader) preloader.style.display = 'none';
+  }, []);
+
+  return (
+    <Router>
+      <AppLayout />
+      <a
+        href="#"
+        id="scroll-top"
+        className="scroll-top d-flex align-items-center justify-content-center"
+      >
+        <i className="bi bi-arrow-up-short"></i>
+      </a>
+      <div id="preloader"></div>
+    </Router>
+  );
+}
+
+
 
 export default App;

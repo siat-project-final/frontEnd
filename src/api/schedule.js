@@ -1,23 +1,19 @@
 import axios from './axios';
 
 /** 일정 목록 조회 */
-export const getEvents = (userId, month) => {
-  return axios.get('/calendar/events', {
-    params: { userId, month },
+export const getEvents = (memberId, startDate, endDate) => {
+  return axios.get(`/calendar/events/${memberId}`, {
+    params: { startDate, endDate },
   });
 };
 
-/** 일정 생성 */
-export const createEvent = (eventData) => {
-  return axios.post('/calendar/events', eventData);
-};
-
-/** 일정 수정 */
-export const updateEvent = (id, updatedData) => {
-  return axios.put(`/calendar/events/${id}`, updatedData);
-};
-
-/** 일정 삭제 */
-export const deleteEvent = (id) => {
-  return axios.delete(`/calendar/events/${id}`);
-};
+// [
+//   {
+//     "type": "MENTORING",
+//     "title": "김민지 멘토링",
+//     "contents": "AI 프로젝트 피드백",
+//     "date": "2025-06-11",
+//     "relatedId": 102,
+//     "redirectUrl": "/mentoring/102"
+//   }
+// ]

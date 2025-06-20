@@ -23,3 +23,15 @@ export const getAuthHeader = () => {
   const token = getToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
+
+export const setRefreshToken = (token) => {
+  sessionStorage.setItem('refreshToken', token);
+};
+
+export const getRefreshToken = () => {
+  return sessionStorage.getItem('refreshToken');
+};
+
+export const removeRefreshToken = () => {
+  sessionStorage.removeItem('refreshToken');
+};
