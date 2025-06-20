@@ -1,55 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signIn } from '../api/auth';
-import { setToken } from '../utils/auth';
 import './Login.css';
+import instance from '../api/axios'; // Axios 인스턴스 가져오기
+import { signIn } from '../api/auth'; // 로그인 API 함수 가져오기
 
 function Login() {
   const navigate = useNavigate();
   const [id, setId] = useState('');
-  const [pwd, setPwd] = useState('');
+  const [password, setPassword] = useState('');
 
   const loginHandler = async (event) => {
    event.preventDefault();
 
-  // ✅ MOCK 로그인 (테스트용 계정)
-  const users = [
-    { id: 'admin', pwd: '1234', role: 'admin', memberId: 0 },
-    { id: 'mentee', pwd: 'mentee1234', role: 'mentee', memberId: 1 },
-    { id: 'mentor', pwd: 'mentor1234', role: 'mentor', memberId: 2 },
-  ];
-
-  const found = users.find((user) => user.id === id && user.pwd === pwd);
-  if (found) {
     try {
-      const mockToken = 'mock.jwt.token';
-      setToken(mockToken);
-      sessionStorage.setItem('userRole', found.role); // 역할 저장
-      sessionStorage.setItem('memberId', found.memberId); // mock userId 저장
-      navigate('/home');
-      return;
+      const response = await signIn({ id, password });
+      if (response.status === 200) {
+        // 예시: 토큰 저장 및 페이지 이동
+        const { accessToken, refreshToken } = response.data;
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('memberId', response.data.memberId);
+        localStorage.setItem('id', response.data.id);
+        localStorage.setItem('memberName', response.data.memberName);
+
+        localStorage.setItem('role', response.data.role);
+
+        navigate('/home', { state: { fromLogin: true } });
+      }
     } catch (error) {
-      console.error('MOCK 로그인 실패:', error);
-      alert('로그인에 실패했습니다.');
-      return;
+      alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
     }
-  }
-
-  // ✅ 실제 로그인 API 연동
-  try {
-    const res = await signIn({ id, password: pwd });
-    const { accessToken, memberId } = res.data;
-
-    setToken(accessToken);
-    sessionStorage.setItem('memberId', memberId);
-
-    navigate('/home');
-  } catch (error) {
-    console.error('API 로그인 실패:', error);
-    alert('아이디 또는 비밀번호가 일치하지 않습니다.');
-  }
-};
-
+}
 
   return (
     <div className="login-container">
@@ -71,8 +52,8 @@ function Login() {
             <input
               id="password"
               type="password"
-              value={pwd}
-              onChange={(e) => setPwd(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="********"
             />
           </div>
