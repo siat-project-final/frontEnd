@@ -7,7 +7,7 @@ export const getMyStudyLogs = (params) => {
 
 /** 내 학습일지 상세 조회 */
 export const getMyStudyLogById = (diaryId) => {
-  return axios.get(`/study-logs${diaryId}`);
+  return axios.get(`/study-logs/${diaryId}`);
 };
 
 /** 학습일지 작성 */
