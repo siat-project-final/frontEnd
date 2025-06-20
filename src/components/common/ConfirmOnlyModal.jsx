@@ -29,13 +29,13 @@ const ConfirmOnlyModal = ({ visible, message, onClose }) => {
         }}
       >
         <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 16 }}>{message}</div>
-        <div style={{ color: '#555', marginBottom: 24, whiteSpace: 'pre-line' }}>
+        {/* <div style={{ color: '#555', marginBottom: 24, whiteSpace: 'pre-line' }}>
           멘토 수락 후, 대화 일정이 확정됩니다. 예약목록에서 신청 현황을 확인해보세요.
-        </div>
+        </div> */}
         <button
           onClick={onClose}
           style={{
-            background: '#5fcf80',
+            background: '#84cc16',
             color: '#fff',
             border: 'none',
             borderRadius: 24,

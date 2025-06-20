@@ -53,11 +53,20 @@ const Sidebar = ({ menuType }) => {
   const menu = menuMap[menuType];
   if (!menu) return null;
 
+  // 멘토 계정이면 예약 내역 링크를 mentor용으로 변경
+  const role = sessionStorage.getItem('userRole');
+  const items = menu.items.map((item) => {
+    if (menuType === 'mentoring' && item.label === '예약 내역' && role === 'mentor') {
+      return { ...item, to: '/mentoring/mentor/register' };
+    }
+    return item;
+  });
+
   return (
     <aside className="sidebar">
       <div className="sidebar-title">{menu.title}</div>
       <nav className="sidebar-nav">
-        {menu.items.map((item, idx) => (
+        {items.map((item, idx) => (
           <Link
             key={idx}
             to={item.to}

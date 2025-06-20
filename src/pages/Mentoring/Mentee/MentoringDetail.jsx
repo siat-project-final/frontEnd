@@ -14,21 +14,21 @@ const MentoringDetail = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const mentorData = location.state?.mentor || {
     name: 'Sophia Bennett',
-    field: 'Current Backend Developer at Tech Innovators Inc.',
-    img: '/assets/img/team/team-1.jpg',
-    intro: 'ABC 전자상거래 플랫폼 백엔드 엔지니어',
+    position: 'Backend Developer',
+    company: 'Tech Innovators Inc.',
+    mentor_image_url: '/assets/img/mentors/mentor1.jpg',
   };
 
   const mentor = {
     name: mentorData.name,
-    field: mentorData.field,
-    img: mentorData.img,
+    position: mentorData.position,
+    company: mentorData.company,
+    mentor_image_url: mentorData.mentor_image_url,
     description: [
-      mentorData.intro,
+      `${mentorData.company} ${mentorData.position}`,
       '백엔드 개발 경력 8년, 대규모 앱 애플리케이션 설계 및 구축 경험',
       '주니어 개발자 멘토링 및 기술 지식 공유에 열정 있음',
     ],
-    contact: 'mentor@example.com',
   };
 
   const handleDateClick = (date) => {
@@ -46,7 +46,7 @@ const MentoringDetail = () => {
 
   return (
     <div>
-      <Header />
+      <Header menuType="mentoring" />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main" style={{ background: '#f8fafc', minHeight: '100vh', flex: 1 }}>
@@ -69,10 +69,13 @@ const MentoringDetail = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
+                  // alignItems: 'flex-start',
+                  paddingLeft: 16,
+                  marginLeft: '40px',
                 }}
               >
                 <img
-                  src={mentor.img}
+                  src={mentor.mentor_image_url}
                   alt={mentor.name}
                   style={{
                     width: 180,
@@ -82,15 +85,19 @@ const MentoringDetail = () => {
                     marginBottom: 16,
                     background: '#f3e7e1',
                   }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/assets/img/mentors/mentor1.jpg';
+                  }}
                 />
-                <div style={{ color: '#bfc8d9', fontWeight: 600, fontSize: 18, marginBottom: 4 }}>
+                <div style={{ color: '#000', fontWeight: 600, fontSize: 18, marginBottom: 4 }}>
                   {mentor.name}
                 </div>
-                <div style={{ color: '#7b8bb2', fontWeight: 500, fontSize: 15, marginBottom: 8 }}>
-                  {mentor.field}
+                <div style={{ color: '#374151', fontWeight: 500, fontSize: 15, marginBottom: 8 }}>
+                  {mentor.position} at {mentor.company}
                 </div>
-                <div style={{ color: '#bfc8d9', fontWeight: 500, fontSize: 14, marginBottom: 8 }}>
-                  Past
+                <div style={{ color: '#6b7280', fontWeight: 500, fontSize: 14, marginBottom: 8 }}>
+                  Career
                 </div>
                 <ul
                   style={{
@@ -99,6 +106,7 @@ const MentoringDetail = () => {
                     paddingLeft: 18,
                     margin: 0,
                     marginBottom: 0,
+                    listStyleType: 'disc',
                   }}
                 >
                   {mentor.description.map((desc, i) => (
@@ -120,7 +128,6 @@ const MentoringDetail = () => {
                 <div
                   style={{
                     width: 320,
-                    background: '#f6f8fa',
                     borderRadius: 12,
                     padding: 24,
                     marginBottom: 32,
@@ -138,26 +145,42 @@ const MentoringDetail = () => {
                   <style>
                     {`
                       .react-calendar__tile--active {
-                        background: #5fcf80 !important;
                         color: white !important;
+                        border-radius: 4px !important; 
+                        background: #84cc16 !important;
+                      }
+
+                      .react-calendar__tile--hasActive {
+                        background: #84cc16 !important;
+                        color: white !important;
+                        border-radius: 4px !important; /* 원한다면 모양 변경 */
                       }
                       .react-calendar__tile--now {
                         background: #dee2e6 !important;
                         color: #000 !important;
+                        border-radius: 4px !important;
                       }
                       .react-calendar__tile--now:enabled:hover,
                       .react-calendar__tile--now:enabled:focus {
-                        background: #5fcf80 !important;
+                        background: #84cc16 !important;
                         color: white !important;
                       }
-                      
+                      .react-calendar abbr {
+                        text-decoration: none;
+                        border: none;
+                      }
+                      .react-calendar__tile:enabled:hover {
+                      background: #c5f18a !important; /* 원하는 hover 색상 */
+                      color: black !important;
+                      border-radius: 4px !important;  /* 선택한 스타일에 따라 */
+                    }
                     `}
                   </style>
                 </div>
                 <button
                   onClick={handleApplyClick}
                   style={{
-                    background: '#5fcf80',
+                    background: '#84cc16',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 24,
