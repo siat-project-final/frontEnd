@@ -109,6 +109,7 @@ const CalendarView = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <FullCalendar
+            schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             key={calendarKey} // ✅ 핵심!
             plugins={[
               dayGridPlugin,
