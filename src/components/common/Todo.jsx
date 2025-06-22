@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import instance from '../../api/axios'; // Axios 인스턴스 가져오기
 
 const Todo = ({ selectedDate, onTodoChange }) => {
   const [input, setInput] = useState('');
   const [todos, setTodos] = useState([]);
+
+  const memberId = localStorage.getItem('memberId');
 
   // 🗓 selectedDate가 없을 경우 기본값을 오늘로
   const getEffectiveDate = () => {
@@ -17,29 +20,48 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   const dateToUse = getEffectiveDate(); // ✅ 여기서 안전하게 처리
 
+  // [kth] 250622 : 투두 리스트 조회 API 요청 함수
+  const fetchTodoList = async () => {
+    try {
+      const res = await instance.get(`/todos?memberId=${memberId}&date=${dateToUse}`);
+
+      const mapped = res.data.map(todo => ({
+        id: todo.id,
+        date: todo.date,
+        item: todo.contents,      
+        status: todo.checked     
+      }));
+
+      setTodos(mapped);
+    } catch (err) {
+      console.error('투두 가져오기 실패:', err);
+    }
+};
+
+
+  // [kth] 250622 : 의존성 배열에 selectedDate를 넣어서 날짜 변경시마다 todo 재조회
   useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
-    const filtered = storedTodos.filter(todo => todo.date === dateToUse);
-    setTodos(filtered);
+      fetchTodoList();
   }, [selectedDate]);
 
-  const handleAdd = () => {
+  // [kth] 250622 : 투두 추가 함수(추가 성공 후 조회)
+  const handleAdd = async () => {
     if (!input.trim()) return;
 
-    const newTodo = {
-      id: Date.now(),
-      date: dateToUse,
-      item: input.trim(),
-      status: false,
-    };
+    try {
+      await instance.post('/todos', {
+        memberId,
+        contents: input.trim(),
+        date: dateToUse
+      });
 
-    const currentTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
-    const updatedTodos = [...currentTodos, newTodo];
+      setInput('');
+      onTodoChange?.();
+      fetchTodoList(); // 목록 다시 불러오기
 
-    localStorage.setItem('todo-list', JSON.stringify(updatedTodos));
-    setTodos(updatedTodos.filter(todo => todo.date === dateToUse));
-    setInput('');
-    onTodoChange?.();
+    } catch (err) {
+      console.error('할 일 추가 실패:', err);
+    }
   };
 
   const toggleTodo = (id) => {
