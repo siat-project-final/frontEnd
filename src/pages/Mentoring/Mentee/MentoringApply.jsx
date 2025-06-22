@@ -9,10 +9,10 @@ import Todo from '../../../components/common/Todo';
 import { applyMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
 
 const options = [
-  { label: 'siat 수업 관련', value: 'siat' },
-  { label: '커리어 조언', value: 'career' },
-  { label: '회사 적응 팁', value: 'adapt' },
-  { label: '장애 극복', value: 'overcome' },
+  { label: 'siat 수업 관련', value: 'siat 수업 관련' },
+  { label: '커리어 조언', value: '커리어 조언' },
+  { label: '회사 적응 팁', value: '회사 적응 팁' },
+  { label: '장애 극복', value: '장애 극복' },
   { label: '기타', value: 'other' },
 ];
 

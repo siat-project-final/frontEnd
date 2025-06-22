@@ -2,15 +2,25 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MenteeRegisterCard = ({
-                              reservationId, // ✅ 추가
+                              reservationId,
                               date,
                               mentorName,
                               status,
                               mentorImageUrl,
+                              subject,
                               onCancel,
                             }) => {
   const navigate = useNavigate();
-  const isConfirmed = status === '예약 대기';
+
+  // ✅ 상태 영어 → 한글 변환
+  const statusToKorean = {
+    PENDING: '예약 대기',
+    CONFIRMED: '예약 확정',
+    CANCELLED: '예약 취소',
+    REJECTED: '예약 거절',
+  };
+
+  const isConfirmed = status === 'PENDING';
 
   const defaultMentorImages = [
     '/assets/img/mentors/mentor1.jpg',
@@ -36,10 +46,10 @@ const MenteeRegisterCard = ({
   };
 
   const handleCancel = () => {
-    onCancel(); // 상태 동기화
+    onCancel();
     navigate('/register/cancel', {
       state: {
-        reservationId, // ✅ 상태에 예약 ID 포함
+        reservationId,
         status,
       },
     });
@@ -74,7 +84,7 @@ const MenteeRegisterCard = ({
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{date}</span>
-          <span style={statusStyle}>{status}</span>
+          <span style={statusStyle}>{statusToKorean[status] || status}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
@@ -96,7 +106,7 @@ const MenteeRegisterCard = ({
           />
           <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
-          {status === '예약 확정' && (
+          {status === 'CONFIRMED' && (
             <a
               href={profileLink}
               target="_blank"
@@ -111,6 +121,11 @@ const MenteeRegisterCard = ({
               🔗
             </a>
           )}
+        </div>
+
+        {/* 대화 주제 표시 */}
+        <div style={{ marginTop: '8px', fontSize: '14px', color: '#475569' }}>
+          🗣 <strong>{subject}</strong>
         </div>
       </div>
 
