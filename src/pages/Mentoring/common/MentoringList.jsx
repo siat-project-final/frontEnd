@@ -14,78 +14,91 @@ const MentoringList = () => {
   // 더미 데이터
   const dummyMentors = [
     {
+      mentorId: 1,
       mentorName: 'Walter White',
       position: 'Business Analyst',
       company: 'SK 쉴더스',
       mentor_image_url: '/assets/img/mentors/mentor1.jpg',
     },
     {
+      mentorId: 2,
       mentorName: 'Sarah Jhonson',
       position: 'Software Engineer',
       company: 'SK C&C',
       mentor_image_url: '/assets/img/mentors/mentor2.jpg',
     },
     {
+      mentorId: 3,
       mentorName: 'William Anderson',
       position: 'Cloud Engineer',
       company: 'AWS',
       mentor_image_url: '/assets/img/mentors/mentor3.jpg',
     },
     {
+      mentorId: 4,
       mentorName: 'Amanda Jepson',
       position: 'Software Developer',
       company: 'TVING',
       mentor_image_url: '/assets/img/mentors/mentor1.jpg',
     },
     {
+      mentorId: 5,
       mentorName: 'Brian Doe',
       position: 'Software Developer',
       company: 'MEGAZONE CLOUD',
       mentor_image_url: '/assets/img/mentors/mentor2.jpg',
     },
     {
+      mentorId: 6,
       mentorName: 'Josepha Palas',
       position: 'Cloud Engineer',
       company: 'AWS',
       mentor_image_url: '/assets/img/mentors/mentor3.jpg',
     },
     {
+      mentorId: 7,
       mentorName: 'Emily Chen',
       position: 'Data Scientist',
       company: 'Google',
       mentor_image_url: '/assets/img/mentors/mentor1.jpg',
     },
     {
+      mentorId: 8,
       mentorName: 'Michael Park',
       position: 'AI Engineer',
       company: 'Naver',
       mentor_image_url: '/assets/img/mentors/mentor2.jpg',
     },
     {
+      mentorId: 9,
       mentorName: 'Sophie Kim',
       position: 'Frontend Developer',
       company: 'Kakao',
       mentor_image_url: '/assets/img/mentors/mentor3.jpg',
     },
     {
+      mentorId: 10,
       mentorName: 'David Lee',
       position: 'Backend Developer',
       company: 'LINE',
       mentor_image_url: '/assets/img/mentors/mentor1.jpg',
     },
     {
+      mentorId: 11,
       mentorName: 'Lisa Wang',
       position: 'DevOps Engineer',
       company: 'Coupang',
       mentor_image_url: '/assets/img/mentors/mentor2.jpg',
     },
     {
+      mentorId: 12,
       mentorName: 'James Kim',
       position: 'Security Engineer',
       company: 'Kakao Security',
       mentor_image_url: '/assets/img/mentors/mentor3.jpg',
     },
   ];
+
 
   useEffect(() => {
     const fetchData = async () => {

@@ -1,7 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
+const MenteeRegisterCard = ({
+                              date,
+                              mentorName,
+                              status,
+                              mentorImageUrl,
+                              onCancel,
+                            }) => {
   const navigate = useNavigate();
   const isConfirmed = status === '예약 대기';
 
@@ -12,10 +18,10 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
   ];
 
   const getMentorImage = () => {
-    if (mentorImg && mentorImg !== '') {
-      return mentorImg;
+    if (mentorImageUrl && mentorImageUrl !== '') {
+      return mentorImageUrl;
     }
-    const nameHash = name ? name.charCodeAt(0) % 3 : 0;
+    const nameHash = mentorName ? mentorName.charCodeAt(0) % 3 : 0;
     return defaultMentorImages[nameHash];
   };
 
@@ -33,7 +39,7 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
     navigate('/mentoring/cancel');
   };
 
-  const profileLink = `https://example.com/profile/${encodeURIComponent(name)}`;
+  const profileLink = `https://example.com/profile/${encodeURIComponent(mentorName)}`;
 
   return (
     <div
@@ -65,11 +71,11 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
           <span style={statusStyle}>{status}</span>
         </div>
 
-        {/* 멘토 이미지 + 이름 +  링크 (예약 확정일 때만 표시) */}
+        {/* 멘토 이미지 + 이름 + 링크 (예약 확정일 때만 표시) */}
         <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
           <img
             src={getMentorImage()}
-            alt={name}
+            alt={mentorName}
             style={{
               width: '32px',
               height: '32px',
@@ -83,7 +89,7 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
               e.target.src = '/assets/img/mentors/mentor1.jpg';
             }}
           />
-          <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{name}</span>
+          <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
           {/* 링크는 예약 확정일 때만 표시 */}
           {status === '예약 확정' && (

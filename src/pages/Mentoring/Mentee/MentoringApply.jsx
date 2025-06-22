@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
 import '../../../App.css';
 import Todo from '../../../components/common/Todo';
-// import { applyMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
+import { applyMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
 
 const options = [
   { label: 'siat 수업 관련', value: 'siat' },
@@ -64,14 +64,14 @@ const MentoringApply = () => {
       : selected;
 
     try {
-      // 실제 API 연동
-      // await applyMentoring({
-      //   mentorId: mentor.id, // mentor.mentorId 사용 가능
-      //   memberId,
-      //   date: selectedDate,
-      //   Introduction: intro,
-      //   subject: finalTopics.join(', '),
-      // });
+
+       await applyMentoring({
+         mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
+         memberId,
+         date: `${selectedDate}T00:00:00`,
+         introduction: intro,
+         subject: finalTopics.join(', '),
+       });
 
       // 성공 시 예약 목록으로 이동
       navigate('/mentoring/mentee/register', {

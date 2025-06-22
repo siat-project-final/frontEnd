@@ -37,7 +37,7 @@ function Login() {
 
   // ✅ 실제 로그인 API 연동
   try {
-    const res = await signIn({ id, password: pwd });
+    const res = await signIn({ login_id :id , password: pwd });
     const { accessToken, memberId } = res.data;
 
     setToken(accessToken);

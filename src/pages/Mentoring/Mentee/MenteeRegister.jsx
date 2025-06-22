@@ -1,73 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
-import Footer from '../../../components/common/Footer';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import MenteeRegisterCard from './MenteeRegisterCard';
 import Todo from '../../../components/common/Todo';
-// import { applyMentoring, getMentoringReservations } from '../../../api/mentoring'; // 실제 연동 시 사용
-
-// 날짜 포맷 함수 (요일 포함)
-const formatDateWithDay = (dateString) => {
-  const date = new Date(dateString);
-  const days = ['일', '월', '화', '수', '목', '금', '토'];
-  const dayName = days[date.getDay()];
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${year}-${month}-${day} (${dayName})`;
-};
+import { getMentoringReservations } from '../../../api/mentoring';
 
 const MenteeRegister = () => {
+  // eslint-disable-next-line no-unused-vars
   const location = useLocation();
-  const { mentor, selectedDate, intro, topics } = location.state || {};
   const [reservations, setReservations] = useState([]);
   const memberId = sessionStorage.getItem('memberId');
+  console.log('✅ 현재 로그인된 memberId:', memberId);
 
   useEffect(() => {
-    const registerAndFetch = async () => {
+    const fetchReservations = async () => {
       try {
-        // 실제 API 연동
-        // if (mentor && selectedDate && intro && topics) {
-        //   await applyMentoring({
-        //     mentorId: mentor.id, // mentorId 필드 확인 필요
-        //     memberId,
-        //     date: selectedDate,
-        //     Introduction: intro,
-        //     subject: topics,
-        //   });
-        // }
-
-        // 예약 목록 조회
-        // const res = await getMentoringReservations(memberId);
-        // setReservations(res.data);
-
-        // 현재는 local dummy data
-        const dummy = [
-          {
-            id: 1,
-            date: formatDateWithDay(new Date().toISOString()),
-            name: mentor?.name || 'Walter White',
-            status: '예약 대기',
-            mentorImg: mentor?.mentor_image_url || '/assets/img/mentors/mentor1.jpg',
-            intro: intro || '커리어 관련 질문 있습니다',
-            topics: topics || 'AI, 진로',
-          },
-        ];
-        setReservations(dummy);
+        const response = await getMentoringReservations(memberId);
+        console.log('✅ 서버 응답:', response.data); // 배열인지 확인
+        setReservations(response.data);
       } catch (error) {
-        console.error('예약 신청 또는 조회 실패:', error);
+        console.error('❌ 예약 조회 실패:', error);
       }
     };
 
-    if (memberId) registerAndFetch();
-  }, [mentor, selectedDate]);
+    if (memberId) fetchReservations();
+  }, [memberId]);
 
-  const handleCancelReservation = (id) => {
-    const updated = reservations.filter((res) => res.id !== id);
+  // 예약 취소 처리
+  const handleCancelReservation = (reservationId) => {
+    const updated = reservations.filter((res) => res.reservationId !== reservationId);
     setReservations(updated);
   };
 
+  // 예약 없을 때 메시지 렌더링
   const renderEmptyMessage = () => {
     if (reservations.length === 0) {
       return (
@@ -94,9 +60,9 @@ const MenteeRegister = () => {
               {renderEmptyMessage()}
               {reservations.map((res) => (
                 <MenteeRegisterCard
-                  key={res.id}
+                  key={res.reservationId}
                   {...res}
-                  onCancel={() => handleCancelReservation(res.id)}
+                  onCancel={() => handleCancelReservation(res.reservationId)}
                 />
               ))}
             </div>
