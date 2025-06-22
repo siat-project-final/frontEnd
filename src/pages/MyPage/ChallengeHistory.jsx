@@ -12,6 +12,11 @@ const ChallengeHistory = () => {
   const [historyList, setHistoryList] = useState([]);
 
   useEffect(() => {
+    setHistoryList([
+      { date: '6/7', rank: 3, subject: 'JAVA', score: '10 / 15' },
+      { date: '6/3', rank: 3, subject: 'REACT', score: '10 / 15' },
+      { date: '6/3', rank: 5, subject: 'AWS', score: '10 / 15' },
+    ]);
     const fetchHistory = async () => {
       try {
         const res = await getChallengeHistory(memberId);

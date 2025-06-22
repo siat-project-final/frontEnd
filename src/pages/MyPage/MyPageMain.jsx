@@ -14,6 +14,19 @@ const MyPageMain = () => {
   useEffect(() => {
     // ✅ 의존성 배열: memberId가 바뀔 때마다 실행됨
     const fetchUserInfo = async () => {
+      //dummy data
+      setUser({
+        id: 'hong123',
+        password: '1234',
+        name: '홍길동',
+        nickname: '코딩왕',
+        phone: '010-1234-5678',
+        status: '훈련생',
+        point: 8750,
+        level: 12,
+        exp: 8000,
+        badge: 5,
+      });
       try {
         // ✅ 실제 API 호출 (비동기 + await)
         const res = await getUserInfo(memberId);
@@ -46,7 +59,7 @@ const MyPageMain = () => {
                 <div className="profile-stats">
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
-                    <p className="stat-value">{user.point.toLocaleString()}</p>
+                    <p className="stat-label">{user.point.toLocaleString()}</p>
                   </div>
                   <div className="stat-item">
                     <div className="level-info">
@@ -92,6 +105,10 @@ const MyPageMain = () => {
                 <div className="form-group">
                   <label htmlFor="phone">PHONE</label>
                   <input id="phone" type="text" defaultValue={user.phone} />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">EMAIL</label>
+                  <input id="email" type="text" defaultValue={user.email} />
                 </div>
                 <div className="form-group">
                   <label htmlFor="status">STATUS (수정불가)</label>

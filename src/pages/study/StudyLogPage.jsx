@@ -13,6 +13,11 @@ const StudyLogPage = () => {
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
+    setStudyLogs([
+      { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
+      { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
+      { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
+    ]);
     const fetchLogs = async () => {
       try {
         const res = await getMyStudyLogs(memberId);

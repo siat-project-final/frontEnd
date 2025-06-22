@@ -11,6 +11,12 @@ const Statistics = () => {
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
+    setStats({
+      learningJournals: 120,
+      challengesCompleted: 10,
+      mentoringSessions: 5,
+      totalPoints: 5000,
+    });
     const fetchStats = async () => {
       try {
         const res = await getUserStats(memberId);
@@ -54,9 +60,9 @@ const Statistics = () => {
               </div>
 
               <div className="stat-card">
-                <h2 className="stat-title">Mentoring Stats</h2>
                 <div className="stats-icon">💬</div>
-                <p className="stats-label">{stats.mentoringSessions} sessions total</p>
+                <p className="stats-value">{stats.mentoringSessions}</p>
+                <p className="stats-label"> Mentoring total</p>
               </div>
 
               <div className="stat-card">

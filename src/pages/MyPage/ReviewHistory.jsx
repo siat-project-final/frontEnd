@@ -11,6 +11,20 @@ const ReviewHistory = () => {
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
+    setReviewList([
+      {
+        date: '6/7',
+        subject: 'JAVA',
+        score: '12 / 15',
+        review: '틀린 문항 복습 완료',
+      },
+      {
+        date: '6/3',
+        subject: 'REACT',
+        score: '13 / 15',
+        review: 'DOM 구조 이슈 재확인',
+      },
+    ]);
     const fetchReview = async () => {
       try {
         const res = await getSubmissionResult(memberId);

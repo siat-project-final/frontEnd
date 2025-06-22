@@ -11,6 +11,22 @@ const StudyLogPublicDetail = () => {
   const [log, setLog] = useState(null);
 
   useEffect(() => {
+    setLog({
+      id: id,
+      title: 'AI 요약',
+      date: '2025-06-13',
+      subject: 'AI 개론',
+      author: '이수현',
+      likes: 45,
+      content: 'BERT 구조를 학습하고 관련 논문을 리뷰함.',
+      comments: [
+        {
+          user: '최은정',
+          text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아',
+          date: '2025.06.13',
+        },
+      ],
+    });
     const fetchDetail = async () => {
       try {
         const res = await getPublicStudyLogDetail(id);

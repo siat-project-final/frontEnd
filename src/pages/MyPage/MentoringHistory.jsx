@@ -12,6 +12,10 @@ const MentoringHistory = () => {
 
   useEffect(() => {
     const fetchMentoring = async () => {
+      setMentoringList([
+        { date: '6/6 (금)', mentorName: '홍길동', topic: '진로 상담' },
+        { date: '6/5 (목)', mentorName: '이수연', topic: 'AI 프로젝트' },
+      ]);
       try {
         const res = await getMentoringHistory(memberId);
         setMentoringList(res.data);

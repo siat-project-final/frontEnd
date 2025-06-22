@@ -7,6 +7,25 @@ import Todo from '../../components/common/Todo';
 // ✅ axios 연동 주석 처리
 import { getMyStudyLogById, updateStudyLog } from '../../api/studyLog';
 
+const dummyLogs = [
+  {
+    id: 1,
+    title: 'BERT 학습',
+    subject: 'AI 개론',
+    date: '2025-06-13',
+    content: 'BERT 구조 학습함',
+    summary: 'BERT는 트랜스포머 기반 모델이다.',
+  },
+  {
+    id: 2,
+    title: 'useEffect 정리',
+    subject: 'React',
+    date: '2025-06-12',
+    content: 'useEffect 훅 정리함',
+    summary: '컴포넌트 라이프사이클 관리에 사용된다.',
+  },
+];
+
 const EditStudyLogPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();

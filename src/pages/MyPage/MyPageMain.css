@@ -200,6 +200,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  margin-bottom: 0.55rem;
   font-size: 0.875rem;
   font-weight: bold;
 }
@@ -216,7 +217,7 @@
 .level-label,
 .badge-label {
   color: #6b7280;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .progress-bar {
@@ -235,7 +236,7 @@
 }
 
 .xp-value {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #374151;
   text-align: center;
   margin-top: 0.5rem;
