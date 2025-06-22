@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MenteeRegisterCard = ({
+                              reservationId, // ✅ 추가
                               date,
                               mentorName,
                               status,
@@ -35,8 +36,13 @@ const MenteeRegisterCard = ({
   };
 
   const handleCancel = () => {
-    onCancel();
-    navigate('/mentoring/cancel');
+    onCancel(); // 상태 동기화
+    navigate('/register/cancel', {
+      state: {
+        reservationId, // ✅ 상태에 예약 ID 포함
+        status,
+      },
+    });
   };
 
   const profileLink = `https://example.com/profile/${encodeURIComponent(mentorName)}`;
@@ -71,7 +77,6 @@ const MenteeRegisterCard = ({
           <span style={statusStyle}>{status}</span>
         </div>
 
-        {/* 멘토 이미지 + 이름 + 링크 (예약 확정일 때만 표시) */}
         <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
           <img
             src={getMentorImage()}
@@ -91,7 +96,6 @@ const MenteeRegisterCard = ({
           />
           <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
-          {/* 링크는 예약 확정일 때만 표시 */}
           {status === '예약 확정' && (
             <a
               href={profileLink}
@@ -110,7 +114,6 @@ const MenteeRegisterCard = ({
         </div>
       </div>
 
-      {/* 예약 취소 버튼 */}
       <button
         onClick={handleCancel}
         style={{
