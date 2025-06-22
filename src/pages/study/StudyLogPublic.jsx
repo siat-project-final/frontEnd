@@ -58,7 +58,7 @@ const StudyLogPublic = () => {
             </div>
 
             {studyLogs.map((log) => (
-              <div key={log.id} className="card mb-4">
+              <div key={log.id} className="studylog-boxes card mb-4" data-aos="fade-up">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <div>
