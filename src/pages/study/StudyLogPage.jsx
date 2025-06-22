@@ -6,24 +6,22 @@ import StudyLogCard from '../../components/studyCard/StudyLogCard';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 // ✅ axios 함수 주석 처리
-// import { getMyStudyLogs } from '../../api/studyLog';
+import { getMyStudyLogs } from '../../api/studyLog';
 
 const StudyLogPage = () => {
   const [studyLogs, setStudyLogs] = useState([]);
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getMyStudyLogs({ memberId })
-    //   .then(res => setStudyLogs(res.data))
-    //   .catch(err => console.error('학습일지 목록 불러오기 실패:', err));
-
-    // ✅ 현재는 dummy 데이터 사용
-    setStudyLogs([
-      { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
-      { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
-      { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
-    ]);
+    const fetchLogs = async () => {
+      try {
+        const res = await getMyStudyLogs(memberId);
+        setStudyLogs(res.data);
+      } catch (err) {
+        console.error('학습일지 목록 실패:', err);
+      }
+    };
+    fetchLogs();
   }, [memberId]);
 
   return (
@@ -36,7 +34,12 @@ const StudyLogPage = () => {
             <main className="main">
               <div className="container py-5">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                  <h1 className="h3 fw-bold mb-0 page-title">MY STUDY LOG</h1>
+                  <h1
+                    className="h3 fw-bold mb-0"
+                    style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+                  >
+                    MY STUDY LOG
+                  </h1>
                   <div className="d-flex align-items-center">
                     <select className="form-select w-auto d-inline-block me-2">
                       <option>과목</option>

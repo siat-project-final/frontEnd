@@ -4,25 +4,23 @@ import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './ChallengeHistory.css';
-// ✅ axios 연동 (주석)
-// import { getChallengeHistory } from '../../api/challenge';
+// ✅ axios 연동
+import { getChallengeHistory } from '../../api/challenge';
 
 const ChallengeHistory = () => {
   const memberId = sessionStorage.getItem('memberId');
   const [historyList, setHistoryList] = useState([]);
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getChallengeHistory(memberId)
-    //   .then(res => setHistoryList(res.data))
-    //   .catch(err => console.error('챌린지 히스토리 조회 실패:', err));
-
-    // ✅ 현재는 dummy 데이터 사용
-    setHistoryList([
-      { date: '6/7', rank: 3, subject: 'JAVA', score: '10 / 15' },
-      { date: '6/3', rank: 3, subject: 'REACT', score: '10 / 15' },
-      { date: '6/3', rank: 5, subject: 'AWS', score: '10 / 15' },
-    ]);
+    const fetchHistory = async () => {
+      try {
+        const res = await getChallengeHistory(memberId);
+        setHistoryList(res.data);
+      } catch (err) {
+        console.error('챌린지 히스토리 조회 실패:', err);
+      }
+    };
+    fetchHistory();
   }, [memberId]);
 
   return (
@@ -33,7 +31,12 @@ const ChallengeHistory = () => {
         <main className="main">
           <section className="challenge-history-section" data-aos="fade-up">
             <div className="page-header">
-              <h1 className="page-title">CHALLENGE HISTORY</h1>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+              >
+                CHALLENGE HISTORY
+              </h1>
               <div className="month-selector">
                 <span className="current-month">6월</span>
                 <button className="month-btn">이전</button>

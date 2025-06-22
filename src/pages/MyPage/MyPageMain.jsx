@@ -5,35 +5,29 @@ import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import './MyPageMain.css';
 import Todo from '../../components/common/Todo';
-// ✅ axios 함수 import (주석 처리)
-// import { getUserInfo } from '../../api/user';
+import { getUserInfo } from '../../api/user'; // ✅ 실제 API 함수 import
 
 const MyPageMain = () => {
-  const [user, setUser] = useState(null);
-  const memberId = sessionStorage.getItem('memberId');
+  const [user, setUser] = useState(null); // ✅ 사용자 정보 상태
+  const memberId = sessionStorage.getItem('memberId'); // ✅ 로그인된 사용자 ID
 
   useEffect(() => {
-    // ✅ 실제 API 연결 시 사용
-    // getUserInfo(memberId)
-    //   .then(res => setUser(res.data))
-    //   .catch(err => console.error('회원 정보 불러오기 실패:', err));
+    // ✅ 의존성 배열: memberId가 바뀔 때마다 실행됨
+    const fetchUserInfo = async () => {
+      try {
+        // ✅ 실제 API 호출 (비동기 + await)
+        const res = await getUserInfo(memberId);
+        setUser(res.data); // 응답 결과를 상태로 설정
+      } catch (err) {
+        // ✅ 에러 발생 시 콘솔 출력 (추후 사용자 메시지로 확장 가능)
+        console.error('회원 정보 불러오기 실패:', err);
+      }
+    };
 
-    // ✅ 현재는 dummy 사용
-    setUser({
-      id: 'hong123',
-      password: '1234',
-      name: '홍길동',
-      nickname: '코딩왕',
-      phone: '010-1234-5678',
-      status: '훈련생',
-      point: 8750,
-      level: 12,
-      exp: 8000,
-      badge: 5,
-    });
+    fetchUserInfo(); // ✅ 컴포넌트가 처음 렌더링될 때 실행
   }, [memberId]);
 
-  if (!user) return <div>로딩 중...</div>;
+  if (!user) return <div>로딩 중...</div>; // ✅ 아직 데이터 없으면 로딩 표시
 
   return (
     <div>
@@ -110,6 +104,7 @@ const MyPageMain = () => {
             </div>
           </section>
         </main>
+
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
