@@ -3,20 +3,14 @@ import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './ReviewHistory.css';
-// ✅ axios 연동 주석
-// import { getSubmissionResult } from '../../api/challenge';
+// ✅ axios 연동
+import { getSubmissionResult } from '../../api/challenge';
 
 const ReviewHistory = () => {
   const [reviewList, setReviewList] = useState([]);
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getSubmissionResult(memberId)
-    //   .then(res => setReviewList(res.data))
-    //   .catch(err => console.error('리뷰 히스토리 불러오기 실패:', err));
-
-    // ✅ 현재는 dummy 사용
     setReviewList([
       {
         date: '6/7',
@@ -31,6 +25,15 @@ const ReviewHistory = () => {
         review: 'DOM 구조 이슈 재확인',
       },
     ]);
+    const fetchReview = async () => {
+      try {
+        const res = await getSubmissionResult(memberId);
+        setReviewList(res.data);
+      } catch (err) {
+        console.error('리뷰 히스토리 실패:', err);
+      }
+    };
+    fetchReview();
   }, [memberId]);
 
   return (
@@ -41,7 +44,12 @@ const ReviewHistory = () => {
         <main className="main">
           <section className="review-section" data-aos="fade-up">
             <div className="page-header">
-              <h1 className="page-title">CHALLENGE REVIEW</h1>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+              >
+                CHALLENGE REVIEW
+              </h1>
             </div>
 
             <div className="review-box">

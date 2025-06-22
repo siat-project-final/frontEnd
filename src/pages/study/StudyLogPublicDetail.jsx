@@ -4,19 +4,13 @@ import Sidebar from '../../components/common/Sidebar';
 import { useParams } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 // ✅ axios 연동 주석 처리
-// import { getPublicStudyLogDetail } from '../../api/studyLog';
+import { getPublicStudyLogDetail } from '../../api/studyLog';
 
 const StudyLogPublicDetail = () => {
   const { id } = useParams();
   const [log, setLog] = useState(null);
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getPublicStudyLogDetail(id)
-    //   .then(res => setLog(res.data))
-    //   .catch(err => console.error('공유 학습일지 상세 조회 실패:', err));
-
-    // ✅ 현재는 dummy 데이터 사용
     setLog({
       id: id,
       title: 'AI 요약',
@@ -33,6 +27,15 @@ const StudyLogPublicDetail = () => {
         },
       ],
     });
+    const fetchDetail = async () => {
+      try {
+        const res = await getPublicStudyLogDetail(id);
+        setLog(res.data);
+      } catch (err) {
+        console.error('공유 학습일지 상세 조회 실패:', err);
+      }
+    };
+    fetchDetail();
   }, [id]);
 
   if (!log) return <div>로딩 중...</div>;
@@ -45,7 +48,12 @@ const StudyLogPublicDetail = () => {
 
         <main className="main" style={{ flex: 1 }}>
           <div className="container py-5">
-            <h1 className="h4 fw-bold mb-4">공유 학습일지 상세</h1>
+            <h1
+              className="h3 fw-bold mb-0"
+              style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+            >
+              공유 학습일지 상세
+            </h1>
 
             <div className="mb-3">
               <div className="d-flex justify-content-between align-items-center mb-2">

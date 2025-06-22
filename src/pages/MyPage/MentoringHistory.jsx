@@ -3,24 +3,27 @@ import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './MentoringHistory.css';
-// ✅ axios 연동 (주석 처리)
-// import { getMentoringHistory } from '../../api/user';
+// ✅ axios 연동
+import { getMentoringHistory } from '../../api/user';
 
 const MentoringHistory = () => {
   const [mentoringList, setMentoringList] = useState([]);
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getMentoringHistory(memberId)
-    //   .then(res => setMentoringList(res.data))
-    //   .catch(err => console.error('멘토링 히스토리 불러오기 실패:', err));
-
-    // ✅ 현재는 dummy 데이터 사용
-    setMentoringList([
-      { date: '6/6 (금)', mentorName: '홍길동', topic: '진로 상담' },
-      { date: '6/5 (목)', mentorName: '이수연', topic: 'AI 프로젝트' },
-    ]);
+    const fetchMentoring = async () => {
+      setMentoringList([
+        { date: '6/6 (금)', mentorName: '홍길동', topic: '진로 상담' },
+        { date: '6/5 (목)', mentorName: '이수연', topic: 'AI 프로젝트' },
+      ]);
+      try {
+        const res = await getMentoringHistory(memberId);
+        setMentoringList(res.data);
+      } catch (err) {
+        console.error('멘토링 히스토리 실패:', err);
+      }
+    };
+    fetchMentoring();
   }, [memberId]);
 
   return (
@@ -31,14 +34,8 @@ const MentoringHistory = () => {
         <main className="main">
           <section className="mentoring-section" data-aos="fade-up">
             <h1
-              className="page-title"
-              style={{
-                backgroundColor: '#84cc16',
-                color: '#fff',
-                width: '100%',
-                padding: '0.75rem 1rem',
-                borderRadius: '0.5rem',
-              }}
+              className="h3 fw-bold mb-0"
+              style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
             >
               MENTORING HISTORY
             </h1>
