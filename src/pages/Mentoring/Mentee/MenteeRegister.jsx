@@ -10,7 +10,7 @@ const MenteeRegister = () => {
   // eslint-disable-next-line no-unused-vars
   const location = useLocation();
   const [reservations, setReservations] = useState([]);
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
   console.log('✅ 현재 로그인된 memberId:', memberId);
 
   useEffect(() => {

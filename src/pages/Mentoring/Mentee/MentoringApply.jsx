@@ -26,7 +26,8 @@ const MentoringApply = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { mentor, selectedDate } = location.state || {};
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
+    console.log('✅ 현재 로그인된 memberId:', memberId);
 
   const handleCheck = (value) => {
     setSelected((prev) =>

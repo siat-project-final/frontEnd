@@ -1,16 +1,16 @@
 // JWT 토큰 저장
 export const setToken = (token) => {
-  sessionStorage.setItem('accessToken', token);
+  localStorage.setItem('accessToken', token);
 };
 
 // JWT 토큰 가져오기
 export const getToken = () => {
-  return sessionStorage.getItem('accessToken');
+  return localStorage.getItem('accessToken');
 };
 
 // JWT 토큰 삭제
 export const removeToken = () => {
-  sessionStorage.removeItem('accessToken');
+  localStorage.removeItem('accessToken');
 };
 
 // 인증 상태 확인
@@ -25,13 +25,13 @@ export const getAuthHeader = () => {
 };
 
 export const setRefreshToken = (token) => {
-  sessionStorage.setItem('refreshToken', token);
+  localStorage.setItem('refreshToken', token);
 };
 
 export const getRefreshToken = () => {
-  return sessionStorage.getItem('refreshToken');
+  return localStorage.getItem('refreshToken');
 };
 
 export const removeRefreshToken = () => {
-  sessionStorage.removeItem('refreshToken');
+  localStorage.removeItem('refreshToken');
 };

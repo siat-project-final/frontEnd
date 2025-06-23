@@ -6,8 +6,8 @@ export const signUp = (data) => {
 };
 
 /** 로그인 */
-export const signIn = ({ login_id, password }) => {
-  return axios.post('/auth/login', { login_id, password });
+export const signIn = ({ id, password }) => {
+  return axios.post('/auth/login', { id, password });
 };
 
 /** 로그아웃 */
