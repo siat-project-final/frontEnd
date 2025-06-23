@@ -50,7 +50,7 @@ const CalendarView = () => {
   const convertJsonToCalendarEvents = (jsonData) => {
     const events = [];
   
-    Object.values(jsonData).forEach(({ date, subjectList, studyDiaryList, mentoringList, todoList }) => {
+    Object.values(jsonData).forEach(({ date, subjectList, studyDiaryList, mentoringList }) => {
       subjectList.forEach((subject) => {
         events.push({
           title: `[과목] ${subject}`,
@@ -87,17 +87,6 @@ const CalendarView = () => {
         });
       });
 
-      todoList.forEach((todo) => {
-        events.push({
-          title: `[todo] ${todo.contents}`,
-          start: date,
-          end: date,
-          backgroundColor: '#D7BDE2',
-          borderColor: '#D7BDE2',     
-          textColor: '#000',
-          extendedProps: { type: 'TODO', ...todo }
-        });
-      });
     });
   
     return events;
