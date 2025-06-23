@@ -57,7 +57,12 @@ const StudyLogPublicDetail = () => {
 
             <div className="card mb-3 p-4">
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <input className="form-control w-50" value={log.title} disabled />
+                <input
+                  className="form-control w-50"
+                  value={log.title}
+                  disabled
+                  style={{ backgroundColor: 'white' }}
+                />
                 <div className="d-flex align-items-center">
                   <span className="me-2">작성자: {log.author}</span>
                   <button className="btn btn-outline-success">
@@ -66,10 +71,26 @@ const StudyLogPublicDetail = () => {
                 </div>
               </div>
               <div className="d-flex gap-3 mb-3">
-                <input className="form-control" value={log.date} disabled />
-                <input className="form-control" value={log.subject} disabled />
+                <input
+                  className="form-control"
+                  value={log.date}
+                  disabled
+                  style={{ backgroundColor: 'white' }}
+                />
+                <input
+                  className="form-control"
+                  value={log.subject}
+                  disabled
+                  style={{ backgroundColor: 'white' }}
+                />
               </div>
-              <textarea className="form-control mb-3" value={log.content} rows="6" disabled />
+              <textarea
+                className="form-control mb-3"
+                value={log.content}
+                rows="6"
+                disabled
+                style={{ backgroundColor: 'white' }}
+              />
             </div>
 
             <div className="mb-4">
