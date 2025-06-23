@@ -62,7 +62,7 @@ const WriteStudyLogPage = () => {
             >
               학습일지 작성
             </h1>
-            <div className="studylog-boxes">
+            <div className="studylog-boxes card p-4" data-aos="fade-up">
               <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
                   <div className="col-md-6">

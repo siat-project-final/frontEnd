@@ -60,7 +60,9 @@ const StudyLogPage = () => {
                 </div>
 
                 {studyLogs.map((log) => (
-                  <StudyLogCard key={log.id} log={log} />
+                  <div key={log.id} data-aos="fade-up">
+                    <StudyLogCard log={log} />
+                  </div>
                 ))}
               </div>
             </main>
