@@ -22,7 +22,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [kth] 250622 : 투두 리스트 조회 API 요청 함수
   const fetchTodoList = async () => {
-    console.log("fetch Todo ID:", id);
+    console.log("fetch Todo ID:");
     try {
       const res = await instance.get(`/todos?memberId=${memberId}&date=${dateToUse}`);
 
@@ -47,7 +47,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [kth] 250622 : 투두 추가 함수(추가 성공 후 조회)
   const handleAdd = async () => {
-    console.log("Insert Todo ID:", id);
+    console.log("Insert Todo ID:");
     if (!input.trim()) return;
 
     try {

@@ -8,55 +8,37 @@ import '../../../App.css';
 
 const ReviewSolve = () => {
   const location = useLocation();
-  const subjectId = location.state?.subjectId;
+  const subject = location.state?.subject;
   const [problem, setProblem] = useState(null);
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState(null);
 
-  useEffect(() => {
-    if (!subjectId) return;
+  const fetchData = async () => {
+    if (!subject) return;
 
-    // ✅ 실제 통신 시
-    // const memberId = sessionStorage.getItem('memberId');
-    // getReviewProblems(memberId, subjectId)
-    //   .then(res => {
-    //     setProblem(res.data);
-    //   })
-    //   .catch(err => console.error('문제 불러오기 실패:', err));
-
-    // ✅ dummy 문제
-    const dummyProblem = {
-      id: 1,
-      subjectId,
-      difficulty: 3,
-      type: 'text',
-      text: `다음 Java 코드의 출력 결과를 작성하세요:
-
-public class Main {
-    public static void main(String[] args) {
-        int a = 10;
-        int b = 5;
-        System.out.println(a + b);
+    const memberId = localStorage.getItem('memberId');
+    getReviewProblems(memberId, subject)
+      .then(res => {
+        setProblem(res.data);
+      })
+      .catch(err => {
+        console.error('문제 불러오기 실패:', err)
+        alert('문제를 불러오는 데 실패했습니다. 다시 시도해주세요.');
+      });
     }
-}
 
-예상 출력:
-`,
-      correctAnswer: '15',
-    };
-
-    setProblem(dummyProblem);
-  }, [subjectId]);
+  useEffect(() => {
+    fetchData();
+  }, [subject]);
 
   const handleSubmit = () => {
     if (!problem) return;
     const trimmed = answer.trim();
-    const isCorrect = trimmed === problem.correctAnswer;
-    setResult(isCorrect ? '정답입니다! 🎉' : `오답입니다. 😢 (정답: ${problem.correctAnswer})`);
+    const isCorrect = trimmed === problem.answer;
+    setResult(isCorrect ? '정답입니다! 🎉' : `오답입니다. 😢 (정답: ${problem.answer})`);
   };
 
   const handleRetry = () => {
-    // ✅ 새 문제 받아오기용 - 현재는 dummy 고정이라 새로고침
     window.location.reload();
   };
 
@@ -90,7 +72,7 @@ public class Main {
                       marginTop: '10px',
                     }}
                   >
-                    {problem.text}
+                    {problem.contents}
                   </pre>
 
                   <input

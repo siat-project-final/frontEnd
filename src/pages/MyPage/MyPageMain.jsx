@@ -5,32 +5,20 @@ import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import './MyPageMain.css';
 import Todo from '../../components/common/Todo';
+import { getUserInfo } from '../../api/user';
+
 // ✅ axios 함수 import (주석 처리)
 // import { getUserInfo } from '../../api/user';
 
 const MyPageMain = () => {
   const [user, setUser] = useState(null);
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
   useEffect(() => {
-    // ✅ 실제 API 연결 시 사용
-    // getUserInfo(memberId)
-    //   .then(res => setUser(res.data))
-    //   .catch(err => console.error('회원 정보 불러오기 실패:', err));
+    getUserInfo(memberId)
+      .then(res => setUser(res.data))
+      .catch(err => console.error('회원 정보 불러오기 실패:', err));
 
-    // ✅ 현재는 dummy 사용
-    setUser({
-      id: 'hong123',
-      password: '1234',
-      name: '홍길동',
-      nickname: '코딩왕',
-      phone: '010-1234-5678',
-      status: '훈련생',
-      point: 8750,
-      level: 12,
-      exp: 8000,
-      badge: 5,
-    });
   }, [memberId]);
 
   if (!user) return <div>로딩 중...</div>;
@@ -52,16 +40,16 @@ const MyPageMain = () => {
                 <div className="profile-stats">
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
-                    <p className="stat-value">{user.point.toLocaleString()}</p>
+                    <p className="stat-value">{user?.usablePoints?.toLocaleString()}</p>
                   </div>
                   <div className="stat-item">
                     <div className="level-info">
-                      <p className="level-value">{user.level}</p>
+                      <p className="level-value">{user.currentLevel}</p>
                       <p className="level-label">Level</p>
                       <div className="progress-bar">
                         <div
                           className="progress-fill"
-                          style={{ width: `${(user.exp / user.point) * 100}%` }}
+                          style={{ width: `${(user.totalXp / user.totalXp) * 100}%` }}
                         ></div>
                       </div>
                       <p className="xp-value">
@@ -89,7 +77,7 @@ const MyPageMain = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="name">NAME</label>
-                  <input id="name" type="text" defaultValue={user.name} />
+                  <input id="name" type="text" defaultValue={user.memberName} />
                 </div>
                 <div className="form-group">
                   <label htmlFor="nickname">NICKNAME</label>
@@ -97,11 +85,11 @@ const MyPageMain = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="phone">PHONE</label>
-                  <input id="phone" type="text" defaultValue={user.phone} />
+                  <input id="phone" type="text" defaultValue={user.phoneNumber} />
                 </div>
                 <div className="form-group">
                   <label htmlFor="status">STATUS (수정불가)</label>
-                  <input id="status" type="text" defaultValue={user.status} readOnly />
+                  <input id="status" type="text" defaultValue={user.role} readOnly />
                 </div>
                 <button className="submit-btn" type="submit">
                   수정하기
