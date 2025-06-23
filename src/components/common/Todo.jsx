@@ -22,6 +22,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [kth] 250622 : 투두 리스트 조회 API 요청 함수
   const fetchTodoList = async () => {
+    console.log("fetch Todo ID:", id);
     try {
       const res = await instance.get(`/todos?memberId=${memberId}&date=${dateToUse}`);
 
@@ -46,6 +47,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [kth] 250622 : 투두 추가 함수(추가 성공 후 조회)
   const handleAdd = async () => {
+    console.log("Insert Todo ID:", id);
     if (!input.trim()) return;
 
     try {
@@ -64,24 +66,33 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  const toggleTodo = (id) => {
-    const currentTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
-    const updatedTodos = currentTodos.map(todo =>
-      todo.id === id ? { ...todo, status: !todo.status } : todo
-    );
+  const toggleTodo = async (id) => {
+    console.log("Toggle Todo ID:", id);
+    
+    try {
+      await instance.put(`/todos/${id}/toggle`);
 
-    localStorage.setItem('todo-list', JSON.stringify(updatedTodos));
-    setTodos(updatedTodos.filter(todo => todo.date === dateToUse));
-    onTodoChange?.();
+      onTodoChange?.();
+      fetchTodoList(); // ✅ 다시 조회하여 최신 상태 반영
+
+    } catch (err) {
+      console.error('할 일 체크 토글 실패:', err); // ✅ 메시지 수정
+    }
   };
 
-  const deleteTodo = (id) => {
-    const currentTodos = JSON.parse(localStorage.getItem('todo-list')) || [];
-    const updatedTodos = currentTodos.filter(todo => todo.id !== id);
+  const deleteTodo = async (id) => {
+    console.log("Delete Todo ID:", id);
+    
+    try {
+      await instance.delete(`/todos/${id}`);
 
-    localStorage.setItem('todo-list', JSON.stringify(updatedTodos));
-    setTodos(updatedTodos.filter(todo => todo.date === dateToUse));
-    onTodoChange?.();
+      onTodoChange?.();
+      fetchTodoList(); // ✅ 다시 조회하여 최신 상태 반영
+
+    } catch (err) {
+      console.error('할 일 체크 토글 실패:', err); // ✅ 메시지 수정
+    }
+    
   };
 
   const handleKeyDown = (e) => {

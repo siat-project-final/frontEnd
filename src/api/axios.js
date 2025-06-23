@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(config => {
-  const token = sessionStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -25,7 +25,7 @@ instance.interceptors.response.use(
 
     if (err.response && err.response.status === 401) {
       alert('세션이 만료되었습니다. 다시 로그인 해주세요.');
-      sessionStorage.removeItem('accessToken');
+      localStorage.removeItem('accessToken');
       window.location.href = '/login';
     }
     return Promise.reject(err);
