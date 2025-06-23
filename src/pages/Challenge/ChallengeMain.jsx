@@ -13,38 +13,25 @@ const ChallengeMain = () => {
   const [todayChallenge, setTodayChallenge] = useState(null);
   const [ranking, setRanking] = useState([]);
 
-  // ✅ Dummy data
-  const dummyChallenge = {
-    title: 'AI 개론 - 분류 모델',
-    description: '다음 중 지도 학습에 해당하는 것은?',
-  };
-
-  const dummyRanking = [
-    { rank: 1, name: '이수연', score: 98 },
-    { rank: 2, name: '최형규', score: 95 },
-    { rank: 3, name: '박지훈', score: 92 },
-  ];
-
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // ✅ 실제 API 연결 시 사용
-        // const res1 = await getTodayChallenge(memberId);
-        // const res2 = await getDailyRanking(new Date().toISOString().slice(0, 10));
+      const today = new Date().toISOString().split('T')[0];
 
-        // setTodayChallenge(res1.data);
-        // setRanking(res2.data);
+      getTodayChallenge()
+        .then(res => {
+          setTodayChallenge(res.data[0]);
+        })
+        .catch(err => console.error('챌린지 과목 데이터 불러오기 실패:', err));
 
-        // ✅ 현재는 dummy 사용
-        setTodayChallenge(dummyChallenge);
-        setRanking(dummyRanking);
-      } catch (error) {
-        console.error('챌린지 메인 데이터 불러오기 실패:', error);
-      }
+      getDailyRanking(today)
+        .then(res => {
+          setRanking(res.data);;
+        })
+        .catch(err => console.error('랭킹 불러오기 실패:', err));
     };
 
-    if (memberId) fetchData();
-  }, [memberId]);
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -113,11 +100,13 @@ const ChallengeMain = () => {
                     <h5 className="mb-3">오늘의 랭킹 TOP 3</h5>
                     <ul className="list-group list-group-flush">
                       {ranking.map((user, idx) => (
-                        <li key={idx} className="list-group-item d-flex justify-content-between">
-                          <span>
-                            {user.rank}위. {user.name}
-                          </span>
-                          <span>{user.score}점</span>
+                        <li
+                          key={idx}
+                          className="list-group-item d-flex justify-content-between"
+                        >
+                          <span>{user.rank}위. {user.memberName}</span>
+                          <span>{user.totalPoints}점</span>
+
                         </li>
                       ))}
                     </ul>
