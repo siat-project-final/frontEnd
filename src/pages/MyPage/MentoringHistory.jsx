@@ -8,21 +8,17 @@ import { getMentoringHistory } from '../../api/user';
 
 const MentoringHistory = () => {
   const [mentoringList, setMentoringList] = useState([]);
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
+
+    const fetchMentoring = async () => {
+      getMentoringHistory(memberId)
+      .then(res => {
+          setMentoringList(res.data);
+        })
+        .catch(err => console.error('멘토링 히스토리 조회 실패:', err));;
+    };
 
   useEffect(() => {
-    const fetchMentoring = async () => {
-      setMentoringList([
-        { date: '6/6 (금)', mentorName: '홍길동', topic: '진로 상담' },
-        { date: '6/5 (목)', mentorName: '이수연', topic: 'AI 프로젝트' },
-      ]);
-      try {
-        const res = await getMentoringHistory(memberId);
-        setMentoringList(res.data);
-      } catch (err) {
-        console.error('멘토링 히스토리 실패:', err);
-      }
-    };
     fetchMentoring();
   }, [memberId]);
 
@@ -52,7 +48,7 @@ const MentoringHistory = () => {
                       <label>멘토 성함</label>
                       <input type="text" value={item.mentorName} readOnly />
                       <label>대화 주제</label>
-                      <input type="text" value={item.topic} readOnly />
+                      <input type="text" value={item.subject} readOnly />
                     </div>
                   </div>
                 </div>

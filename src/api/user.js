@@ -7,7 +7,7 @@ export const getUserInfo = (memberId) => {
 
 /** 회원 정보 수정 */
 export const updateUserInfo = (memberId, data) => {
-  return axios.put(`/users/${memberId}`, data);
+  return axios.put(`/myPage/members/${memberId}`, data);
 };
 
 /** 비밀번호 변경 */
@@ -20,7 +20,7 @@ export const changePassword = (memberId, currentPassword, newPassword) => {
 
 /** 통계 정보 조회 */
 export const getUserStats = (memberId) => {
-  return axios.get(`/users/${memberId}/stats`);
+  return axios.get(`/myPage/members/${memberId}/stats`);
 };
 
 /** 프로필 이미지 업로드 */
@@ -37,7 +37,7 @@ export const uploadProfileImage = (memberId, file) => {
 
 /** 멘토링 히스토리 조회 */
 export const getMentoringHistory = (memberId) => {
-  return axios.get(`/mentoring/${memberId}/history`);
+  return axios.get(`/myPage/history/mentoring/${memberId}`);
 };
 
 // 요청 예시

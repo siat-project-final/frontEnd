@@ -16,9 +16,7 @@ export const submitChallenge = (problemId, memberId, submitAnswer) => {
 
 /** 챌린지 히스토리 전체 조회 */
 export const getChallengeHistory = (memberId) => {
-  return axios.get('/challenges/history', {
-    params: { memberId },
-  });
+  return axios.get(`/myPage/history/challenge/${memberId}`);
 };
 
 /** 챌린지 히스토리 상세 조회 */

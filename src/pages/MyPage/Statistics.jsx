@@ -8,23 +8,17 @@ import { getUserStats } from '../../api/user';
 
 const Statistics = () => {
   const [stats, setStats] = useState(null);
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
+
+const fetchStats = async () => {
+      getUserStats(memberId)
+      .then(res => {
+          setStats(res.data);
+        })
+        .catch(err => console.error('통계 조회 실패:', err));;
+    };
 
   useEffect(() => {
-    setStats({
-      learningJournals: 120,
-      challengesCompleted: 10,
-      mentoringSessions: 5,
-      totalPoints: 5000,
-    });
-    const fetchStats = async () => {
-      try {
-        const res = await getUserStats(memberId);
-        setStats(res.data);
-      } catch (err) {
-        console.error('통계 정보 실패:', err);
-      }
-    };
     fetchStats();
   }, [memberId]);
 
@@ -49,25 +43,25 @@ const Statistics = () => {
             <div className="stats-grid">
               <div className="stat-card">
                 <div className="stats-icon">📝</div>
-                <p className="stats-value">{stats.learningJournals}</p>
+                <p className="stats-value">{stats.studyDiaryCount}</p>
                 <p className="stats-label">learning journals created</p>
               </div>
 
               <div className="stat-card">
                 <div className="stats-icon">🏆</div>
-                <p className="stats-value">{stats.challengesCompleted}</p>
+                <p className="stats-value">{stats.challengeCount}</p>
                 <p className="stats-label">challenges completed</p>
               </div>
 
               <div className="stat-card">
                 <div className="stats-icon">💬</div>
-                <p className="stats-value">{stats.mentoringSessions}</p>
+                <p className="stats-value">{stats.mentoringCount}</p>
                 <p className="stats-label"> Mentoring total</p>
               </div>
 
               <div className="stat-card">
                 <div className="stats-icon">⭐</div>
-                <p className="stats-value">{stats.totalPoints.toLocaleString()}</p>
+                <p className="stats-value">{stats?.totalXp?.toLocaleString()}</p>
                 <p className="stats-label">total points earned</p>
               </div>
             </div>

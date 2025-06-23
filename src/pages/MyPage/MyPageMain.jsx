@@ -6,7 +6,8 @@ import Sidebar from '../../components/common/Sidebar';
 import './MyPageMain.css';
 import Todo from '../../components/common/Todo';
 
-import { getUserInfo } from '../../api/user';
+import { getUserInfo, updateUserInfo } from '../../api/user';
+
 
 // ✅ axios 함수 import (주석 처리)
 // import { getUserInfo } from '../../api/user';
@@ -15,14 +16,41 @@ const MyPageMain = () => {
   const [user, setUser] = useState(null);
   const memberId = localStorage.getItem('memberId');
 
-  useEffect(() => {
-    getUserInfo(memberId)
+  const fetchData = async () => {
+      getUserInfo(memberId)
       .then(res => setUser(res.data))
       .catch(err => console.error('회원 정보 불러오기 실패:', err));
 
+  }
+
+  useEffect(() => {
+    fetchData();
   }, [memberId]);
 
-  if (!user) return <div>로딩 중...</div>; // ✅ 아직 데이터 없으면 로딩 표시
+  const handleSubmit = async (e) => {
+    console.log('e.target', e.target);
+    
+    e.preventDefault(); // 기본 제출 방지
+
+    const updatedUser = {
+      id: e.target.id.value,
+      password: e.target.password.value,
+      memberName: e.target.name.value,
+      nickname: e.target.nickname.value,
+      phoneNumber: e.target.phone.value,
+      email: e.target.email.value
+      // role/status는 수정 불가이므로 제외
+    };
+    
+    await updateUserInfo(memberId, updatedUser)
+        .then(res => {
+          alert('회원 정보가 수정되었습니다.');
+          fetchData();
+        })
+        .catch(err => console.error('회원 정보 수정 실패:', err));
+  };
+
+  if (!user) return <div>로딩 중...</div>;
 
   return (
     <div>
@@ -42,7 +70,6 @@ const MyPageMain = () => {
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
                     <p className="stat-value">{user?.usablePoints?.toLocaleString()}</p>
-
                   </div>
                   <div className="stat-item">
                     <div className="level-info">
@@ -68,10 +95,10 @@ const MyPageMain = () => {
                 </div>
               </div>
 
-              <form className="profile-form">
+              <form className="profile-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="id">ID</label>
-                  <input id="id" type="text" defaultValue={user.id} />
+                  <input id="id" type="text" defaultValue={user.id} readOnly/>
                 </div>
                 <div className="form-group">
                   <label htmlFor="password">PASSWORD</label>
@@ -104,7 +131,6 @@ const MyPageMain = () => {
             </div>
           </section>
         </main>
-
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />

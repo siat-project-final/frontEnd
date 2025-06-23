@@ -8,23 +8,19 @@ import './ChallengeHistory.css';
 import { getChallengeHistory } from '../../api/challenge';
 
 const ChallengeHistory = () => {
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
   const [historyList, setHistoryList] = useState([]);
 
-  useEffect(() => {
-    setHistoryList([
-      { date: '6/7', rank: 3, subject: 'JAVA', score: '10 / 15' },
-      { date: '6/3', rank: 3, subject: 'REACT', score: '10 / 15' },
-      { date: '6/3', rank: 5, subject: 'AWS', score: '10 / 15' },
-    ]);
     const fetchHistory = async () => {
-      try {
-        const res = await getChallengeHistory(memberId);
-        setHistoryList(res.data);
-      } catch (err) {
-        console.error('챌린지 히스토리 조회 실패:', err);
-      }
+      getChallengeHistory(memberId)
+      .then(res => {
+          setHistoryList(res.data);
+        })
+        .catch(err => console.error('챌린지 히스토리 조회 실패:', err));;
     };
+
+
+  useEffect(() => {
     fetchHistory();
   }, [memberId]);
 
@@ -64,7 +60,7 @@ const ChallengeHistory = () => {
                     </div>
                     <div className="info-item">
                       <p className="info-label">TOTAL SCORE</p>
-                      <p className="info-value">{item.score}</p>
+                      <p className="info-value">{item.totalPoints}</p>
                     </div>
                   </div>
                   <Link to="/mypage/review-history" className="detail-btn">
