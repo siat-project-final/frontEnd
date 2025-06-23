@@ -21,13 +21,19 @@ const ChallengeMain = () => {
         .then(res => {
           setTodayChallenge(res.data[0]);
         })
-        .catch(err => console.error('챌린지 과목 데이터 불러오기 실패:', err));
+        .catch(err => {
+          console.error('챌린지 과목 데이터 불러오기 실패:', err)
+          alert('챌린지 과목 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+        });
 
       getDailyRanking(today)
         .then(res => {
           setRanking(res.data);;
         })
-        .catch(err => console.error('랭킹 불러오기 실패:', err));
+        .catch(err => {
+          console.error('랭킹 불러오기 실패:', err)
+          alert('랭킹 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+        });
     };
 
     fetchData();

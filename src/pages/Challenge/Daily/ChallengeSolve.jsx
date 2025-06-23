@@ -14,57 +14,25 @@ const ChallengeSolve = () => {
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ✅ 더미 데이터
-  const dummyProblems = [
-    {
-      id: 1,
-      difficulty: 1,
-      type: 'text',
-      text: '문제 1: 1 + 1은?',
-      correctAnswer: '2',
-    },
-    {
-      id: 2,
-      difficulty: 2,
-      type: 'text',
-      text: '문제 2: 3 + 4는?',
-      correctAnswer: '7',
-    },
-    {
-      id: 3,
-      difficulty: 2,
-      type: 'multiple',
-      text: '문제 3: 다음 중 프론트엔드 프레임워크가 아닌 것은?',
-      options: ['React', 'Vue', 'Spring', 'Svelte'],
-      correctAnswer: 'Spring',
-    },
-    {
-      id: 4,
-      difficulty: 3,
-      type: 'multiple',
-      text: '문제 4: 자바스크립트의 배열 메서드가 아닌 것은?',
-      options: ['map', 'filter', 'reduce', 'insert'],
-      correctAnswer: 'insert',
-    },
-    {
-      id: 5,
-      difficulty: 1,
-      type: 'text',
-      text: '문제 5: 10 / 2는?',
-      correctAnswer: '5',
-    },
-  ];
-
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-
-    // 실제 API 연결 시
-    // getTodayChallenge(memberId)
-    //   .then(res => setProblems(res.data))
-    //   .catch(err => console.error('문제 불러오기 실패:', err));
-
-    setProblems(dummyProblems);
-  }, [memberId]);
+    getTodayChallenge()
+      .then(res => {
+        const parsed = res.data.map(p => {
+          let options = [];
+          try {
+            const once = typeof p.choices === 'string' ? JSON.parse(p.choices) : p.choices;
+            options = typeof once === 'string' ? JSON.parse(once) : once;
+          } catch (e) {
+            console.error(`선택지 파싱 실패 (problemId=${p.problemId || p.id}):`, e);
+            alert('문제의 선택지를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+          }
+          return { ...p, options, type: 'choice' };
+        });
+  
+        setProblems(parsed);
+      })
+      .catch(err => console.error('문제 불러오기 실패:', err));
+  }, []);
 
   const handleChange = (problemId, value) => {
     setAnswers(prev => ({ ...prev, [problemId]: value }));
@@ -132,7 +100,7 @@ const ChallengeSolve = () => {
                       fontSize: '15px',
                     }}
                   >
-                    {currentProblem.text}
+                    {currentProblem.title}
                   </pre>
 
                   {currentProblem.type === 'text' ? (
