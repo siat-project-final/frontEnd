@@ -5,6 +5,7 @@ import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import './MyPageMain.css';
 import Todo from '../../components/common/Todo';
+
 import { getUserInfo } from '../../api/user';
 
 // ✅ axios 함수 import (주석 처리)
@@ -21,7 +22,7 @@ const MyPageMain = () => {
 
   }, [memberId]);
 
-  if (!user) return <div>로딩 중...</div>;
+  if (!user) return <div>로딩 중...</div>; // ✅ 아직 데이터 없으면 로딩 표시
 
   return (
     <div>
@@ -41,6 +42,7 @@ const MyPageMain = () => {
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
                     <p className="stat-value">{user?.usablePoints?.toLocaleString()}</p>
+
                   </div>
                   <div className="stat-item">
                     <div className="level-info">
@@ -88,6 +90,10 @@ const MyPageMain = () => {
                   <input id="phone" type="text" defaultValue={user.phoneNumber} />
                 </div>
                 <div className="form-group">
+                  <label htmlFor="email">EMAIL</label>
+                  <input id="email" type="text" defaultValue={user.email} />
+                </div>
+                <div className="form-group">
                   <label htmlFor="status">STATUS (수정불가)</label>
                   <input id="status" type="text" defaultValue={user.role} readOnly />
                 </div>
@@ -98,6 +104,7 @@ const MyPageMain = () => {
             </div>
           </section>
         </main>
+
         {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />

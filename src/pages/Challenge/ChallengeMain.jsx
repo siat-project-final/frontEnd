@@ -54,8 +54,12 @@ const ChallengeMain = () => {
                     <h4 className="mb-3">일일 챌린지</h4>
                     {todayChallenge ? (
                       <>
-                        <p className="mb-2"><strong>{todayChallenge.subject}</strong></p>
-                        <p className="text-muted" style={{ fontSize: '14px' }}>{todayChallenge.description}</p>
+                        <p className="mb-2">
+                          <strong>{todayChallenge.title}</strong>
+                        </p>
+                        <p className="text-muted" style={{ fontSize: '14px' }}>
+                          {todayChallenge.description}
+                        </p>
                         <button
                           className="btn btn-dark mb-2"
                           onClick={() => navigate('/challenge/daily')}
@@ -79,11 +83,10 @@ const ChallengeMain = () => {
                 <div className="col-lg-5">
                   <div className="card text-center p-4 shadow-sm">
                     <h4 className="mb-3">종합 챌린지</h4>
-                    <p className="text-muted">복습하고 싶은 과목의 문제를 선택하여 다시 풀어보세요.</p>
-                    <button
-                      className="btn btn-dark"
-                      onClick={() => navigate('/challenge/review')}
-                    >
+                    <p className="text-muted">
+                      복습하고 싶은 과목의 문제를 선택하여 다시 풀어보세요.
+                    </p>
+                    <button className="btn btn-dark" onClick={() => navigate('/challenge/review')}>
                       복습하러 가기
                     </button>
                   </div>
@@ -103,13 +106,13 @@ const ChallengeMain = () => {
                         >
                           <span>{user.rank}위. {user.memberName}</span>
                           <span>{user.totalPoints}점</span>
+
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
               </div>
-
             </div>
           </section>
         </main>

@@ -10,8 +10,17 @@ function Login() {
   const [password, setPassword] = useState('');
 
   const loginHandler = async (event) => {
-   event.preventDefault();
+    event.preventDefault();
 
+    if (id === 'mock' && password === '1234') {
+      localStorage.setItem('accessToken', 'mock-token');
+      localStorage.setItem('refreshToken', 'mock-refresh');
+      localStorage.setItem('memberId', 'mock-id');
+
+      alert('MOCK 로그인 성공');
+      navigate('/home', { state: { fromLogin: true } });
+      return;
+    }
     try {
       const response = await signIn({ id, password });
       if (response.status === 200) {
@@ -30,7 +39,7 @@ function Login() {
     } catch (error) {
       alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
     }
-}
+  };
 
   return (
     <div className="login-container">
