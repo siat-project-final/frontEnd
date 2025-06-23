@@ -55,11 +55,9 @@ const ChallengeMain = () => {
                     {todayChallenge ? (
                       <>
                         <p className="mb-2">
-                          <strong>{todayChallenge.title}</strong>
+                          <strong>{todayChallenge.subject}</strong>
                         </p>
-                        <p className="text-muted" style={{ fontSize: '14px' }}>
-                          {todayChallenge.description}
-                        </p>
+                        <br />
                         <button
                           className="btn btn-dark mb-2"
                           onClick={() => navigate('/challenge/daily')}
