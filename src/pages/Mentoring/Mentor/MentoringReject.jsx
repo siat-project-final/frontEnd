@@ -3,7 +3,7 @@ import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
 import Footer from '../../../components/common/Footer';
 import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
-import Todo from '../../../components/common/Todo'; 
+import Todo from '../../../components/common/Todo';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const rejectReasons = [
@@ -25,7 +25,7 @@ const MentoringReject = () => {
 
   useEffect(() => {
     const role = sessionStorage.getItem('userRole');
-    if (role !== 'mentor') {
+    if (role !== 'MENTOR') {
       alert('멘토만 접근 가능한 페이지입니다.');
       navigate('/');
     }
@@ -63,10 +63,10 @@ const MentoringReject = () => {
       // await rejectMentoring({ mentorId: ..., reason: reasonText });
 
       alert('예약이 거절되었습니다.');
-      navigate('/mentoring/mentor/register', { 
-        state: { 
-          rejectedReservationId: location.state?.reservationId 
-        } 
+      navigate('/mentoring/mentor/register', {
+        state: {
+          rejectedReservationId: location.state?.reservationId
+        }
       });
     } catch (err) {
       console.error('예약 거절 중 오류:', err);

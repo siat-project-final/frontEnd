@@ -49,27 +49,41 @@ const MentorRegisterCard = ({
     setShowCompleteModal(true);
   };
 
-  const handleCancelClick = () => {
-    navigate('/mentoring/cancel', { 
-      state: { 
-        reservationId: id,
-        memberName: memberName,
-        date: date,
-        status: status
-      } 
-    });
-  };
+  // const handleCancelClick = () => {
+  //   navigate('/mentoring/cancel', {
+  //     state: {
+  //       reservationId: id,
+  //       memberName: memberName,
+  //       date: date,
+  //       status: status
+  //     }
+  //   });
+  // };
 
-  const handleRejectClick = () => {
-    navigate('/mentoring/mentor/reject', { 
-      state: { 
-        reservationId: id,
-        memberName: memberName,
-        date: date,
-        status: status
-      } 
-    });
-  };
+    const handleCancelClick = () => {
+        navigate('/mentoring/cancel', {
+            state: {
+                reservationId: id,
+                memberName,
+                date,
+                status,
+                source: 'mentor' // ✅ 누가 취소했는지
+            }
+        });
+    };
+
+
+    const handleRejectClick = () => {
+      onReject(id); // 예약 거절 후 카드 삭제
+      navigate('/mentoring/mentor/reject', {
+          state: {
+              reservationId: id,
+              memberName: memberName,
+              date: date,
+              status: status
+            }
+        });
+    };
 
   return (
     <>
