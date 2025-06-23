@@ -65,13 +65,13 @@ const ChallengeMain = () => {
                 <div className="col-lg-5">
                   <div className="card text-center p-4 shadow-sm">
                     <h4 className="mb-3">일일 챌린지</h4>
-                    {dummyChallenge ? (
+                    {todayChallenge ? (
                       <>
                         <p className="mb-2">
-                          <strong>{dummyChallenge.title}</strong>
+                          <strong>{todayChallenge.title}</strong>
                         </p>
                         <p className="text-muted" style={{ fontSize: '14px' }}>
-                          {dummyChallenge.description}
+                          {todayChallenge.description}
                         </p>
                         <button
                           className="btn btn-dark mb-2"
