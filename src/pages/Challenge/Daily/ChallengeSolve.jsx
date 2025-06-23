@@ -3,7 +3,7 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { getTodayChallenge, submitChallenge } from '../../../api/challenge'; // ✅ axios 기반 함수
+import { getTodayChallenge, submitChallenge } from '../../../api/challenge';
 import '../../../App.css';
 
 const ChallengeSolve = () => {
@@ -12,68 +12,96 @@ const ChallengeSolve = () => {
 
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ✅ 더미 문제
-  const dummyProblem = {
-    id: 1,
-    difficulty: 2,
-    type: 'text',
-    text: `문제: 사칙연산 계산기 만들기
-
-두 개의 정수와 연산자(+, -, *, /)를 입력받아 계산 결과를 출력하는 프로그램을 작성하세요.
-
-요구사항:
-1. 사용자로부터 첫 번째 숫자, 연산자, 두 번째 숫자를 입력받습니다.
-2. 연산자에 따라 계산을 수행합니다.
-3. 나눗셈의 경우 0으로 나누면 예외 처리합니다.
-
-입력 예시:
-10 + 5 → 출력: 15
-`,
-    correctAnswer: '정답',
-  };
+  // ✅ 더미 데이터
+  const dummyProblems = [
+    {
+      id: 1,
+      difficulty: 1,
+      type: 'text',
+      text: '문제 1: 1 + 1은?',
+      correctAnswer: '2',
+    },
+    {
+      id: 2,
+      difficulty: 2,
+      type: 'text',
+      text: '문제 2: 3 + 4는?',
+      correctAnswer: '7',
+    },
+    {
+      id: 3,
+      difficulty: 2,
+      type: 'multiple',
+      text: '문제 3: 다음 중 프론트엔드 프레임워크가 아닌 것은?',
+      options: ['React', 'Vue', 'Spring', 'Svelte'],
+      correctAnswer: 'Spring',
+    },
+    {
+      id: 4,
+      difficulty: 3,
+      type: 'multiple',
+      text: '문제 4: 자바스크립트의 배열 메서드가 아닌 것은?',
+      options: ['map', 'filter', 'reduce', 'insert'],
+      correctAnswer: 'insert',
+    },
+    {
+      id: 5,
+      difficulty: 1,
+      type: 'text',
+      text: '문제 5: 10 / 2는?',
+      correctAnswer: '5',
+    },
+  ];
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
-    // ✅ 실제 API 호출
+    // 실제 API 연결 시
     // getTodayChallenge(memberId)
-    //   .then(res => {
-    //     setProblems(res.data);
-    //   })
+    //   .then(res => setProblems(res.data))
     //   .catch(err => console.error('문제 불러오기 실패:', err));
 
-    // ✅ 더미로 세팅
-    setProblems([dummyProblem]);
+    setProblems(dummyProblems);
   }, [memberId]);
 
   const handleChange = (problemId, value) => {
     setAnswers(prev => ({ ...prev, [problemId]: value }));
   };
 
+  const handleNext = () => {
+    if (currentIndex < problems.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  };
+
   const handleSubmit = () => {
     const submissionData = problems.map(p => ({
       problemId: p.id,
       submitAnswer: answers[p.id] || '',
-      memberId: memberId,
+      memberId,
     }));
 
-    // ✅ 실제 API 연결 시
-    // submissionData.forEach(data => {
-    //   submitChallenge(data.problemId, data.memberId, data.submitAnswer)
-    //     .then(() => {
-    //       // 성공시
-    //       navigate('/challenge/daily/result');
-    //     })
-    //     .catch(err => {
-    //       console.error('제출 실패:', err);
-    //       alert('제출에 실패했습니다.');
-    //     });
-    // });
+    // 실제 API 호출
+    // Promise.all(
+    //   submissionData.map(data =>
+    //     submitChallenge(data.problemId, data.memberId, data.submitAnswer)
+    //   )
+    // )
+    //   .then(() => {
+    //     navigate('/challenge/daily/result');
+    //   })
+    //   .catch(err => {
+    //     console.error('제출 실패:', err);
+    //     alert('제출에 실패했습니다.');
+    //   });
 
-    console.log('제출된 데이터 (dummy):', submissionData);
+    console.log('제출 데이터:', submissionData);
     navigate('/challenge/daily/result');
   };
+
+  const currentProblem = problems[currentIndex];
 
   return (
     <>
@@ -89,10 +117,10 @@ const ChallengeSolve = () => {
 
           <section className="section">
             <div className="container" style={{ padding: '40px 20px' }}>
-              {problems.map((problem, index) => (
-                <div key={problem.id} className="mb-4">
+              {currentProblem && (
+                <div className="mb-4">
                   <h5 className="mb-2">
-                    Q{index + 1}. (난이도: {problem.difficulty})
+                    Q{currentIndex + 1}. (난이도: {currentProblem.difficulty})
                   </h5>
                   <pre
                     style={{
@@ -104,20 +132,60 @@ const ChallengeSolve = () => {
                       fontSize: '15px',
                     }}
                   >
-                    {problem.text}
+                    {currentProblem.text}
                   </pre>
-                  <input
-                    type="text"
-                    className="form-control mt-2"
-                    placeholder="정답을 입력하세요"
-                    onChange={(e) => handleChange(problem.id, e.target.value)}
-                  />
+
+                  {currentProblem.type === 'text' ? (
+                    <input
+                      type="text"
+                      className="form-control mt-2"
+                      placeholder="정답을 입력하세요"
+                      value={answers[currentProblem.id] || ''}
+                      onChange={(e) =>
+                        handleChange(currentProblem.id, e.target.value)
+                      }
+                    />
+                  ) : (
+                    <div className="mt-3">
+                      {currentProblem.options.map((option, idx) => (
+                        <div className="form-check" key={idx}>
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name={`question-${currentProblem.id}`}
+                            value={option}
+                            checked={answers[currentProblem.id] === option}
+                            onChange={(e) =>
+                              handleChange(
+                                currentProblem.id,
+                                e.target.value
+                              )
+                            }
+                            id={`option-${currentProblem.id}-${idx}`}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`option-${currentProblem.id}-${idx}`}
+                          >
+                            {option}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))}
+              )}
+
               <div className="text-center mt-4">
-                <button className="btn btn-dark" onClick={handleSubmit}>
-                  제출
-                </button>
+                {currentIndex < problems.length - 1 ? (
+                  <button className="btn btn-dark" onClick={handleNext}>
+                    다음 문제
+                  </button>
+                ) : (
+                  <button className="btn btn-success" onClick={handleSubmit}>
+                    제출
+                  </button>
+                )}
               </div>
             </div>
           </section>

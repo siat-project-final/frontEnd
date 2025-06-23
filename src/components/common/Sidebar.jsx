@@ -24,7 +24,7 @@ const menuMap = {
       { label: '일일 챌린지', to: '/challenge/daily' },
       { label: '챌린지 랭킹', to: '/challenge/ranking' },
       { label: '종합 챌린지', to: '/challenge/review' },
-      { label: '챌린지 히스토리', to: '/challenge/list' },
+      { label: '챌린지 히스토리', to: '/mypage/challenge-history' },
     ],
   },
   mypage: {
