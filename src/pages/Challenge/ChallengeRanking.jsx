@@ -14,7 +14,8 @@ const ChallengeRanking = () => {
 
      getDailyRanking(today)
       .then(res => {
-        setRankingList(res.data);
+        const sorted = res.data.sort((a, b) => b.totalPoints - a.totalPoints); // 점수 내림차순
+        setRankingList(sorted);
       })
       .catch(err => console.error('랭킹 불러오기 실패:', err));
   }, []);
