@@ -23,13 +23,6 @@ const MentoringReject = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const role = sessionStorage.getItem('userRole');
-    if (role !== 'mentor') {
-      alert('멘토만 접근 가능한 페이지입니다.');
-      navigate('/');
-    }
-  }, [navigate]);
 
   const handleCheck = (idx) => {
     setSelected((prev) => {
