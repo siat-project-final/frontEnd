@@ -33,8 +33,8 @@ export const summarizeContent = (content) => {
 };
 
 /** 공개 학습일지 전체 조회 */
-export const getPublicStudyLogs = (params) => {
-  return axios.get('/study-diary/public', { params }); // subject 등 필터 가능
+export const getPublicStudyLogs = () => {
+  return axios.get('/study-diary/public');
 };
 
 /** 공개 학습일지 단건 조회 */

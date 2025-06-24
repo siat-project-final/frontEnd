@@ -13,6 +13,8 @@ const StudyLogPublicDetail = () => {
   const [commentText, setCommentText] = useState('');
   const [isLiked, setIsLiked] = useState(false);
 
+const memberId = localStorage.getItem('memberId');
+
   useEffect(() => {
     fetchDetail();
     fetchComments();
@@ -20,7 +22,8 @@ const StudyLogPublicDetail = () => {
 
   const fetchDetail = async () => {
     try {
-      const res = await getPublicStudyLogDetail(id);
+      console.log('공유 학습일지 상세 조회 시작:', id);
+      const res = await getPublicStudyLogDetail(memberId);
       console.log(res.data); // 응답 데이터 확인
       setLog(res.data);
       setIsLiked(localStorage.getItem(`liked-${res.data.diaryId}`) === 'true');

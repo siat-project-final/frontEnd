@@ -7,13 +7,16 @@ import Todo from '../../components/common/Todo';
 import { getPublicStudyLogs, toggleLikeStudyLog } from '../../api/studyLog';
 
 const StudyLogPublic = () => {
+  
+
   const [studyLogs, setStudyLogs] = useState([]);
   const [likedMap, setLikedMap] = useState({}); // 각 로그의 좋아요 여부 상태
 
   useEffect(() => {
+    console.log('StudyLogPublic 컴포넌트가 마운트되었습니다.');
     const fetchPublicLogs = async () => {
       try {
-        const res = await getPublicStudyLogs({ subject: 'ALL' });
+        const res = await getPublicStudyLogs();
         setStudyLogs(res.data);
 
         // 초기 좋아요 여부 상태 설정 (localStorage 기준)
@@ -64,7 +67,7 @@ const StudyLogPublic = () => {
                 <select className="form-select w-auto d-inline-block me-2">
                   <option>과목</option>
                 </select>
-                <Link to="./write" className="btn border-0 text-white" style={{ backgroundColor: '#84cc16' }}>
+                <Link to="../study/write" className="btn border-0 text-white" style={{ backgroundColor: '#84cc16' }}>
                   일지 작성하기
                 </Link>
               </div>
