@@ -40,6 +40,8 @@ const WriteStudyLogPage = () => {
       isPublic: form.isPublic === 'true' || form.isPublic === true,
       memberId,
     };
+     // ✅ 이 아래 줄 추가!
+    console.log('📤 전송 데이터:', data);
     try {
       await postStudyLog(data);
       navigate('/study');

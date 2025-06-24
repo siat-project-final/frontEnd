@@ -1,55 +1,55 @@
 import axios from './axios';
 
 /** 내 학습일지 전체 조회 */
-export const getMyStudyLogs = (params) => {
-  return axios.get('/study-logs', { params }); // subject, memberId, isPublic 등
+export const getMyStudyLogs = (memberId) => {
+  return axios.get(`/study-diary/member/${memberId}`); // subject, memberId, isPublic 등
 };
 
 /** 내 학습일지 상세 조회 */
 export const getMyStudyLogById = (diaryId) => {
-  return axios.get(`/study-logs/${diaryId}`);
+  return axios.get(`/study-diary/${diaryId}`);
 };
 
 /** 학습일지 작성 */
 export const postStudyLog = (data) => {
-  return axios.post('/study-logs', data);
+  return axios.post('/study-diary', data);
 };
 
 /** 학습일지 수정 */
 export const updateStudyLog = (diaryId, data) => {
-  return axios.put(`/study-logs/${diaryId}`, data);
+  return axios.put(`/study-diary/${diaryId}`, data);
 };
 
 /** 학습일지 삭제 */
 export const deleteStudyLog = (diaryId, memberId) => {
-  return axios.delete(`/study-logs/${diaryId}`, {
+  return axios.delete(`/study-diary/${diaryId}`, {
     params: { memberId },
   });
 };
 
 /** AI 요약 생성 */
 export const summarizeContent = (content) => {
-  return axios.post('/study-logs/summary', { content });
+  return axios.post('/study-diary/ai-summary', { text: content });
 };
 
 /** 공개 학습일지 전체 조회 */
 export const getPublicStudyLogs = (params) => {
-  return axios.get('/study-logs/public', { params }); // isPublic, subject, memberId 등
+  return axios.get('/study-diary/public', { params }); // isPublic, subject, memberId 등
 };
 
 /** 공개 학습일지 상세 조회 (댓글+좋아요 포함) */
 export const getPublicStudyLogDetail = (diaryId) => {
-  return axios.get(`/study-logs/public/${diaryId}`);
+  return axios.get(`/study-diary/${diaryId}`);
 };
 
 /** 좋아요 등록 */
 export const likePublicStudyLog = (diaryId, memberId) => {
-  return axios.post(`/study-logs/${diaryId}/likes`, { memberId });
+  return axios.post(`/study-diary/${diaryId}/likes`, { memberId });
 };
 
 /** 댓글 작성 */
 export const commentOnStudyLog = (diaryId, memberId, contents) => {
-  return axios.post(`/study-logs/${diaryId}/comments`, {
+  return axios.post(`/study-diary/${diaryId}/comments`, {
     memberId,
     contents,
   });

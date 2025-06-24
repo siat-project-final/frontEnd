@@ -1,32 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
-// ✅ axios 연동 주석 처리
 import { getMyStudyLogById, updateStudyLog } from '../../api/studyLog';
 
-const dummyLogs = [
-  {
-    id: 1,
-    title: 'BERT 학습',
-    subject: 'AI 개론',
-    date: '2025-06-13',
-    content: 'BERT 구조 학습함',
-    summary: 'BERT는 트랜스포머 기반 모델이다.',
-  },
-  {
-    id: 2,
-    title: 'useEffect 정리',
-    subject: 'React',
-    date: '2025-06-12',
-    content: 'useEffect 훅 정리함',
-    summary: '컴포넌트 라이프사이클 관리에 사용된다.',
-  },
-];
-
-const EditStudyLogPage = () => {
+const StudyLogDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const memberId = sessionStorage.getItem('memberId');
@@ -35,15 +14,20 @@ const EditStudyLogPage = () => {
     title: '',
     subject: '',
     date: '',
-    content: '',
+    contents: '',
     summary: '',
   });
+  const [originalData, setOriginalData] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     const fetchLog = async () => {
       try {
         const res = await getMyStudyLogById(id);
+
+        console.log('🔥 getMyStudyLogById 응답:', res); // ← 여기!
         setFormData(res.data);
+        setOriginalData(res.data); // 백업용 원본 저장
       } catch {
         alert('해당 일지를 불러올 수 없습니다.');
         navigate('/study');
@@ -62,10 +46,22 @@ const EditStudyLogPage = () => {
     const updateData = { ...formData, memberId };
     try {
       await updateStudyLog(id, updateData);
-      navigate('/study');
+      const res = await getMyStudyLogById(id); // 수정 후 재조회로 최신 데이터 반영
+      setFormData(res.data);
+      setOriginalData(res.data);
+      setIsEditMode(false);
+      alert('수정이 완료되었습니다.');
     } catch (err) {
       console.error('일지 수정 실패:', err);
+      alert('수정 실패');
     }
+  };
+
+  const handleCancel = () => {
+    if (originalData) {
+      setFormData(originalData); // 원래 내용으로 되돌림
+    }
+    setIsEditMode(false);
   };
 
   return (
@@ -73,14 +69,13 @@ const EditStudyLogPage = () => {
       <Header />
       <div className="container-flex" style={{ display: 'flex' }}>
         <Sidebar menuType="studylog" />
-
         <main className="main">
           <div className="container py-5">
             <h1
               className="h3 fw-bold mb-0"
               style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
             >
-              학습일지 수정
+              학습일지 상세
             </h1>
             <div className="studylog-boxes">
               <form onSubmit={handleSubmit}>
@@ -91,8 +86,9 @@ const EditStudyLogPage = () => {
                       name="title"
                       type="text"
                       className="form-control"
-                      value={formData.title}
+                      value={formData.title || ''}
                       onChange={handleChange}
+                      readOnly={!isEditMode}
                     />
                   </div>
                   <div className="col-md-3">
@@ -108,8 +104,9 @@ const EditStudyLogPage = () => {
                       name="date"
                       type="date"
                       className="form-control"
-                      value={formData.date}
+                      value={formData.date || ''}
                       onChange={handleChange}
+                      readOnly={!isEditMode}
                     />
                   </div>
                 </div>
@@ -121,8 +118,9 @@ const EditStudyLogPage = () => {
                       name="subject"
                       type="text"
                       className="form-control"
-                      value={formData.subject}
+                      value={formData.subject || ''}
                       onChange={handleChange}
+                      readOnly={!isEditMode}
                     />
                   </div>
                 </div>
@@ -130,11 +128,12 @@ const EditStudyLogPage = () => {
                 <div className="mb-3">
                   <label className="form-label">학습일지 내용</label>
                   <textarea
-                    name="content"
+                    name="contents"
                     className="form-control"
                     rows="5"
-                    value={formData.content}
+                    value={formData.contents || ''}
                     onChange={handleChange}
+                    readOnly={!isEditMode}
                   ></textarea>
                 </div>
 
@@ -144,26 +143,51 @@ const EditStudyLogPage = () => {
                     name="summary"
                     className="form-control"
                     rows="3"
-                    value={formData.summary}
+                    value={formData.summary || ''}
                     readOnly
                   ></textarea>
                 </div>
 
                 <div className="d-flex justify-content-end gap-3">
+                {!isEditMode ? (
                   <button
-                    type="submit"
+                    type="button"
                     className="btn border-0 text-white"
                     style={{ backgroundColor: '#84cc16' }}
+                    onClick={(e) => {
+                      e.preventDefault();           // form 안에서의 submit 방지
+                      setTimeout(() => {
+                        setIsEditMode(true);       // 리렌더 타이밍 문제 해결
+                      }, 0);
+                    }}
                   >
-                    수정 완료
+                    수정하기
                   </button>
+                ) : (
+                  <>
+                    <button
+                      type="submit"
+                      className="btn border-0 text-white"
+                      style={{ backgroundColor: '#84cc16' }}
+                    >
+                      수정 완료
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={handleCancel}
+                    >
+                      취소
+                    </button>
+                  </>
+                )}
+
                 </div>
               </form>
             </div>
           </div>
         </main>
 
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>
@@ -172,4 +196,4 @@ const EditStudyLogPage = () => {
   );
 };
 
-export default EditStudyLogPage;
+export default StudyLogDetailPage;

@@ -58,5 +58,6 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.5",
     "sass": "^1.89.2"
-  }
+  },
+  "proxy": "http://localhost:8087"
 }

@@ -34,7 +34,7 @@ import MenteeAlarm from './pages/Events/MenteeAlarm';
 
 import StudyLogPage from './pages/study/StudyLogPage';
 import WriteStudyLogPage from './pages/study/WriteStudyLogPage';
-import EditStudyLogPage from './pages/study/EditStudyLogPage';
+import StudyLogDetailPage from './pages/study/StudyLogDetailPage';
 import StudyLogPublic from './pages/study/StudyLogPublic';
 import StudyLogPublicDetail from './pages/study/StudyLogPublicDetail';
 
@@ -92,7 +92,7 @@ function AppLayout() {
           {/* Study */}
           <Route path="/study" element={<PrivateRoute><StudyLogPage /></PrivateRoute>} />
           <Route path="/study/write" element={<PrivateRoute><WriteStudyLogPage /></PrivateRoute>} />
-          <Route path="/study/edit/:id" element={<PrivateRoute><EditStudyLogPage /></PrivateRoute>} />
+          <Route path="/study/edit/:id" element={<PrivateRoute><StudyLogDetailPage /></PrivateRoute>} />
           <Route path="/study/public" element={<PrivateRoute><StudyLogPublic /></PrivateRoute>} />
           <Route path="/study/public/:id" element={<PrivateRoute><StudyLogPublicDetail /></PrivateRoute>} />
 
@@ -138,6 +138,10 @@ function App() {
     AOS.init();
     const preloader = document.getElementById('preloader');
     if (preloader) preloader.style.display = 'none';
+     // ✅ 테스트용 memberId 강제 주입
+    sessionStorage.setItem('memberId', '1');  // 또는 실제 테스트 ID
+    // 🔍 확인용 로그
+  console.log('✅ sessionStorage 설정 완료:', sessionStorage.getItem('memberId'));
   }, []);
 
   return (

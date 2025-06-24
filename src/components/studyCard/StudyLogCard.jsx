@@ -7,18 +7,28 @@ const StudyLogCard = ({ log }) => {
       <div className="card-body">
         <div className="row mb-3">
           <div className="col-md-3">
-            <input type="text" className="form-control" defaultValue={log.date} readOnly />
+            <input
+              type="text"
+              className="form-control"
+              value={log.studyDate || ''}
+              readOnly
+            />
           </div>
           <div className="col-md-5">
-            <input type="text" className="form-control" defaultValue={log.subject} readOnly />
+            <input
+              type="text"
+              className="form-control"
+              value={log.subject || ''}
+              readOnly
+            />
           </div>
           <div className="col-md-2">
             <Link
-              to={`/study/edit/${log.id}`}
+              to={`/study/edit/${log.diaryId}`}
               className="btn border-0 text-white w-100"
               style={{ backgroundColor: '#84cc16' }}
             >
-              수정
+              상세보기
             </Link>
           </div>
           <div className="col-md-2">
@@ -30,7 +40,12 @@ const StudyLogCard = ({ log }) => {
             </button>
           </div>
         </div>
-        <textarea className="form-control" rows="3" defaultValue={log.summary} readOnly></textarea>
+        <textarea
+          className="form-control"
+          rows="3"
+          value={log.aiSummary || ''}
+          readOnly
+        />
       </div>
     </div>
   );

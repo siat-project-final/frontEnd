@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import StudyLogCard from '../../components/studyCard/StudyLogCard';
 import { Link } from 'react-router-dom';
@@ -13,14 +12,19 @@ const StudyLogPage = () => {
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
-    setStudyLogs([
-      { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
-      { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
-      { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
-    ]);
+    // setStudyLogs([
+    //   { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
+    //   { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
+    //   { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
+    // ]);
+    if (!memberId) {
+      console.warn('❌ memberId 없음 - 로그인 필요');
+      return;
+    }
     const fetchLogs = async () => {
       try {
         const res = await getMyStudyLogs(memberId);
+        console.log('📥 studyLogs 응답:', res.data);
         setStudyLogs(res.data);
       } catch (err) {
         console.error('학습일지 목록 실패:', err);
@@ -60,7 +64,7 @@ const StudyLogPage = () => {
                 </div>
 
                 {studyLogs.map((log) => (
-                  <div key={log.id} data-aos="fade-up">
+                  <div key={log.diaryId} data-aos="fade-up">
                     <StudyLogCard log={log} />
                   </div>
                 ))}
