@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { getTodayChallenge, submitChallenge } from '../../../api/challenge';
 import '../../../App.css';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import styled from "styled-components";
+import useWindowSize from "react-use/lib/useWindowSize";
+import Confetti from "react-confetti";
 
 const ChallengeSolve = () => {
   const navigate = useNavigate();
@@ -13,8 +18,20 @@ const ChallengeSolve = () => {
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const progress = problems.length > 0
+  ? Math.round(((currentIndex + 1) / problems.length) * 100)
+  : 0;
+  const { width, height } = useWindowSize();
+
 
   useEffect(() => {
+    if (!memberId) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
     getTodayChallenge()
       .then(res => {
         const parsed = res.data.map(p => {
@@ -66,7 +83,14 @@ const ChallengeSolve = () => {
     //   });
 
     console.log('제출 데이터:', submissionData);
-    navigate('/challenge/daily/result');
+    
+    // Confetti 효과 시작
+    setShowConfetti(true);
+    
+    // 3초 후 결과 페이지로 이동
+    setTimeout(() => {
+      navigate('/challenge/daily/result');
+    }, 3000);
   };
 
   const currentProblem = problems[currentIndex];
@@ -74,6 +98,16 @@ const ChallengeSolve = () => {
   return (
     <>
       <Header />
+      {showConfetti && (
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={500}
+          gravity={0.05}
+          colors={['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3']}
+        />
+      )}
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
@@ -84,7 +118,20 @@ const ChallengeSolve = () => {
           </div>
 
           <section className="section">
+            
             <div className="container" style={{ padding: '40px 20px' }}>
+              <div style={{ width: 80, margin: '0 auto 20px' }}>
+                <CircularProgressbar
+                  value={progress}
+                  text={`${progress}%`}
+                  strokeWidth={10}
+                  styles={buildStyles({
+                    pathColor: '#00c853',
+                    textColor: '#333',
+                    trailColor: '#e0e0e0',
+                  })}
+                />
+              </div>
               {currentProblem && (
                 <div className="mb-4">
                   <h5 className="mb-2">

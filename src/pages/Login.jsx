@@ -16,11 +16,27 @@ function Login() {
       localStorage.setItem('accessToken', 'mock-token');
       localStorage.setItem('refreshToken', 'mock-refresh');
       localStorage.setItem('memberId', 'mock-id');
+      sessionStorage.setItem('memberId', 'mock-id');
 
       alert('MOCK 로그인 성공');
       navigate('/home', { state: { fromLogin: true } });
       return;
     }
+
+    // Admin 계정 추가
+    if (id === 'admin' && password === 'admin123') {
+      localStorage.setItem('accessToken', 'admin-token');
+      localStorage.setItem('refreshToken', 'admin-refresh');
+      localStorage.setItem('memberId', 'admin-id');
+      sessionStorage.setItem('memberId', 'admin-id');
+      sessionStorage.setItem('userRole', 'admin');
+      sessionStorage.setItem('memberName', '관리자');
+
+      alert('ADMIN 로그인 성공');
+      navigate('/home', { state: { fromLogin: true } });
+      return;
+    }
+
     try {
       const response = await signIn({ id, password });
       if (response.status === 200) {
@@ -31,8 +47,12 @@ function Login() {
         localStorage.setItem('memberId', response.data.memberId);
         localStorage.setItem('id', response.data.id);
         localStorage.setItem('memberName', response.data.memberName);
-
         localStorage.setItem('role', response.data.role);
+
+        // sessionStorage에도 저장
+        sessionStorage.setItem('memberId', response.data.memberId);
+        sessionStorage.setItem('userRole', response.data.role);
+        sessionStorage.setItem('memberName', response.data.memberName);
 
         navigate('/home', { state: { fromLogin: true } });
       }

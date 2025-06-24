@@ -95,6 +95,13 @@ const CalendarView = () => {
   // [kth] 250622 : 의존성 배열을 비워놔서 최초 렌더링시에만 조회 api 1회 요청
   useEffect(() => {
     const fetchCalendarData = async () => {
+      try {
+        // memberId가 없으면 요청하지 않음
+        if (!memberId) {
+          console.log('memberId가 없습니다. 로그인이 필요합니다.');
+          return;
+        }
+
         // 현재 위치한 달을 기준으로 일정 데이터를 가져오기 위해
         const calendarApi = calendarRef.current?.getApi();
         const currentDate = calendarApi ? calendarApi.getDate() : new Date(); // 현재 캘린더 기준 날짜
@@ -104,6 +111,8 @@ const CalendarView = () => {
         const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
         const monthStr = `${yyyy}-${mm}`;
 
+        console.log(`캘린더 데이터 요청: /calendar/schedule/${memberId}/${monthStr}`);
+
         // 서버에 스케쥴 조회 요청
         const res = await instance.get(`/calendar/schedule/${memberId}/${monthStr}`);
   
@@ -112,10 +121,28 @@ const CalendarView = () => {
   
         setCalendarEvents([...calendarMapped]);
         setCalendarKey(Date.now());
+      } catch (error) {
+        console.error('캘린더 데이터 조회 실패:', error);
+        
+        // 서버 에러인 경우 더미 데이터로 대체
+        if (error.response?.status === 500 || error.response?.status === 404) {
+          console.log('서버 에러로 인해 더미 데이터를 사용합니다.');
+          const dummyData = {
+            [`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`]: {
+              date: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`,
+              subjectList: ['React', 'JavaScript'],
+              studyDiaryList: [{ title: 'React 학습일지' }],
+              mentoringList: [{ mentorName: '김멘토' }]
+            }
+          };
+          const calendarMapped = convertJsonToCalendarEvents(dummyData);
+          setCalendarEvents([...calendarMapped]);
+        }
+      }
     };
 
     fetchCalendarData();
-  }, []);
+  }, [memberId]); // memberId를 의존성 배열에 추가
 
   const handleDateClick = (info) => {
     const clickedDate = info.dateStr;
@@ -188,12 +215,22 @@ const CalendarView = () => {
               // 🔒 이미 같은 달이면 요청 안 보냄
               if (monthStr === currentMonthStr) return;
             
+              // memberId가 없으면 요청하지 않음
+              if (!memberId) {
+                console.log('memberId가 없습니다. 로그인이 필요합니다.');
+                return;
+              }
+
               instance
                 .get(`/calendar/schedule/${memberId}/${monthStr}`)
                 .then((res) => {
                   const calendarMapped = convertJsonToCalendarEvents(res.data);
                   setCalendarEvents(calendarMapped);
                   setCurrentMonthStr(monthStr); // 🔑 마지막으로 요청한 달 저장
+                })
+                .catch((error) => {
+                  console.error('달 변경 시 캘린더 데이터 조회 실패:', error);
+                  // 에러가 발생해도 기존 이벤트는 유지
                 });
             }}
           />
