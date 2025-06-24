@@ -50,7 +50,7 @@ const CalendarView = () => {
   const convertJsonToCalendarEvents = (jsonData) => {
     const events = [];
   
-    Object.values(jsonData).forEach(({ date, subjectList, studyDiaryList, mentoringList }) => {
+    Object.values(jsonData).forEach(({ date, subjectList, studyDiaryList, mentoringList, mentoringReservationList }) => {
       subjectList.forEach((subject) => {
         events.push({
           title: `[과목] ${subject}`,
@@ -80,10 +80,22 @@ const CalendarView = () => {
           title: `[멘토링] ${mentoring.mentorName}`,
           start: date,
           end: date,
-          backgroundColor: '#F9E79F',
+          backgroundColor: '#F1C40F',
           borderColor: '#F9E79F',
           textColor: '#000',
           extendedProps: { type: 'MENTORING', ...mentoring }
+        });
+      });
+  
+      mentoringReservationList.forEach((reservation) => {
+        events.push({
+          title: `[멘토링 예약] ${reservation.mentorName}`,
+          start: date,
+          end: date,
+          backgroundColor: '#F9E79F',
+          borderColor: '#F9E79F',
+          textColor: '#000',
+          extendedProps: { type: 'MENTORING', ...reservation }
         });
       });
 

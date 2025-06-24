@@ -31,7 +31,10 @@ const ChallengeSolve = () => {
   
         setProblems(parsed);
       })
-      .catch(err => console.error('문제 불러오기 실패:', err));
+      .catch(err => {
+        console.error('문제 불러오기 실패:', err)
+        alert('오늘의 챌린지 문제를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+        });
   }, []);
 
   const handleChange = (problemId, value) => {
@@ -66,10 +69,8 @@ const ChallengeSolve = () => {
       })
       .catch(err => {
         console.error('제출 실패:', err);
-        alert('제출에 실패했습니다.');
+        alert('제출에 실패했습니다. 나중에 다시 시도해주세요.');
       });
-
-    console.log('제출 데이터:', submissionData);
   };
 
   const currentProblem = problems[currentIndex];

@@ -34,7 +34,9 @@ const ReviewSolve = () => {
   const handleSubmit = () => {
     if (!problem) return;
     const trimmed = answer.trim();
-    const isCorrect = trimmed === problem.answer;
+    const isCorrect = trimmed.toString() === problem.answer.toString();
+    console.log(isCorrect);
+    
     setResult(isCorrect ? '정답입니다! 🎉' : `오답입니다. 😢 (정답: ${problem.answer})`);
   };
 
@@ -72,7 +74,7 @@ const ReviewSolve = () => {
                       marginTop: '10px',
                     }}
                   >
-                    {problem.contents}
+                    {problem.contents.replace(/\\n/g, '\n')}
                   </pre>
 
                   <input
