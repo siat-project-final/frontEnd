@@ -32,13 +32,20 @@ const MenteeRegister = () => {
     const fetchReservations = async () => {
       try {
         const response = await getMentoringReservations(memberId);
+        console.log('📦 전체 응답 데이터:', response.data); // 👈 여기 확인 필수
+  
         const filtered = response.data.filter(
           (res) => res.status !== 'CANCELLED' && res.status !== 'REJECTED'
         );
-        const formatted = filtered.map((res) => ({
-          ...res,
-          date: formatDate(res.date),
-        }));
+  
+        const formatted = filtered.map((res) => {
+          console.log('🔍 단건 reservation 데이터:', res); // 👈 여기서 res.subject 있는지 확인
+          return {
+            ...res,
+            date: formatDate(res.date),
+          };
+        });
+  
         setReservations(formatted);
       } catch (error) {
         console.error('❌ 예약 조회 실패:', error);

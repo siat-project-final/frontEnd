@@ -1,109 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import Todo from '../../../components/common/Todo';
-// import { getMentors } from '../../../api/mentoring'; // 실제 사용 시 주석 해제
+import { getMentors } from '../../../api/mentoring'; // ✅ 실제 API 사용
 import '../../../App.css';
 
 const MentoringList = () => {
   const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
 
-    // 더미 데이터
-  const dummyMentors = [
-    {
-      mentorId: 1,
-      mentorName: '안철수',
-      position: 'Business Analyst',
-      company: 'SK 쉴더스',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
-    },
-    {
-      mentorId: 2,
-      mentorName: 'Sarah Jhonson',
-      position: 'Software Engineer',
-      company: 'SK C&C',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
-    },
-    {
-      mentorId: 3,
-      mentorName: 'William Anderson',
-      position: 'Cloud Engineer',
-      company: 'AWS',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
-    },
-    {
-      mentorId: 4,
-      mentorName: 'Amanda Jepson',
-      position: 'Software Developer',
-      company: 'TVING',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
-    },
-    {
-      mentorId: 5,
-      mentorName: 'Brian Doe',
-      position: 'Software Developer',
-      company: 'MEGAZONE CLOUD',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
-    },
-    {
-      mentorId: 6,
-      mentorName: 'Josepha Palas',
-      position: 'Cloud Engineer',
-      company: 'AWS',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
-    },
-    {
-      mentorId: 7,
-      mentorName: 'Emily Chen',
-      position: 'Data Scientist',
-      company: 'Google',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
-    },
-    {
-      mentorId: 8,
-      mentorName: 'Michael Park',
-      position: 'AI Engineer',
-      company: 'Naver',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
-    },
-    {
-      mentorId: 9,
-      mentorName: 'Sophie Kim',
-      position: 'Frontend Developer',
-      company: 'Kakao',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
-    },
-    {
-      mentorId: 10,
-      mentorName: 'David Lee',
-      position: 'Backend Developer',
-      company: 'LINE',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
-    },
-    {
-      mentorId: 11,
-      mentorName: 'Lisa Wang',
-      position: 'DevOps Engineer',
-      company: 'Coupang',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
-    },
-    {
-      mentorId: 12,
-      mentorName: 'James Kim',
-      position: 'Security Engineer',
-      company: 'Kakao Security',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
-    },
-  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const res = await getMentors(); // 실제 호출 시
-        // setMentors(res.data);
-        setMentors(dummyMentors); // 현재는 local dummy data
+        const res = await getMentors(); // ✅ 실제 백엔드 API 호출
+        setMentors(res.data);          // ✅ 응답 데이터 state에 저장
       } catch (err) {
         console.error('멘토 목록 불러오기 실패:', err);
       }
@@ -112,7 +23,6 @@ const MentoringList = () => {
     fetchData();
   }, []);
 
-  // 클릭 시 역할 확인 후 navigate
   const handleMentorClick = (mentor) => {
     const role = sessionStorage.getItem('role');
     if (role === 'MENTOR') {

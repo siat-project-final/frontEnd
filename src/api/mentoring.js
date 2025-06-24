@@ -2,7 +2,7 @@ import axios from './axios';
 
 /** 멘토 목록 조회 */
 export const getMentors = (keyword, field) => {
-  return axios.get('/mentors', {
+  return axios.get('mentoring/mentors', {
     params: { keyword, field },
   });
 };
@@ -16,7 +16,7 @@ export const getMentorDetail = (mentorId) => {
 export const applyMentoring = ({ mentorId, memberId, date, introduction, subject }) => {
   return axios.post('/reservations', {
     mentorId,          // Long
-    memberId,          // Long
+    menteeId: memberId,          // Long
     date,              // ISO 형식 문자열
     introduction,      // String
     subject,           // String (comma로 연결된 주제 목록)
@@ -58,8 +58,17 @@ export const getMentoringHistory = (memberId) => {
   return axios.get(`/mentoring/mentee/${memberId}/completed`);
 };
 
-/** 멘토 - 멘토링 완료 처리 */
-export const completeMentoring = (reservationId) => {
-  return axios.put(`/reservations/mentor/${reservationId}/complete`);
-};
+// /** 멘토 - 멘토링 완료 처리 */
+// export const completeMentoring = (reservationId, content = '') => {
+//   return axios.post(`/mentoring/mentor/${reservationId}/complete`, {
+//     content, // MentoringCompleteRequestDto 에서 요구하는 필드
+//   });
+// };
 
+export const completeMentoring = ({ reservationId, mentorId, menteeId }) => {
+  return axios.post(`/mentoring/mentor/${reservationId}/complete`, {
+    mentorId,
+    menteeId,
+    createdAt: new Date().toISOString().split('T')[0],
+  });
+};
