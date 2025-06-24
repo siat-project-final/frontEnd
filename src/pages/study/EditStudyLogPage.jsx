@@ -38,6 +38,14 @@ const EditStudyLogPage = () => {
     content: '',
     summary: '',
   });
+  // focus 상태 관리
+  const [focus, setFocus] = useState({
+    title: false,
+    date: false,
+    subject: false,
+    content: false,
+    summary: false,
+  });
 
   useEffect(() => {
     const fetchLog = async () => {
@@ -68,6 +76,17 @@ const EditStudyLogPage = () => {
     }
   };
 
+  // focus 스타일
+  const getFocusStyle = (key) =>
+    focus[key]
+      ? {
+          borderColor: '#84cc16',
+          boxShadow: '0 0 0 0.2rem rgba(132,204,22,0.25)',
+          outline: 'none',
+          backgroundColor: 'white',
+        }
+      : { backgroundColor: 'white' };
+
   return (
     <div>
       <Header />
@@ -93,6 +112,9 @@ const EditStudyLogPage = () => {
                       className="form-control"
                       value={formData.title}
                       onChange={handleChange}
+                      style={getFocusStyle('title')}
+                      onFocus={() => setFocus((f) => ({ ...f, title: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, title: false }))}
                     />
                   </div>
                   <div className="col-md-3">
@@ -110,6 +132,9 @@ const EditStudyLogPage = () => {
                       className="form-control"
                       value={formData.date}
                       onChange={handleChange}
+                      style={getFocusStyle('date')}
+                      onFocus={() => setFocus((f) => ({ ...f, date: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, date: false }))}
                     />
                   </div>
                 </div>
@@ -123,6 +148,9 @@ const EditStudyLogPage = () => {
                       className="form-control"
                       value={formData.subject}
                       onChange={handleChange}
+                      style={getFocusStyle('subject')}
+                      onFocus={() => setFocus((f) => ({ ...f, subject: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, subject: false }))}
                     />
                   </div>
                 </div>
@@ -135,6 +163,9 @@ const EditStudyLogPage = () => {
                     rows="5"
                     value={formData.content}
                     onChange={handleChange}
+                    style={getFocusStyle('content')}
+                    onFocus={() => setFocus((f) => ({ ...f, content: true }))}
+                    onBlur={() => setFocus((f) => ({ ...f, content: false }))}
                   ></textarea>
                 </div>
 
@@ -146,6 +177,9 @@ const EditStudyLogPage = () => {
                     rows="3"
                     value={formData.summary}
                     readOnly
+                    style={getFocusStyle('summary')}
+                    onFocus={() => setFocus((f) => ({ ...f, summary: true }))}
+                    onBlur={() => setFocus((f) => ({ ...f, summary: false }))}
                   ></textarea>
                 </div>
 

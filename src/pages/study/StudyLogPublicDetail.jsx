@@ -9,6 +9,14 @@ import { getPublicStudyLogDetail } from '../../api/studyLog';
 const StudyLogPublicDetail = () => {
   const { id } = useParams();
   const [log, setLog] = useState(null);
+  // focus 상태 관리
+  const [focus, setFocus] = useState({
+    title: false,
+    date: false,
+    subject: false,
+    content: false,
+    comment: false,
+  });
 
   useEffect(() => {
     setLog({
@@ -40,6 +48,17 @@ const StudyLogPublicDetail = () => {
 
   if (!log) return <div>로딩 중...</div>;
 
+  // focus 스타일
+  const getFocusStyle = (key) =>
+    focus[key]
+      ? {
+          borderColor: '#84cc16',
+          boxShadow: '0 0 0 0.2rem rgba(132,204,22,0.25)',
+          outline: 'none',
+          backgroundColor: 'white',
+        }
+      : { backgroundColor: 'white' };
+
   return (
     <div>
       <Header />
@@ -61,7 +80,9 @@ const StudyLogPublicDetail = () => {
                   className="form-control w-50"
                   value={log.title}
                   disabled
-                  style={{ backgroundColor: 'white' }}
+                  style={getFocusStyle('title')}
+                  onFocus={() => setFocus((f) => ({ ...f, title: true }))}
+                  onBlur={() => setFocus((f) => ({ ...f, title: false }))}
                 />
                 <div className="d-flex align-items-center">
                   <span className="me-2">작성자: {log.author}</span>
@@ -75,13 +96,17 @@ const StudyLogPublicDetail = () => {
                   className="form-control"
                   value={log.date}
                   disabled
-                  style={{ backgroundColor: 'white' }}
+                  style={getFocusStyle('date')}
+                  onFocus={() => setFocus((f) => ({ ...f, date: true }))}
+                  onBlur={() => setFocus((f) => ({ ...f, date: false }))}
                 />
                 <input
                   className="form-control"
                   value={log.subject}
                   disabled
-                  style={{ backgroundColor: 'white' }}
+                  style={getFocusStyle('subject')}
+                  onFocus={() => setFocus((f) => ({ ...f, subject: true }))}
+                  onBlur={() => setFocus((f) => ({ ...f, subject: false }))}
                 />
               </div>
               <textarea
@@ -89,7 +114,9 @@ const StudyLogPublicDetail = () => {
                 value={log.content}
                 rows="6"
                 disabled
-                style={{ backgroundColor: 'white' }}
+                style={getFocusStyle('content')}
+                onFocus={() => setFocus((f) => ({ ...f, content: true }))}
+                onBlur={() => setFocus((f) => ({ ...f, content: false }))}
               />
             </div>
 
@@ -107,6 +134,9 @@ const StudyLogPublicDetail = () => {
                   type="text"
                   placeholder="댓글을 남겨보세요"
                   className="form-control me-2 flex-grow-1"
+                  style={getFocusStyle('comment')}
+                  onFocus={() => setFocus((f) => ({ ...f, comment: true }))}
+                  onBlur={() => setFocus((f) => ({ ...f, comment: false }))}
                 />
                 <button
                   className="btn border-0 text-white flex-shrink-0"

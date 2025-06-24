@@ -11,6 +11,8 @@ import { getMyStudyLogs } from '../../api/studyLog';
 const StudyLogPage = () => {
   const [studyLogs, setStudyLogs] = useState([]);
   const memberId = sessionStorage.getItem('memberId');
+  // select focus 상태 관리
+  const [focus, setFocus] = useState({ subject: false });
 
   useEffect(() => {
     setStudyLogs([
@@ -29,6 +31,17 @@ const StudyLogPage = () => {
     fetchLogs();
   }, [memberId]);
 
+  // focus 스타일
+  const getFocusStyle = (key) =>
+    focus[key]
+      ? {
+          borderColor: '#84cc16',
+          boxShadow: '0 0 0 0.2rem rgba(132,204,22,0.25)',
+          outline: 'none',
+          backgroundColor: 'white',
+        }
+      : { backgroundColor: 'white' };
+
   return (
     <div>
       <Header />
@@ -46,7 +59,12 @@ const StudyLogPage = () => {
                     MY STUDY LOG
                   </h1>
                   <div className="d-flex align-items-center">
-                    <select className="form-select w-auto d-inline-block me-2">
+                    <select
+                      className="form-select w-auto d-inline-block me-2"
+                      style={getFocusStyle('subject')}
+                      onFocus={() => setFocus((f) => ({ ...f, subject: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, subject: false }))}
+                    >
                       <option>과목</option>
                     </select>
                     <Link
