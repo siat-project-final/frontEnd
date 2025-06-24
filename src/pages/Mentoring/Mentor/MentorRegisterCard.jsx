@@ -17,8 +17,15 @@ const MentorRegisterCard = ({
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
 
+  const statusToKorean = {
+    PENDING: '예약 대기',
+    CONFIRMED: '예약 확정',
+    CANCELLED: '예약 취소',
+    REJECTED: '예약 거절',
+  };
+
   const statusStyle = {
-    backgroundColor: status === '예약 대기' ? '#f1f5f9' : '#e2e8f0',
+    backgroundColor: status === 'PENDING' ? '#f1f5f9' : '#e2e8f0',
     color: '#475569',
     fontSize: '12px',
     fontWeight: '500',
@@ -39,17 +46,6 @@ const MentorRegisterCard = ({
     textAlign: 'center',
   };
 
-  // 멘티 프로필 이미지 클릭 시 권한 체크 예시 (멘토링 신청 페이지 이동 등)
-  const handleProfileImgClick = () => {
-    const role = sessionStorage.getItem('userRole');
-    if (role !== 'MENTEE') {
-      alert('멘토는 멘토링 신청 권한이 없습니다.');
-      return;
-    }
-    // 예시: 멘토링 신청 페이지로 이동 (필요시 state 추가)
-    navigate('/mentoring/apply', { state: { mentorId: id } });
-  };
-
   const handleAcceptClick = () => {
     onAccept(id);
     setShowAcceptModal(true);
@@ -61,24 +57,24 @@ const MentorRegisterCard = ({
   };
 
   const handleCancelClick = () => {
-    navigate('/mentoring/cancel', { 
-      state: { 
+    navigate('/mentoring/cancel', {
+      state: {
         reservationId: id,
-        memberName: memberName,
-        date: date,
-        status: status
-      } 
+        memberName,
+        date,
+        status,
+      },
     });
   };
 
   const handleRejectClick = () => {
-    navigate('/mentoring/mentor/reject', { 
-      state: { 
+    navigate('/mentoring/mentor/reject', {
+      state: {
         reservationId: id,
-        memberName: memberName,
-        date: date,
-        status: status
-      } 
+        memberName,
+        date,
+        status,
+      },
     });
   };
 
@@ -99,20 +95,18 @@ const MentorRegisterCard = ({
           margin: '0 auto',
         }}
       >
-        {/* 프로필 이미지 (멘티/멘토) */}
+        {/* 프로필 이미지 */}
         <img
           src={mentorImg}
-          alt="멘토 이미지"
+          alt="멘티 이미지"
           style={{
             width: 80,
             height: 80,
             borderRadius: '50%',
-            cursor: 'pointer',
             objectFit: 'cover',
             marginRight: '24px',
             border: '1px solid #e2e8f0',
           }}
-          onClick={handleProfileImgClick}
         />
 
         <div
@@ -126,7 +120,7 @@ const MentorRegisterCard = ({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{date}</span>
-            <span style={statusStyle}>{status}</span>
+            <span style={statusStyle}>{statusToKorean[status] || status}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
             <span style={{ fontSize: '14px' }}>멘티: {memberName}</span>
@@ -135,7 +129,7 @@ const MentorRegisterCard = ({
 
         {/* 버튼 영역 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          {status === '예약 대기' && (
+          {status === 'PENDING' && (
             <>
               <button
                 onClick={handleAcceptClick}
@@ -152,7 +146,7 @@ const MentorRegisterCard = ({
             </>
           )}
 
-          {status === '예약 확정' && (
+          {status === 'CONFIRMED' && (
             <>
               <button
                 onClick={handleCancelClick}

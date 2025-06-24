@@ -11,7 +11,7 @@ const MentoringList = () => {
   const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
 
-  // 더미 데이터
+    // 더미 데이터
   const dummyMentors = [
     {
       mentorId: 1,
@@ -98,7 +98,6 @@ const MentoringList = () => {
       mentor_image_url: '/assets/img/mentors/mentor3.jpg',
     },
   ];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,16 +112,23 @@ const MentoringList = () => {
     fetchData();
   }, []);
 
+  // 클릭 시 역할 확인 후 navigate
+  const handleMentorClick = (mentor) => {
+    const role = sessionStorage.getItem('role');
+    if (role === 'MENTOR') {
+      alert('멘토는 멘토링 신청 권한이 없습니다.');
+      return;
+    }
+    navigate('/mentoring/detail', { state: { mentor } });
+  };
+
   return (
     <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main">
-          <h1
-            className="h3 fw-bold"
-            style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
-          >
+          <h1 className="h3 fw-bold" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
             Mentoring
           </h1>
           <p style={{ marginTop: '16px', marginLeft: '16px', whiteSpace: 'pre-line' }}>
@@ -166,14 +172,7 @@ const MentoringList = () => {
                           img.style.transform = 'scale(1)';
                         }
                       }}
-                      onClick={() => {
-                        const role = sessionStorage.getItem('userRole');
-                        if (role !== 'MENTEE') {
-                          alert('멘토는 멘토링 신청 권한이 없습니다.');
-                          return;
-                        }
-                        navigate('/mentoring/detail', { state: { mentor } });
-                      }}
+                      onClick={() => handleMentorClick(mentor)}
                     >
                       <div
                         style={{

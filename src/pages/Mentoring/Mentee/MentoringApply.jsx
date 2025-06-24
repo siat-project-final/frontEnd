@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
 import '../../../App.css';
 import Todo from '../../../components/common/Todo';
-import { applyMentoring } from '../../../api/mentoring';
+import { applyMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
 
 const options = [
   { label: 'siat 수업 관련', value: 'siat 수업 관련' },
@@ -27,14 +27,7 @@ const MentoringApply = () => {
   const location = useLocation();
   const { mentor, selectedDate } = location.state || {};
   const memberId = localStorage.getItem('memberId');
-
-  useEffect(() => {
-    const role = sessionStorage.getItem('userRole');
-    if (role !== 'MENTEE') {
-      alert('멘토는 멘토링 신청 권한이 없습니다.');
-      navigate(-1);
-    }
-  }, [navigate]);
+    console.log('✅ 현재 로그인된 memberId:', memberId);
 
   const handleCheck = (value) => {
     setSelected((prev) =>
@@ -72,14 +65,16 @@ const MentoringApply = () => {
       : selected;
 
     try {
-      await applyMentoring({
-        mentorId: mentor.mentorId,
-        memberId,
-        date: `${selectedDate}T00:00:00`,
-        introduction: intro,
-        subject: finalTopics.join(', '),
-      });
 
+       await applyMentoring({
+         mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
+         memberId,
+         date: `${selectedDate}T00:00:00`,
+         introduction: intro,
+         subject: finalTopics.join(', '),
+       });
+
+      // 성공 시 예약 목록으로 이동
       navigate('/mentoring/mentee/register', {
         state: {
           mentor,
@@ -239,7 +234,6 @@ const MentoringApply = () => {
           <Todo />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

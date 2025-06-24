@@ -7,18 +7,31 @@ import Todo from '../../../components/common/Todo';
 import { getMentoringReservations } from '../../../api/mentoring';
 
 const MenteeRegister = () => {
-  // eslint-disable-next-line no-unused-vars
   const location = useLocation();
   const [reservations, setReservations] = useState([]);
   const memberId = localStorage.getItem('memberId');
   console.log('✅ 현재 로그인된 memberId:', memberId);
 
+  const formatDate = (dateStr) => {
+    const dateObj = new Date(dateStr);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hour = String(dateObj.getHours()).padStart(2, '0');
+    const minute = String(dateObj.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hour}:${minute}`;
+  };
+
   useEffect(() => {
     const fetchReservations = async () => {
       try {
         const response = await getMentoringReservations(memberId);
-        console.log('✅ 서버 응답:', response.data); // 배열인지 확인
-        setReservations(response.data);
+        console.log('✅ 서버 응답:', response.data);
+        const formatted = response.data.map((res) => ({
+          ...res,
+          date: formatDate(res.date),
+        }));
+        setReservations(formatted);
       } catch (error) {
         console.error('❌ 예약 조회 실패:', error);
       }
@@ -27,13 +40,11 @@ const MenteeRegister = () => {
     if (memberId) fetchReservations();
   }, [memberId]);
 
-  // 예약 취소 처리
   const handleCancelReservation = (reservationId) => {
     const updated = reservations.filter((res) => res.reservationId !== reservationId);
     setReservations(updated);
   };
 
-  // 예약 없을 때 메시지 렌더링
   const renderEmptyMessage = () => {
     if (reservations.length === 0) {
       return (
