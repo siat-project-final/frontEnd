@@ -110,7 +110,8 @@ const Todo = ({ selectedDate, onTodoChange }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          style={{ flex: 1, padding: '8px', fontSize: '13px' }}
+          style={{ flex: 1, padding: '8px', outline: 'none',
+            border: '1px solid #e5e7eb',fontSize: '13px' }}
         />
         <button
           onClick={handleAdd}
@@ -120,6 +121,10 @@ const Todo = ({ selectedDate, onTodoChange }) => {
             color: 'white',
             padding: '8px 12px',
             fontSize: '13px',
+            outline: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            borderRadius: '0.375rem'
           }}
         >
           추가
