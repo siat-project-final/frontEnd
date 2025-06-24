@@ -10,87 +10,48 @@ const ChallengeResult = () => {
   const navigate = useNavigate();
   const [resultData, setResultData] = useState([]);
   const [totalScore, setTotalScore] = useState(0);
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
     // ✅ 실제 API 호출 시
-    // getSubmissionResult(memberId, today)
-    //   .then(res => {
-    //     setResultData(res.data.results);
-    //     setTotalScore(res.data.totalScore);
-    //   })
-    //   .catch(err => console.error('결과 불러오기 실패:', err));
+    getSubmissionResult(memberId)
+      .then(res => {
+        const processed = (res.data || []).map(item => {
+        let parsedOptions = [];
 
-    // ✅ dummy 데이터 (5개)
-    const dummyResults = [
-      {
-        problemId: 1,
-        text: '1 + 1은?',
-        type: 'text',
-        difficulty: 1,
-        correctAnswer: '2',
-        submitAnswer: '2',
-        correct: true,
-      },
-      {
-        problemId: 2,
-        text: '3 + 4는?',
-        type: 'text',
-        difficulty: 2,
-        correctAnswer: '7',
-        submitAnswer: '8',
-        correct: false,
-      },
-      {
-        problemId: 3,
-        text: '프론트엔드 프레임워크가 아닌 것은?',
-        type: 'multiple',
-        difficulty: 2,
-        options: ['React', 'Vue', 'Spring', 'Svelte'],
-        correctAnswer: 'Spring',
-        submitAnswer: 'Vue',
-        correct: false,
-      },
-      {
-        problemId: 4,
-        text: 'AI 모델 중 Transformer를 사용하는 것은?',
-        type: 'multiple',
-        difficulty: 3,
-        options: ['CNN', 'RNN', 'BERT', 'SVM'],
-        correctAnswer: 'BERT',
-        submitAnswer: 'BERT',
-        correct: true,
-      },
-      {
-        problemId: 5,
-        text: 'Spring에서 의존성 주입 방식이 아닌 것은?',
-        type: 'multiple',
-        difficulty: 2,
-        options: ['필드 주입', '세터 주입', '생성자 주입', '서비스 주입'],
-        correctAnswer: '서비스 주입',
-        submitAnswer: '필드 주입',
-        correct: false,
-      },
-      {
-        problemId: 6,
-        text: '이 문제는 6번째지만 출력되면 안 됨',
-        type: 'text',
-        difficulty: 1,
-        correctAnswer: 'x',
-        submitAnswer: 'x',
-        correct: true,
-      },
-    ];
+        try {
+          // 두 번 파싱: 이중 문자열 → 배열
+          const once = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
+          parsedOptions = Array.isArray(once)
+            ? once
+            : typeof once === 'string'
+            ? JSON.parse(once)
+            : [];
+        } catch (e) {
+          console.warn(`옵션 파싱 실패 (problemId=${item.problemId}):`, e);
+        }
 
-    const dummyScore = dummyResults
-      .slice(0, 5)
-      .reduce((sum, item) => sum + (item.correct ? item.difficulty : 0), 0);
+        return {
+          ...item,
+          options: parsedOptions,
+          type: item.type || 'multiple',
+        };
+      });
+        
+        setResultData(processed);
+        console.log('결과 데이터:', processed);
 
-    setResultData(dummyResults);
-    setTotalScore(dummyScore);
-  }, [memberId]);
+        const score = processed
+          .slice(0, 5)
+          .reduce((sum, item) => sum + (item.correct ? item.difficulty : 0), 0);
+        setTotalScore(score);
+      })
+      .catch(err => console.error('결과 불러오기 실패:', err));
+  
+
+  }, []);
 
   return (
     <>
@@ -125,31 +86,36 @@ const ChallengeResult = () => {
                       fontSize: '14px',
                     }}
                   >
-                    {item.text}
+                    {item.title}
                   </pre>
 
                   {item.type === 'multiple' && item.options && (
                     <ul className="list-group mb-2">
-                      {item.options.map((opt, idx) => (
-                        <li
-                          key={idx}
-                          className={`list-group-item d-flex justify-content-between ${
-                            opt === item.correctAnswer
-                              ? 'list-group-item-success'
-                              : opt === item.submitAnswer
-                              ? 'list-group-item-danger'
-                              : ''
-                          }`}
-                        >
-                          <span>{opt}</span>
-                          {opt === item.correctAnswer && (
-                            <span className="badge bg-success">정답</span>
-                          )}
-                          {opt === item.submitAnswer && opt !== item.correctAnswer && (
-                            <span className="badge bg-danger">내 답안</span>
-                          )}
-                        </li>
-                      ))}
+                      {item.options.map((opt, idx) => {
+                        const optionNumber = opt.split('.')[0].trim(); // 🔧 숫자만 추출: "2. String" → "2"
+
+                        return (
+                          <li
+                            key={idx}
+                            className={`list-group-item d-flex justify-content-between ${
+                              optionNumber === item.correctAnswer
+                                ? 'list-group-item-success'
+                                : optionNumber === item.submitAnswer
+                                ? 'list-group-item-danger'
+                                : ''
+                            }`}
+                          >
+                            <span>{opt}</span>
+                            {optionNumber === item.correctAnswer && (
+                              <span className="badge bg-success">정답</span>
+                            )}
+                            {optionNumber === item.submitAnswer &&
+                              optionNumber !== item.correctAnswer && (
+                                <span className="badge bg-danger">내 답안</span>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
 

@@ -8,7 +8,7 @@ import '../../../App.css';
 
 const ChallengeSolve = () => {
   const navigate = useNavigate();
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -46,27 +46,30 @@ const ChallengeSolve = () => {
 
   const handleSubmit = () => {
     const submissionData = problems.map(p => ({
-      problemId: p.id,
-      submitAnswer: answers[p.id] || '',
+      problemId: p.problemId,
+      submitAnswer: answers[p.problemId] ?? null,
       memberId,
     }));
 
-    // 실제 API 호출
-    // Promise.all(
-    //   submissionData.map(data =>
-    //     submitChallenge(data.problemId, data.memberId, data.submitAnswer)
-    //   )
-    // )
-    //   .then(() => {
-    //     navigate('/challenge/daily/result');
-    //   })
-    //   .catch(err => {
-    //     console.error('제출 실패:', err);
-    //     alert('제출에 실패했습니다.');
-    //   });
+    const requestBody = {
+      memberId,
+      problemIds: submissionData.map(data => data.problemId),
+      answers: submissionData.map(data =>
+        data.submitAnswer !== null ? parseInt(data.submitAnswer) : null
+      ),
+      createdAt: new Date().toISOString(), // 또는 원하는 날짜값
+    };
+
+    submitChallenge(requestBody)
+      .then(() => {
+        navigate('/challenge/daily/result');
+      })
+      .catch(err => {
+        console.error('제출 실패:', err);
+        alert('제출에 실패했습니다.');
+      });
 
     console.log('제출 데이터:', submissionData);
-    navigate('/challenge/daily/result');
   };
 
   const currentProblem = problems[currentIndex];
@@ -108,9 +111,9 @@ const ChallengeSolve = () => {
                       type="text"
                       className="form-control mt-2"
                       placeholder="정답을 입력하세요"
-                      value={answers[currentProblem.id] || ''}
+                      value={answers[currentProblem.problemId] || ''}
                       onChange={(e) =>
-                        handleChange(currentProblem.id, e.target.value)
+                        handleChange(currentProblem.problemId, e.target.value)
                       }
                     />
                   ) : (
@@ -120,20 +123,20 @@ const ChallengeSolve = () => {
                           <input
                             className="form-check-input"
                             type="radio"
-                            name={`question-${currentProblem.id}`}
+                            name={`question-${currentProblem.problemId}`}
                             value={option}
-                            checked={answers[currentProblem.id] === option}
+                            checked={answers[currentProblem.problemId] === option}
                             onChange={(e) =>
                               handleChange(
-                                currentProblem.id,
-                                e.target.value
+                                currentProblem.problemId,
+                                parseInt(e.target.value)
                               )
                             }
-                            id={`option-${currentProblem.id}-${idx}`}
+                            id={`option-${currentProblem.problemId}-${idx}`}
                           />
                           <label
                             className="form-check-label"
-                            htmlFor={`option-${currentProblem.id}-${idx}`}
+                            htmlFor={`option-${currentProblem.problemId}-${idx}`}
                           >
                             {option}
                           </label>
