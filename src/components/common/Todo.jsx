@@ -22,7 +22,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [kth] 250622 : 투두 리스트 조회 API 요청 함수
   const fetchTodoList = async () => {
-    console.log("fetch Todo ID:");
+    // console.log("fetch Todo ID:");
 
     try {
       const res = await instance.get(`/todos?memberId=${memberId}&date=${dateToUse}`);

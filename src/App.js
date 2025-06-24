@@ -56,6 +56,7 @@ import ChallengeRanking from './pages/Challenge/ChallengeRanking';
 import ReviewMain from './pages/Challenge/Review/ReviewMain';
 import ReviewSolve from './pages/Challenge/Review/ReviewSolve';
 import ChallengeMain from './pages/Challenge/ChallengeMain';
+import MyProgress from './pages/Challenge/Daily/MyProgress';
 // import DayChallengeList from './pages/Challenge/DayChallengeList';
 // import CourseDetail from './pages/Challenge/CourseDetail';
 
@@ -106,6 +107,7 @@ function AppLayout() {
           <Route path="/challenge/review/solve" element={<PrivateRoute><ReviewSolve /></PrivateRoute>} />
           {/* <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
           <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} /> */}
+          <Route path="/challenge/daily/progress" element={<PrivateRoute><MyProgress /></PrivateRoute>} />
 
           {/* Mentoring */}
           <Route path="/mentoring/mentors" element={<PrivateRoute><MentoringList /></PrivateRoute>} />
