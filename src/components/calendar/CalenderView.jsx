@@ -144,6 +144,87 @@ const CalendarView = () => {
       <Header />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
+          <style>
+            {`
+              .fc .fc-toolbar {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 16px !important;
+                position: relative !important;
+                height: 60px !important;
+              }
+
+              .fc .fc-toolbar-title {
+                font-size: 24px !important;
+                font-weight: bold !important;
+                position: absolute !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 200px !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+              }
+
+              .fc-myPrev-button,
+              .fc-myNext-button {
+                background: none !important;
+                border: none !important;
+                width: 24px !important;
+                height: 32px !important;
+                cursor: pointer !important;
+                position: absolute !important;
+                top: 52% !important;
+                transform: translateY(-50%) !important;
+                z-index: 1 !important;
+              }
+              
+              .fc-myPrev-button {
+                left: calc(50% - 120px) !important;
+              }
+
+              .fc-myNext-button {
+                right: calc(50% - 120px) !important;
+              }
+
+              .fc-myPrev-button:focus,
+              .fc-myNext-button:focus {
+                outline: none !important;
+                box-shadow: none !important;
+              }
+
+              .fc-myPrev-button::before,
+              .fc-myNext-button::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 52% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 24px !important;
+                height: 24px !important;
+                background-size: contain !important;
+                background-repeat: no-repeat !important;
+              }
+
+              .fc-myPrev-button::before {
+                background-image: url('/assets/img/mentors/chevron-left.png') !important;
+              }
+
+              .fc-myNext-button::before {
+                background-image: url('/assets/img/mentors/chevron-right.png') !important;
+              }
+
+              .fc-today-button {
+                margin-right: 20px !important;
+                background-color: #84cc16 !important;
+                border-color: #84cc16 !important;
+                color: white !important;
+              }
+            `}
+          </style>
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             key={calendarKey} // ✅ 핵심!
@@ -157,11 +238,11 @@ const CalendarView = () => {
             initialView="dayGridMonth"
             customButtons={{
               myPrev: {
-                text: '',
+                text: '‹',
                 click: () => calendarRef.current.getApi().prev(),
               },
               myNext: {
-                text: '',
+                text: '›',
                 click: () => calendarRef.current.getApi().next(),
               },
             }}
