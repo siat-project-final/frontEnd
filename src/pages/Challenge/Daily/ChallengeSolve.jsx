@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
@@ -7,23 +7,23 @@ import { getTodayChallenge, submitChallenge } from '../../../api/challenge';
 import '../../../App.css';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import styled from "styled-components";
-import useWindowSize from "react-use/lib/useWindowSize";
-import Confetti from "react-confetti";
+import styled from 'styled-components';
+import useWindowSize from 'react-use/lib/useWindowSize';
+import Confetti from 'react-confetti';
 
 const ChallengeSolve = () => {
   const navigate = useNavigate();
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
-  const progress = problems.length > 0
-  ? Math.round(((currentIndex + 1) / problems.length) * 100)
-  : 0;
   const { width, height } = useWindowSize();
 
+  const progress = problems.length > 0
+    ? Math.round(((currentIndex + 1) / problems.length) * 100)
+    : 0;
 
   useEffect(() => {
     if (!memberId) {
@@ -45,10 +45,13 @@ const ChallengeSolve = () => {
           }
           return { ...p, options, type: 'choice' };
         });
-  
+
         setProblems(parsed);
       })
-      .catch(err => console.error('문제 불러오기 실패:', err));
+      .catch(err => {
+        console.error('문제 불러오기 실패:', err);
+        alert('오늘의 챌린지 문제를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+      });
   }, []);
 
   const handleChange = (problemId, value) => {
@@ -63,34 +66,34 @@ const ChallengeSolve = () => {
 
   const handleSubmit = () => {
     const submissionData = problems.map(p => ({
-      problemId: p.id,
-      submitAnswer: answers[p.id] || '',
+      problemId: p.problemId,
+      submitAnswer: answers[p.problemId] ?? null,
       memberId,
     }));
 
-    // 실제 API 호출
-    // Promise.all(
-    //   submissionData.map(data =>
-    //     submitChallenge(data.problemId, data.memberId, data.submitAnswer)
-    //   )
-    // )
-    //   .then(() => {
-    //     navigate('/challenge/daily/result');
-    //   })
-    //   .catch(err => {
-    //     console.error('제출 실패:', err);
-    //     alert('제출에 실패했습니다.');
-    //   });
+    const requestBody = {
+      memberId,
+      problemIds: submissionData.map(data => data.problemId),
+      answers: submissionData.map(data =>
+        data.submitAnswer !== null ? parseInt(data.submitAnswer) : null
+      ),
+      createdAt: new Date().toISOString(),
+    };
 
-    console.log('제출 데이터:', submissionData);
-    
-    // Confetti 효과 시작
-    setShowConfetti(true);
-    
-    // 3초 후 결과 페이지로 이동
-    setTimeout(() => {
-      navigate('/challenge/daily/result');
-    }, 3000);
+    submitChallenge(requestBody)
+      .then(() => {
+        // Confetti 효과 시작
+        setShowConfetti(true);
+
+        // 3초 후 결과 페이지로 이동
+        setTimeout(() => {
+          navigate('/challenge/daily/result');
+        }, 3000);
+      })
+      .catch(err => {
+        console.error('제출 실패:', err);
+        alert('제출에 실패했습니다. 나중에 다시 시도해주세요.');
+      });
   };
 
   const currentProblem = problems[currentIndex];
@@ -118,7 +121,6 @@ const ChallengeSolve = () => {
           </div>
 
           <section className="section">
-            
             <div className="container" style={{ padding: '40px 20px' }}>
               <div style={{ width: 80, margin: '0 auto 20px' }}>
                 <CircularProgressbar
@@ -155,9 +157,9 @@ const ChallengeSolve = () => {
                       type="text"
                       className="form-control mt-2"
                       placeholder="정답을 입력하세요"
-                      value={answers[currentProblem.id] || ''}
+                      value={answers[currentProblem.problemId] || ''}
                       onChange={(e) =>
-                        handleChange(currentProblem.id, e.target.value)
+                        handleChange(currentProblem.problemId, e.target.value)
                       }
                     />
                   ) : (
@@ -167,20 +169,20 @@ const ChallengeSolve = () => {
                           <input
                             className="form-check-input"
                             type="radio"
-                            name={`question-${currentProblem.id}`}
+                            name={`question-${currentProblem.problemId}`}
                             value={option}
-                            checked={answers[currentProblem.id] === option}
+                            checked={answers[currentProblem.problemId] === option}
                             onChange={(e) =>
                               handleChange(
-                                currentProblem.id,
-                                e.target.value
+                                currentProblem.problemId,
+                                parseInt(e.target.value)
                               )
                             }
-                            id={`option-${currentProblem.id}-${idx}`}
+                            id={`option-${currentProblem.problemId}-${idx}`}
                           />
                           <label
                             className="form-check-label"
-                            htmlFor={`option-${currentProblem.id}-${idx}`}
+                            htmlFor={`option-${currentProblem.problemId}-${idx}`}
                           >
                             {option}
                           </label>

@@ -6,11 +6,12 @@ export const getTodayChallenge = () => {
 };
 
 /** 챌린지 문제 제출 */
-export const submitChallenge = (problemId, memberId, submitAnswer) => {
-  return axios.post('/challenges/submit', {
-    problemId,
+export const submitChallenge = ({ memberId, problemIds, answers, createdAt }) => {
+  return axios.post('/challenge', {
     memberId,
-    submitAnswer,
+    problemIds,
+    answers,
+    createdAt,
   });
 };
 
@@ -39,10 +40,8 @@ export const checkParticipation = (memberId, date) => {
 };
 
 /** 채점 결과 조회 */
-export const getSubmissionResult = (memberId, subject) => {
-  return axios.get('/submissions/result', {
-    params: { memberId, subject },
-  });
+export const getSubmissionResult = (memberId) => {
+  return axios.get(`/challenge/${memberId}/scoring`);
 };
 
 /** 복습 과목 목록 조회 */

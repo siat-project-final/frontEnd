@@ -106,15 +106,15 @@ const MyPageMain = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="name">NAME</label>
-                  <input id="name" type="text" defaultValue={user.memberName} />
+                  <input id="name" type="text" defaultValue={user.memberName} readOnly />
                 </div>
-                <div className="form-group">
+                <div className="form-group">  
                   <label htmlFor="nickname">NICKNAME</label>
                   <input id="nickname" type="text" defaultValue={user.nickname} />
                 </div>
                 <div className="form-group">
                   <label htmlFor="phone">PHONE</label>
-                  <input id="phone" type="text" defaultValue={user.phoneNumber} />
+                  <input id="phone" type="text" defaultValue={user.phoneNumber} readOnly />
                 </div>
                 <div className="form-group">
                   <label htmlFor="email">EMAIL</label>
