@@ -69,7 +69,10 @@ const RegisterCancel = () => {
       const userRole = sessionStorage.getItem('userRole');
       if (userRole === 'mentor') {
         navigate('/mentoring/mentor/register', {
-          state: { cancelledReservationId: reservationId },
+          state: { 
+            cancelledReservationId: reservationId,
+            alreadyRemoved: true
+          },
         });
       } else {
         navigate('/mentoring/mentee/register');

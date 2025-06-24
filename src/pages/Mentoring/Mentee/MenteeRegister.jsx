@@ -6,11 +6,17 @@ import MenteeRegisterCard from './MenteeRegisterCard';
 import Todo from '../../../components/common/Todo';
 import { getMentoringReservations } from '../../../api/mentoring';
 
+const RESERVATION_STATUS = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELED: 'CANCELED',
+  REJECTED: 'REJECTED',
+};
+
 const MenteeRegister = () => {
   const location = useLocation();
   const [reservations, setReservations] = useState([]);
   const memberId = localStorage.getItem('memberId');
-  console.log('✅ 현재 로그인된 memberId:', memberId);
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
@@ -26,8 +32,10 @@ const MenteeRegister = () => {
     const fetchReservations = async () => {
       try {
         const response = await getMentoringReservations(memberId);
-        console.log('✅ 서버 응답:', response.data);
-        const formatted = response.data.map((res) => ({
+        const filtered = response.data.filter(
+          (res) => res.status !== 'CANCELLED' && res.status !== 'REJECTED'
+        );
+        const formatted = filtered.map((res) => ({
           ...res,
           date: formatDate(res.date),
         }));

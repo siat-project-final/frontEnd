@@ -1,189 +1,347 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
+// import React, { useState, useEffect } from 'react';
+// import Header from '../../../components/common/Header';
+// import Sidebar from '../../../components/common/Sidebar';
+// import Footer from '../../../components/common/Footer';
+// import { useNavigate, useLocation } from 'react-router-dom';
+// import MentorRegisterCard from './MentorRegisterCard';
+// import { getMentorReservations, acceptMentoring, completeMentoring } from '../../../api/mentoring';
 
-const MentorRegisterCard = ({
-  id,
-  date,
-  memberName,
-  status,
-  mentorImg,
-  onCancel = () => {},
-  onAccept = () => {},
-  onReject = () => {},
-  onComplete = () => {},
-}) => {
-  const navigate = useNavigate();
-  const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [showCompleteModal, setShowCompleteModal] = useState(false);
+// const RESERVATION_STATUS = {
+//   PENDING: 'PENDING',
+//   CONFIRMED: 'CONFIRMED',
+//   CANCELED: 'CANCELED',
+//   REJECTED: 'REJECTED',
+// };
 
-  const statusToKorean = {
-    PENDING: '예약 대기',
-    CONFIRMED: '예약 확정',
-    CANCELLED: '예약 취소',
-    REJECTED: '예약 거절',
-  };
+// const MentorRegister = () => {
+//   const [reservations, setReservations] = useState([]);
+//   const memberId = localStorage.getItem('memberId');
+//   const location = useLocation();
+//   const navigate = useNavigate();
 
-  const statusStyle = {
-    backgroundColor: status === 'PENDING' ? '#f1f5f9' : '#e2e8f0',
-    color: '#475569',
-    fontSize: '12px',
-    fontWeight: '500',
-    padding: '4px 12px',
-    borderRadius: '9999px',
-  };
+//   console.log('🏁 MentorRegister 컴포넌트 마운트');
+//   console.log('🆔 memberId:', memberId);
+//   console.log('📍 location.state:', location.state);
 
-  const buttonStyle = {
-    fontWeight: 600,
-    border: 'none',
-    borderRadius: '24px',
-    padding: '10px 16px',
-    fontSize: '14px',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    marginLeft: '8px',
-    minWidth: '120px',
-    textAlign: 'center',
-  };
+//   // localStorage 초기화 함수 (디버깅용)
+//   const clearCancelledReservations = () => {
+//     localStorage.removeItem('cancelledReservations');
+//     console.log('🧹 localStorage 취소된 예약들 초기화 완료');
+//   };
 
-  const handleAcceptClick = () => {
-    onAccept(id);
-    setShowAcceptModal(true);
-  };
+//   // 개발 중에만 사용 (나중에 제거)
+//   // clearCancelledReservations();
 
-  const handleCompleteClick = () => {
-    onComplete(id);
-    setShowCompleteModal(true);
-  };
+//   // 예약 목록 불러오기
+//   useEffect(() => {
+//     if (!memberId) return;
 
-  const handleCancelClick = () => {
-    navigate('/mentoring/cancel', {
-      state: {
-        reservationId: id,
-        memberName,
-        date,
-        status,
-      },
-    });
-  };
+//     const fetchReservations = async () => {
+//       try {
+//         console.log('🔍 예약 목록 조회 시작, memberId:', memberId);
+//         const response = await getMentorReservations(memberId);
+//         console.log('📡 API 응답 전체:', response.data);
+        
+//         // 정확한 상태값으로 필터링
+//         const filtered = response.data.filter(
+//           (res) =>
+//             res.status !== RESERVATION_STATUS.CANCELED &&
+//             res.status !== RESERVATION_STATUS.REJECTED
+//         );
+//         console.log('🚫 CANCELED/REJECTED 제외 후:', filtered);
+        
+//         // localStorage에 저장된 취소된 예약들도 제외
+//         const cancelledReservations = JSON.parse(localStorage.getItem('cancelledReservations') || '[]');
+//         console.log('💾 localStorage 취소된 예약들:', cancelledReservations);
+        
+//         // const finalFiltered = filtered.filter(
+//         //   (res) => !cancelledReservations.includes(res.reservationId)
+//         // );
+//         // console.log('🎯 localStorage 제외 후 최종:', finalFiltered);
+        
+//         // const formatted = finalFiltered.map((res) => ({
+//         //   ...res,
+//         //   date: res.date, // 필요시 formatDate(res.date)
+//         // }));
+        
+//         // console.log('✅ 최종 예약 목록:', formatted);
+//         // setReservations(formatted);
+//       } catch (error) {
+//         console.error('❌ 멘토 예약 조회 실패:', error);
+//       }
+//     };
 
-  const handleRejectClick = () => {
-    navigate('/mentoring/mentor/reject', {
-      state: {
-        reservationId: id,
-        memberName,
-        date,
-        status,
-      },
-    });
-  };
+//     fetchReservations();
+//   }, [memberId]);
 
-  return (
-    <>
-      <div
-        style={{
-          border: '1px solid #cbd5e1',
-          borderRadius: '12px',
-          padding: '16px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '25px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-          maxWidth: '600px',
-          width: '100%',
-          margin: '0 auto',
-        }}
-      >
-        {/* 프로필 이미지 */}
-        <img
-          src={mentorImg}
-          alt="멘티 이미지"
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: '50%',
-            objectFit: 'cover',
-            marginRight: '24px',
-            border: '1px solid #e2e8f0',
-          }}
-        />
+//   // MentoringReject에서 돌아올 때 거절된 예약 제거
+//   useEffect(() => {
+//     if (location.state?.rejectedReservationId) {
+//       const rejectedId = location.state.rejectedReservationId;
+//       // setReservations((prev) => prev.filter((res) => res.reservationId !== rejectedId));
+//       navigate(location.pathname, { replace: true });
+//     }
+//   }, [location.state, navigate, location.pathname]);
 
-        <div
-          style={{
-            border: '1px solid #e2e8f0',
-            padding: '16px',
-            borderRadius: '8px',
-            flexGrow: 1,
-            marginRight: '16px',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{date}</span>
-            <span style={statusStyle}>{statusToKorean[status] || status}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
-            <span style={{ fontSize: '14px' }}>멘티: {memberName}</span>
-          </div>
-        </div>
+//   // RegisterCancel에서 돌아올 때 취소된 예약 제거
+//   useEffect(() => {
+//     if (location.state?.cancelledReservationId && !location.state?.alreadyRemoved) {
+//       const cancelledId = location.state.cancelledReservationId;
+//       setReservations((prev) => {
+//         // const filtered = prev.filter((res) => res.reservationId !== cancelledId);
+//         console.log('취소 페이지에서 돌아온 후 예약 제거:', cancelledId);
+//         // return filtered;
+//       });
+//       navigate(location.pathname, { replace: true });
+//     }
+//   }, [location.state, navigate, location.pathname]);
 
-        {/* 버튼 영역 */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          {status === 'PENDING' && (
-            <>
-              <button
-                onClick={handleAcceptClick}
-                style={{ ...buttonStyle, backgroundColor: '#84cc16', color: '#fff' }}
-              >
-                예약 수락
-              </button>
-              <button
-                onClick={handleRejectClick}
-                style={{ ...buttonStyle, backgroundColor: '#ced4da', color: '#fff' }}
-              >
-                예약 거절
-              </button>
-            </>
-          )}
+//   // 예약 취소(프론트에서만 제거)
+//   const handleCancel = (reservationId) => {
+//     console.log('🚨 handleCancel 함수 호출됨, reservationId:', reservationId);
+//     console.log('📋 현재 reservations 상태:', reservations);
+//     console.log('🔢 reservations 길이:', reservations.length);
+    
+//     // localStorage에 취소된 예약 저장
+//     const cancelledReservations = JSON.parse(localStorage.getItem('cancelledReservations') || '[]');
+//     console.log('💾 기존 localStorage 취소된 예약들:', cancelledReservations);
+    
+//     cancelledReservations.push(reservationId);
+//     localStorage.setItem('cancelledReservations', JSON.stringify(cancelledReservations));
+//     console.log('💾 localStorage에 추가된 후:', cancelledReservations);
+    
+//     // 즉시 상태 업데이트
+//     setReservations(prev => {
+//       console.log('🔄 setReservations prev 값:', prev);
+//       // const updated = prev.filter((res) => res.reservationId !== reservationId);
+//       // console.log('🎯 필터링 후 updated:', updated);
+//       // console.log('🔢 updated 길이:', updated.length);
+//       // return updated;
+//     });
+    
+//     console.log('✅ 예약 취소 후 목록에서 제거 완료:', reservationId);
+//   };
 
-          {status === 'CONFIRMED' && (
-            <>
-              <button
-                onClick={handleCancelClick}
-                style={{ ...buttonStyle, backgroundColor: '#334155', color: 'white' }}
-              >
-                예약 취소
-              </button>
-              <button
-                onClick={handleCompleteClick}
-                style={{ ...buttonStyle, backgroundColor: '#0ea5e9', color: 'white' }}
-              >
-                멘토링 완료
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+//   // 예약 거절(프론트에서만 제거)
+//   const handleReject = (reservationId) => {
+//     // const updated = reservations.filter((res) => res.reservationId !== reservationId);
+//     // setReservations(updated);
+//   };
 
-      {/* 모달 */}
-      <ConfirmOnlyModal
-        visible={showAcceptModal}
-        onClose={() => setShowAcceptModal(false)}
-        message="멘토링이 예약되었습니다"
-      />
-      <ConfirmOnlyModal
-        visible={showCompleteModal}
-        onClose={() => setShowCompleteModal(false)}
-        message={
-          <>
-            멘토링에 참여해주셔서 감사합니다!
-            <br />
-            앞으로도 멘토님의 적극적인 참여를 기대하겠습니다:)
-          </>
+//   // 예약 수락 처리
+//   const handleAccept = async (reservationId) => {
+//     try {
+//       await acceptMentoring(reservationId);
+      
+//       // 상태를 CONFIRMED로 업데이트
+//       setReservations(prev => {
+//         const updated = prev.map(res => 
+//           res.reservationId === reservationId 
+//             ? { ...res, status: 'CONFIRMED' }
+//             : res
+//         );
+//         console.log('예약 수락 후 상태 업데이트:', updated);
+//         return updated;
+//       });
+      
+//       return Promise.resolve(); // 성공 시 Promise 반환
+//     } catch (error) {
+//       console.error('예약 수락 실패:', error);
+//       alert('예약 수락 중 오류가 발생했습니다.');
+//       return Promise.reject(error); // 실패 시 Promise 반환
+//     }
+//   };
+
+//   // 멘토링 완료 처리
+//   const handleComplete = async (reservationId) => {
+//     try {
+//       await completeMentoring(reservationId);
+      
+//       // 목록에서 제거
+//       const updated = reservations.filter((res) => res.reservationId !== reservationId);
+//       setReservations(updated);
+//     } catch (error) {
+//       console.error('멘토링 완료 처리 실패:', error);
+//       alert('멘토링 완료 처리 중 오류가 발생했습니다.');
+//     }
+//   };
+
+//   return (
+//     <>
+//       <Header menuType="mentoring" />
+//       <div className="container-flex">
+//         <Sidebar menuType="mentoring" />
+//         <main className="main">
+//           <div className="max-w-2xl mx-auto pt-10 pb-16">
+//             <h3 className="text-2xl font-bold mb-8 text-slate-900" style={{ textAlign: 'center' }}>
+//               멘토링 예약 관리
+//             </h3>
+//             <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '20px 0' }}></div>
+//             <div>
+//               {reservations.length === 0 ? (
+//                 <div style={{ textAlign: 'center', padding: '40px 0', color: '#666' }}>
+//                   예약 요청이 없습니다.
+//                 </div>
+//               ) : (
+//                 <>
+//                   {console.log('🎬 MentorRegister 렌더링, reservations:', reservations)}
+//                   {reservations.map((res) => {
+//                     console.log('📝 각 예약 렌더링:', res);
+//                     return (
+//                       <MentorRegisterCard
+//                         key={`${res.reservationId}-${res.status}`}
+//                         id={res.reservationId}
+//                         date={res.date}
+//                         memberName={res.memberName}
+//                         status={res.status}
+//                         mentorImg={res.mentorImageUrl}
+//                         onCancel={handleCancel}
+//                         onReject={handleReject}
+//                         onAccept={handleAccept}
+//                         onComplete={handleComplete}
+//                       />
+//                     );
+//                   })}
+//                 </>
+//               )}
+//             </div>
+//           </div>
+//         </main>
+//         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+//           {/* Todo 혹은 다른 사이드 컴포넌트 있으면 여기에 */}
+//         </div>
+//       </div>
+//       <Footer />
+//     </>
+//   );
+// };
+
+// export default MentorRegister;
+
+import React, { useState, useEffect } from 'react';
+import Header from '../../../components/common/Header';
+import Sidebar from '../../../components/common/Sidebar';
+import Footer from '../../../components/common/Footer';
+import { useNavigate, useLocation } from 'react-router-dom';
+import MentorRegisterCard from './MentorRegisterCard';
+import { getMentorReservations, acceptMentoring, completeMentoring } from '../../../api/mentoring';
+
+const MentorRegister = () => {
+    const [reservations, setReservations] = useState([]);
+    const memberId = localStorage.getItem('memberId');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    console.log('🏁 MentorRegister 컴포넌트 마운트');
+    console.log('🆔 memberId:', memberId);
+    console.log('📍 location.state:', location.state);
+
+    useEffect(() => {
+        if (!memberId) return;
+
+        const fetchReservations = async () => {
+            try {
+                console.log('🔍 예약 목록 조회 시작, memberId:', memberId);
+                const response = await getMentorReservations(memberId);
+                console.log('📡 API 응답 전체:', response.data);
+                setReservations(response.data);
+            } catch (error) {
+                console.error('❌ 멘토 예약 조회 실패:', error);
+            }
+        };
+
+        fetchReservations();
+    }, [memberId]);
+
+    useEffect(() => {
+        if (location.state?.rejectedReservationId) {
+            navigate(location.pathname, { replace: true });
         }
-      />
-    </>
-  );
+    }, [location.state, navigate, location.pathname]);
+
+    useEffect(() => {
+        if (location.state?.cancelledReservationId && !location.state?.alreadyRemoved) {
+            navigate(location.pathname, { replace: true });
+        }
+    }, [location.state, navigate, location.pathname]);
+
+    const handleCancel = (reservationId) => {
+        console.log('✅ 예약 취소 로직 생략됨, reservationId:', reservationId);
+    };
+
+    const handleReject = (reservationId) => {
+        console.log('✅ 예약 거절 로직 생략됨, reservationId:', reservationId);
+    };
+
+    const handleAccept = async (reservationId) => {
+        try {
+            await acceptMentoring(reservationId);
+            setReservations(prev =>
+                prev.map(res =>
+                    res.reservationId === reservationId
+                        ? { ...res, status: 'CONFIRMED' }
+                        : res
+                )
+            );
+        } catch (error) {
+            console.error('예약 수락 실패:', error);
+            alert('예약 수락 중 오류가 발생했습니다.');
+        }
+    };
+
+    const handleComplete = async (reservationId) => {
+        try {
+            await completeMentoring(reservationId);
+            const updated = reservations.filter(res => res.reservationId !== reservationId);
+            setReservations(updated);
+        } catch (error) {
+            console.error('멘토링 완료 처리 실패:', error);
+            alert('멘토링 완료 처리 중 오류가 발생했습니다.');
+        }
+    };
+
+    return (
+        <>
+            <Header menuType="mentoring" />
+            <div className="container-flex">
+                <Sidebar menuType="mentoring" />
+                <main className="main">
+                    <div className="max-w-2xl mx-auto pt-10 pb-16">
+                        <h3 className="text-2xl font-bold mb-8 text-slate-900" style={{ textAlign: 'center' }}>
+                            멘토링 예약 관리
+                        </h3>
+                        <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '20px 0' }}></div>
+                        <div>
+                            {reservations.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '40px 0', color: '#666' }}>
+                                    예약 요청이 없습니다.
+                                </div>
+                            ) : (
+                                reservations.map((res) => (
+                                    <MentorRegisterCard
+                                        key={`${res.reservationId}-${res.status}`}
+                                        id={res.reservationId}
+                                        date={res.date}
+                                        memberName={res.memberName}
+                                        status={res.status}
+                                        mentorImg={res.mentorImageUrl}
+                                        onCancel={handleCancel}
+                                        onReject={handleReject}
+                                        onAccept={handleAccept}
+                                        onComplete={handleComplete}
+                                    />
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </main>
+                <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
+                    {/* 사이드 컴포넌트 영역 */}
+                </div>
+            </div>
+            <Footer />
+        </>
+    );
 };
 
-export default MentorRegisterCard;
+export default MentorRegister;

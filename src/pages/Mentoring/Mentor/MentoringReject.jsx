@@ -5,6 +5,7 @@ import Footer from '../../../components/common/Footer';
 import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
 import Todo from '../../../components/common/Todo'; 
 import { useNavigate, useLocation } from 'react-router-dom';
+import { rejectMentoring } from '../../../api/mentoring';
 
 const rejectReasons = [
   '갑작스러운 일정 변경이 생겼어요.',
@@ -52,8 +53,8 @@ const MentoringReject = () => {
 
       const reasonText = selectedReasons.join(', ');
 
-      // 실제 API 호출 시
-      // await rejectMentoring({ mentorId: ..., reason: reasonText });
+      // 실제 API 호출
+      await rejectMentoring(location.state?.reservationId, reasonText);
 
       alert('예약이 거절되었습니다.');
       navigate('/mentoring/mentor/register', { 
