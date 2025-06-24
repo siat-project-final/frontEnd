@@ -4,13 +4,14 @@ import Sidebar from '../../components/common/Sidebar';
 import { useParams } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 import axios from 'axios';
-import { getPublicStudyLogDetail } from '../../api/studyLog';
+import { getPublicStudyLogDetail, toggleLikeStudyLog } from '../../api/studyLog';
 
 const StudyLogPublicDetail = () => {
   const { id } = useParams();
   const [log, setLog] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     fetchDetail();
@@ -20,8 +21,9 @@ const StudyLogPublicDetail = () => {
   const fetchDetail = async () => {
     try {
       const res = await getPublicStudyLogDetail(id);
-      console.log('📥 상세 응답:', res.data);
+      console.log(res.data); // 응답 데이터 확인
       setLog(res.data);
+      setIsLiked(localStorage.getItem(`liked-${res.data.diaryId}`) === 'true');
     } catch (err) {
       console.error('공유 학습일지 상세 조회 실패:', err);
     }
@@ -30,7 +32,6 @@ const StudyLogPublicDetail = () => {
   const fetchComments = async () => {
     try {
       const res = await axios.get(`/v1/study-diary/comments/${id}`);
-      console.log('📥 댓글 응답:', res.data);
       setComments(res.data);
     } catch (err) {
       console.error('댓글 조회 실패:', err);
@@ -51,13 +52,27 @@ const StudyLogPublicDetail = () => {
         contents: commentText,
       });
       setCommentText('');
-      fetchComments(); // ✅ 재사용
+      fetchComments();
     } catch (err) {
       console.error('댓글 등록 실패:', err);
     }
   };
 
-  if (!log) return <div>로딩 중...</div>;
+  const handleLike = async () => {
+    if (!log) return;
+    try {
+      await toggleLikeStudyLog(log.diaryId, !isLiked);
+      setIsLiked(!isLiked);
+      localStorage.setItem(`liked-${log.diaryId}`, String(!isLiked));
+    } catch (err) {
+      console.error('좋아요 실패:', err);
+    }
+  };
+
+  // 로딩 중 화면 처리
+  if (!log) {
+    return <div>로딩 중...</div>;
+  }
 
   return (
     <div>
@@ -74,9 +89,12 @@ const StudyLogPublicDetail = () => {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <input className="form-control w-50" value={log.title} disabled style={{ backgroundColor: 'white' }} />
                 <div className="d-flex align-items-center">
-                  <span className="me-2">작성자: {log.memberName}</span>
-                  <button className="btn btn-outline-success">
-                    <i className="bi bi-heart"></i> {log.likeCount}
+                  <span className="me-2">작성자: {log.memberName ? log.memberName : '이름 미제공'}</span>
+                  <button
+                    className={`btn ${isLiked ? 'btn-success' : 'btn-outline-success'}`}
+                    onClick={handleLike}
+                  >
+                    <i className={`bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}`}></i> {log.likeCount}
                   </button>
                 </div>
               </div>

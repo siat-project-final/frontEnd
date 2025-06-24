@@ -16,7 +16,7 @@ const WriteStudyLogPage = () => {
     content: '',
     summary: '',
   });
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
   const navigate = useNavigate();
 
   const handleChange = (e) => {

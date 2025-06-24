@@ -4,25 +4,24 @@ import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
-// ✅ axios 연동 주석
-import { getPublicStudyLogs } from '../../api/studyLog';
+import { getPublicStudyLogs, toggleLikeStudyLog } from '../../api/studyLog';
 
 const StudyLogPublic = () => {
   const [studyLogs, setStudyLogs] = useState([]);
+  const [likedMap, setLikedMap] = useState({}); // 각 로그의 좋아요 여부 상태
 
   useEffect(() => {
-    console.log('studyLogs:', studyLogs);
-    //dummy data
-    // setStudyLogs([
-    //   { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
-    //   { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
-    //   { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
-    // ]);
     const fetchPublicLogs = async () => {
       try {
         const res = await getPublicStudyLogs({ subject: 'ALL' });
-        console.log('📥 공유 일지 응답:', res.data); // ✅ 반드시 확인할 로그
         setStudyLogs(res.data);
+
+        // 초기 좋아요 여부 상태 설정 (localStorage 기준)
+        const likedStates = {};
+        res.data.forEach((log) => {
+          likedStates[log.diaryId] = localStorage.getItem(`liked-${log.diaryId}`) === 'true';
+        });
+        setLikedMap(likedStates);
       } catch (err) {
         console.error('공유 일지 조회 실패:', err);
       }
@@ -30,31 +29,42 @@ const StudyLogPublic = () => {
     fetchPublicLogs();
   }, []);
 
+  const handleLike = async (diaryId) => {
+    const isLiked = likedMap[diaryId] || false;
+    try {
+      await toggleLikeStudyLog(diaryId, !isLiked);
+
+      // UI 상태 업데이트
+      setStudyLogs((prevLogs) =>
+        prevLogs.map((log) =>
+          log.diaryId === diaryId
+            ? { ...log, likeCount: log.likeCount + (isLiked ? -1 : 1) }
+            : log
+        )
+      );
+      setLikedMap((prev) => ({ ...prev, [diaryId]: !isLiked }));
+      localStorage.setItem(`liked-${diaryId}`, String(!isLiked));
+    } catch (err) {
+      console.error('좋아요 실패:', err);
+    }
+  };
+
   return (
-    
     <div>
       <Header />
       <div className="container-flex" style={{ display: 'flex' }}>
         <Sidebar menuType="studylog" />
-
         <main className="main" style={{ flex: 1 }}>
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1
-                className="h3 fw-bold mb-0"
-                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
-              >
+              <h1 className="h3 fw-bold mb-0" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
                 공유 학습일지
               </h1>
               <div className="d-flex align-items-center">
                 <select className="form-select w-auto d-inline-block me-2">
                   <option>과목</option>
                 </select>
-                <Link
-                  to="./write"
-                  className="btn border-0 text-white"
-                  style={{ backgroundColor: '#84cc16' }}
-                >
+                <Link to="./write" className="btn border-0 text-white" style={{ backgroundColor: '#84cc16' }}>
                   일지 작성하기
                 </Link>
               </div>
@@ -70,28 +80,26 @@ const StudyLogPublic = () => {
                       <span className="text-muted ms-3">NAME: {log.memberName}</span>
                     </div>
                     <div>
-                      <button className="btn btn-outline-success">
-                        <i className="bi bi-heart"></i> {log.likeCount}
+                      <button
+                        className={`btn ${likedMap[log.diaryId] ? 'btn-success' : 'btn-outline-success'}`}
+                        onClick={() => handleLike(log.diaryId)}
+                      >
+                        <i className={`bi ${likedMap[log.diaryId] ? 'bi-heart-fill' : 'bi-heart'}`}></i>{' '}
+                        {log.likeCount}
                       </button>
                     </div>
                   </div>
                   <p>{log.aiSummary}</p>
                   <div className="text-end">
-                    <Link
-                      to={`/study/public/${log.diaryId}`}
-                      className="btn btn-outline-secondary btn-sm"
-                    >
+                    <Link to={`/study/public/${log.diaryId}`} className="btn btn-outline-secondary btn-sm">
                       상세 보기
                     </Link>
                   </div>
                 </div>
               </div>
             ))}
-
           </div>
         </main>
-
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>

@@ -1,11 +1,11 @@
-import axios from './axios';
+import axios from './axios'; // 또는 './axiosInstance' 프로젝트 설정에 따라
 
 /** 내 학습일지 전체 조회 */
 export const getMyStudyLogs = (memberId) => {
-  return axios.get(`/study-diary/member/${memberId}`); // subject, memberId, isPublic 등
+  return axios.get(`/study-diary/member/${memberId}`);
 };
 
-/** 내 학습일지 상세 조회 */
+/** 내 학습일지 단건 조회 */
 export const getMyStudyLogById = (diaryId) => {
   return axios.get(`/study-diary/${diaryId}`);
 };
@@ -34,17 +34,17 @@ export const summarizeContent = (content) => {
 
 /** 공개 학습일지 전체 조회 */
 export const getPublicStudyLogs = (params) => {
-  return axios.get('/study-diary/public', { params }); // isPublic, subject, memberId 등
+  return axios.get('/study-diary/public', { params }); // subject 등 필터 가능
 };
 
-/** 공개 학습일지 상세 조회 (댓글+좋아요 포함) */
-export const getPublicStudyLogDetail = (diaryId) => {
-  return axios.get(`/study-diary/${diaryId}`);
+/** 공개 학습일지 단건 조회 */
+export const getPublicStudyLogDetail = async (id) => {
+  return axios.get(`/study-diary/${id}`);
 };
 
-/** 좋아요 등록 */
-export const likePublicStudyLog = (diaryId, memberId) => {
-  return axios.post(`/study-diary/${diaryId}/likes`, { memberId });
+/** 좋아요 토글 (등록/취소) */
+export const toggleLikeStudyLog = (diaryId, isLike) => {
+  return axios.put(`/study-diary/like/${diaryId}?isLike=${isLike}`);
 };
 
 /** 댓글 작성 */
@@ -54,9 +54,3 @@ export const commentOnStudyLog = (diaryId, memberId, contents) => {
     contents,
   });
 };
-
-
-// 요청 예시
-// GET /api/study-logs/public?subject=AI&isPublic=true
-
-// POST /api/study-logs/3/comments { memberId: 5, contents: "좋은 글입니다!" }
