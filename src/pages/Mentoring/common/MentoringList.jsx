@@ -15,7 +15,7 @@ const MentoringList = () => {
   const dummyMentors = [
     {
       mentorId: 1,
-      mentorName: 'Walter White',
+      mentorName: '안철수',
       position: 'Business Analyst',
       company: 'SK 쉴더스',
       mentor_image_url: '/assets/img/mentors/mentor1.jpg',
@@ -99,7 +99,6 @@ const MentoringList = () => {
     },
   ];
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -169,11 +168,11 @@ const MentoringList = () => {
                       }}
                       onClick={() => {
                         const role = sessionStorage.getItem('userRole');
-                        if (role === 'mentor') {
-                          navigate('/mentoring/mentor/detail', { state: { mentor } });
-                        } else {
-                          navigate('/mentoring/detail', { state: { mentor } });
+                        if (role !== 'MENTEE') {
+                          alert('멘토는 멘토링 신청 권한이 없습니다.');
+                          return;
                         }
+                        navigate('/mentoring/detail', { state: { mentor } });
                       }}
                     >
                       <div

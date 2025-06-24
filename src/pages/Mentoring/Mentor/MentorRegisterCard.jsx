@@ -39,51 +39,48 @@ const MentorRegisterCard = ({
     textAlign: 'center',
   };
 
+  // 멘티 프로필 이미지 클릭 시 권한 체크 예시 (멘토링 신청 페이지 이동 등)
+  const handleProfileImgClick = () => {
+    const role = sessionStorage.getItem('userRole');
+    if (role !== 'MENTEE') {
+      alert('멘토는 멘토링 신청 권한이 없습니다.');
+      return;
+    }
+    // 예시: 멘토링 신청 페이지로 이동 (필요시 state 추가)
+    navigate('/mentoring/apply', { state: { mentorId: id } });
+  };
+
   const handleAcceptClick = () => {
     onAccept(id);
     setShowAcceptModal(true);
   };
 
   const handleCompleteClick = () => {
-    onComplete(id); // 부모에서 삭제 처리
+    onComplete(id);
     setShowCompleteModal(true);
   };
 
-  // const handleCancelClick = () => {
-  //   navigate('/mentoring/cancel', {
-  //     state: {
-  //       reservationId: id,
-  //       memberName: memberName,
-  //       date: date,
-  //       status: status
-  //     }
-  //   });
-  // };
+  const handleCancelClick = () => {
+    navigate('/mentoring/cancel', { 
+      state: { 
+        reservationId: id,
+        memberName: memberName,
+        date: date,
+        status: status
+      } 
+    });
+  };
 
-    const handleCancelClick = () => {
-        navigate('/mentoring/cancel', {
-            state: {
-                reservationId: id,
-                memberName,
-                date,
-                status,
-                source: 'mentor' // ✅ 누가 취소했는지
-            }
-        });
-    };
-
-
-    const handleRejectClick = () => {
-      onReject(id); // 예약 거절 후 카드 삭제
-      navigate('/mentoring/mentor/reject', {
-          state: {
-              reservationId: id,
-              memberName: memberName,
-              date: date,
-              status: status
-            }
-        });
-    };
+  const handleRejectClick = () => {
+    navigate('/mentoring/mentor/reject', { 
+      state: { 
+        reservationId: id,
+        memberName: memberName,
+        date: date,
+        status: status
+      } 
+    });
+  };
 
   return (
     <>
@@ -102,6 +99,22 @@ const MentorRegisterCard = ({
           margin: '0 auto',
         }}
       >
+        {/* 프로필 이미지 (멘티/멘토) */}
+        <img
+          src={mentorImg}
+          alt="멘토 이미지"
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            cursor: 'pointer',
+            objectFit: 'cover',
+            marginRight: '24px',
+            border: '1px solid #e2e8f0',
+          }}
+          onClick={handleProfileImgClick}
+        />
+
         <div
           style={{
             border: '1px solid #e2e8f0',

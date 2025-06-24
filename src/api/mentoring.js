@@ -1,6 +1,5 @@
 import axios from './axios';
 
-
 /** 멘토 목록 조회 */
 export const getMentors = (keyword, field) => {
   return axios.get('/mentors', {
@@ -15,12 +14,12 @@ export const getMentorDetail = (mentorId) => {
 
 
 /** 멘토링 신청 */
-export const applyMentoring = ({ mentorId, memberId, date, introduction, subject }) => {
+export const applyMentoring = ({ mentorId, memberId, date, Introduction, subject }) => {
   return axios.post('/reservations', {
     mentorId,
     memberId,
     date,
-    introduction,
+    Introduction,
     subject,
   });
 };
@@ -31,11 +30,13 @@ export const getMentoringReservations = (memberId) => {
 };
 
 /** 멘토링 취소 */
-export const cancelMentoring = ({ reservationId, cancelReason }) => {
+export const cancelMentoring = ({ reservationId, memberName, cancelReason }) => {
   return axios.put(`/reservations/mentee/${reservationId}/cancel`, {
+    memberName,
     cancelReason,
   });
 };
+
 /** 멘토링 히스토리 조회 */
 export const getMentoringHistory = (memberId) => {
   return axios.get(`/mentoring/mentee/${memberId}/completed`);
