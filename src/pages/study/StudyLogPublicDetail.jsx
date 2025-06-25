@@ -7,13 +7,11 @@ import axios from 'axios';
 import { getPublicStudyLogDetail, toggleLikeStudyLog } from '../../api/studyLog';
 
 const StudyLogPublicDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // diaryId
   const [log, setLog] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isLiked, setIsLiked] = useState(false);
-
-const memberId = localStorage.getItem('memberId');
 
   useEffect(() => {
     fetchDetail();
@@ -22,13 +20,22 @@ const memberId = localStorage.getItem('memberId');
 
   const fetchDetail = async () => {
     try {
-      console.log('공유 학습일지 상세 조회 시작:', id);
-      const res = await getPublicStudyLogDetail(memberId);
-      console.log(res.data); // 응답 데이터 확인
-      setLog(res.data);
-      setIsLiked(localStorage.getItem(`liked-${res.data.diaryId}`) === 'true');
+      console.log('공유 학습일지 상세 조회 시작, diaryId:', id);
+
+      const res = await getPublicStudyLogDetail(id);
+      const data = res.data;
+      console.log('공유 학습일지 상세 응답:', data);
+
+      setLog(data);
+
+      const liked = localStorage.getItem(`liked-${data.diaryId}`) === 'true';
+      setIsLiked(liked);
     } catch (err) {
       console.error('공유 학습일지 상세 조회 실패:', err);
+      if (err.response) {
+        console.error('응답 상태코드:', err.response.status);
+        console.error('응답 데이터:', err.response.data);
+      }
     }
   };
 
@@ -65,14 +72,14 @@ const memberId = localStorage.getItem('memberId');
     if (!log) return;
     try {
       await toggleLikeStudyLog(log.diaryId, !isLiked);
-      setIsLiked(!isLiked);
-      localStorage.setItem(`liked-${log.diaryId}`, String(!isLiked));
+      const newLiked = !isLiked;
+      setIsLiked(newLiked);
+      localStorage.setItem(`liked-${log.diaryId}`, String(newLiked));
     } catch (err) {
       console.error('좋아요 실패:', err);
     }
   };
 
-  // 로딩 중 화면 처리
   if (!log) {
     return <div>로딩 중...</div>;
   }
@@ -92,7 +99,9 @@ const memberId = localStorage.getItem('memberId');
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <input className="form-control w-50" value={log.title} disabled style={{ backgroundColor: 'white' }} />
                 <div className="d-flex align-items-center">
-                  <span className="me-2">작성자: {log.memberName ? log.memberName : '이름 미제공'}</span>
+                  {log.memberName && (
+                    <span className="me-2">작성자: {log.memberName}</span>
+                  )}
                   <button
                     className={`btn ${isLiked ? 'btn-success' : 'btn-outline-success'}`}
                     onClick={handleLike}
