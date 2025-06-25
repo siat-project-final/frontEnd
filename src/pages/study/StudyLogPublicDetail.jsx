@@ -3,7 +3,7 @@ import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import { useParams } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
-import axios from 'axios';
+import instance from '../../api/axios'; 
 import { getPublicStudyLogDetail, toggleLikeStudyLog } from '../../api/studyLog';
 
 const StudyLogPublicDetail = () => {
@@ -32,16 +32,12 @@ const StudyLogPublicDetail = () => {
       setIsLiked(liked);
     } catch (err) {
       console.error('공유 학습일지 상세 조회 실패:', err);
-      if (err.response) {
-        console.error('응답 상태코드:', err.response.status);
-        console.error('응답 데이터:', err.response.data);
-      }
     }
   };
 
   const fetchComments = async () => {
     try {
-      const res = await axios.get(`/v1/study-diary/comments/${id}`);
+      const res = await instance.get(`/study-diary/comments/${id}`);
       setComments(res.data);
     } catch (err) {
       console.error('댓글 조회 실패:', err);
@@ -56,7 +52,7 @@ const StudyLogPublicDetail = () => {
     }
 
     try {
-      await axios.post('/v1/study-diary/comments', {
+      await instance.post('/study-diary/comments', {
         diaryId: id,
         memberId: parseInt(memberId),
         contents: commentText,
