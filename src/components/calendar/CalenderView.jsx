@@ -52,9 +52,9 @@ const CalendarView = () => {
             const dates = new Set(
                 res.data
                     .map((log) => {
-                        if (!log.date) return null;
-                        if (typeof log.date === 'string') {
-                            return log.date.includes('T') ? log.date.split('T')[0] : log.date;
+                        if (!log.studyDate) return null;
+                        if (typeof log.studyDate === 'string') {
+                            return log.studyDate.includes('T') ? log.studyDate.split('T')[0] : log.studyDate;
                         }
                         return null;
                     })
@@ -205,9 +205,9 @@ const CalendarView = () => {
                         selectable={true}
                         dateClick={handleDateClick}
                         eventClick={(info) => {
-                            const { type, studyDiaryId, date } = info.event.extendedProps;
+                            const { type, diaryId, date } = info.event.extendedProps;
                             if (type === 'DIARY') {
-                                navigate(`/study-log/${studyDiaryId}`);
+                                navigate(`/study-log/${diaryId}`);
                             } else if (type === 'UNWRITTEN_DIARY') {
                                 navigate(`/study/write?date=${date}`);
                             } else if (type === 'MENTORING') {
