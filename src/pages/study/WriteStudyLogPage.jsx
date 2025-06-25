@@ -16,6 +16,15 @@ const WriteStudyLogPage = () => {
     content: '',
     summary: '',
   });
+  // focus 상태 관리
+  const [focus, setFocus] = useState({
+    title: false,
+    date: false,
+    subject: false,
+    content: false,
+    summary: false,
+    isPublic: false,
+  });
   const memberId = sessionStorage.getItem('memberId');
   const navigate = useNavigate();
 
@@ -48,6 +57,17 @@ const WriteStudyLogPage = () => {
     }
   };
 
+  // focus 스타일
+  const getFocusStyle = (key) =>
+    focus[key]
+      ? {
+          borderColor: '#84cc16',
+          boxShadow: '0 0 0 0.2rem rgba(132,204,22,0.25)',
+          outline: 'none',
+          backgroundColor: 'white',
+        }
+      : { backgroundColor: 'white' };
+
   return (
     <div>
       <Header />
@@ -74,6 +94,9 @@ const WriteStudyLogPage = () => {
                       value={form.title}
                       onChange={handleChange}
                       placeholder="제목 입력"
+                      style={getFocusStyle('title')}
+                      onFocus={() => setFocus((f) => ({ ...f, title: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, title: false }))}
                     />
                   </div>
                   <div className="col-md-3">
@@ -83,6 +106,9 @@ const WriteStudyLogPage = () => {
                       name="isPublic"
                       value={form.isPublic}
                       onChange={handleChange}
+                      style={getFocusStyle('isPublic')}
+                      onFocus={() => setFocus((f) => ({ ...f, isPublic: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, isPublic: false }))}
                     >
                       <option value="true">공개</option>
                       <option value="false">비공개</option>
@@ -96,6 +122,9 @@ const WriteStudyLogPage = () => {
                       name="date"
                       value={form.date}
                       onChange={handleChange}
+                      style={getFocusStyle('date')}
+                      onFocus={() => setFocus((f) => ({ ...f, date: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, date: false }))}
                     />
                   </div>
                 </div>
@@ -110,6 +139,9 @@ const WriteStudyLogPage = () => {
                       value={form.subject}
                       onChange={handleChange}
                       placeholder="과목 입력"
+                      style={getFocusStyle('subject')}
+                      onFocus={() => setFocus((f) => ({ ...f, subject: true }))}
+                      onBlur={() => setFocus((f) => ({ ...f, subject: false }))}
                     />
                   </div>
                 </div>
@@ -122,6 +154,9 @@ const WriteStudyLogPage = () => {
                     rows="5"
                     value={form.content}
                     onChange={handleChange}
+                    style={getFocusStyle('content')}
+                    onFocus={() => setFocus((f) => ({ ...f, content: true }))}
+                    onBlur={() => setFocus((f) => ({ ...f, content: false }))}
                   ></textarea>
                 </div>
 
@@ -133,6 +168,9 @@ const WriteStudyLogPage = () => {
                     rows="3"
                     readOnly
                     value={form.summary}
+                    style={getFocusStyle('summary')}
+                    onFocus={() => setFocus((f) => ({ ...f, summary: true }))}
+                    onBlur={() => setFocus((f) => ({ ...f, summary: false }))}
                   ></textarea>
                 </div>
 
