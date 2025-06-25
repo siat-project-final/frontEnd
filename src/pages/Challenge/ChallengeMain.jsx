@@ -3,7 +3,7 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { getTodayChallenge, getDailyRanking } from '../../api/challenge'; // ✅ axios 연동 주석
+import { getTodayChallenge, getDailyRanking } from '../../api/challenge';
 import '../../App.css';
 
 const ChallengeMain = () => {
@@ -22,16 +22,16 @@ const ChallengeMain = () => {
           setTodayChallenge(res.data[0]);
         })
         .catch(err => {
-          console.error('챌린지 과목 데이터 불러오기 실패:', err)
+          console.error('챌린지 과목 데이터 불러오기 실패:', err);
           alert('챌린지 과목 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
         });
 
       getDailyRanking(today)
         .then(res => {
-          setRanking(res.data);;
+          setRanking(res.data);
         })
         .catch(err => {
-          console.error('랭킹 불러오기 실패:', err)
+          console.error('랭킹 불러오기 실패:', err);
           alert('랭킹 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
         });
     };
@@ -45,14 +45,20 @@ const ChallengeMain = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="page-title" data-aos="fade">
-            <div className="heading text-center">
-              <h2>챌린지 메인</h2>
+          <div className="container" style={{ paddingTop: '20px', paddingBottom: '0px' }}>
+            <div className="d-flex align-items-center" style={{ marginBottom: '0px' }}>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginLeft: '16px', color: '#84cc16' }}
+              >
+                챌린지
+              </h1>
             </div>
           </div>
 
+          {/* 카드 영역 */}
           <section className="section">
-            <div className="container py-5">
+            <div className="container" style={{ paddingTop: '10px', paddingBottom: '40px' }}>
               <div className="row g-4 justify-content-center">
                 {/* 일일 챌린지 */}
                 <div className="col-lg-5">
@@ -67,12 +73,22 @@ const ChallengeMain = () => {
                         <button
                           className="btn btn-dark mb-2"
                           onClick={() => navigate('/challenge/daily')}
+                          style={{
+                            backgroundColor: '#84cc16',
+                            color: '#fff',
+                            border: 'none',
+                          }}
                         >
                           오늘 문제 풀기
                         </button>
                         <button
                           className="btn btn-outline-dark"
                           onClick={() => navigate('/challenge/ranking')}
+                          style={{
+                            backgroundColor: '#84cc16',
+                            color: '#fff',
+                            border: 'none',
+                          }}
                         >
                           오늘의 랭킹 보기
                         </button>
@@ -90,14 +106,22 @@ const ChallengeMain = () => {
                     <p className="text-muted">
                       복습하고 싶은 과목의 문제를 선택하여 다시 풀어보세요.
                     </p>
-                    <button className="btn btn-dark" onClick={() => navigate('/challenge/review')}>
+                    <button
+                      className="btn btn-dark"
+                      onClick={() => navigate('/challenge/review')}
+                      style={{
+                        backgroundColor: '#84cc16',
+                        color: '#fff',
+                        border: 'none',
+                      }}
+                    >
                       복습하러 가기
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* 🔥 랭킹 섹션 (선택사항) */}
+              {/* 랭킹 */}
               <div className="row mt-5 justify-content-center">
                 <div className="col-lg-10">
                   <div className="card p-4 shadow-sm">
@@ -108,9 +132,10 @@ const ChallengeMain = () => {
                           key={idx}
                           className="list-group-item d-flex justify-content-between"
                         >
-                          <span>{user.rank}위. {user.memberName}</span>
+                          <span>
+                            {user.rank}위. {user.memberName}
+                          </span>
                           <span>{user.totalPoints}점</span>
-
                         </li>
                       ))}
                     </ul>
