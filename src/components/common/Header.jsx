@@ -21,9 +21,9 @@ const Header = ({ menuType }) => (
           src="/assets/img/mentors/siatlogo.png"
           alt="SIAT Logo"
           style={{ 
-            width: '180px', 
-            height: '80px',
-            maxHeight: '80px',
+            width: '200px', 
+            height: '120px',
+            maxHeight: '120px',
             display: 'block'
           }}
         />
@@ -85,7 +85,13 @@ const Header = ({ menuType }) => (
         <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <NavLink className="btn-getstarted" to="/login" style={{ fontSize: '16px' }}>
+
+      <NavLink className="btn-getstarted" to="/login" style={{ 
+        fontSize: '16px',
+        color: '#334155',
+        backgroundColor: 'white',
+        border: '1px solid #334155'
+        }}>
         <b>Logout</b>
       </NavLink>
     </div>
