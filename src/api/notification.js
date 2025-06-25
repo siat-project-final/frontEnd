@@ -1,10 +1,13 @@
 import axios from './axios';
 
-/** 알림 조회 */
-export const getNotifications = (memberId) => {
-  return axios.get('/notifications', {
-    params: { memberId },
-  });
+/** 멘토 알림 조회 */
+export const getNotificationsMentor = (memberId) => {
+  return axios.get(`/notifications/mentor/${memberId}`);
+};
+
+/** 멘티 알림 조회 */
+export const getNotificationsMentee = (memberId) => {
+  return axios.get(`/notifications/mentee/${memberId}`);
 };
 
 /** 알림 삭제 */
