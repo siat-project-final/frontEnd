@@ -48,12 +48,16 @@
       };
       // ✅ 이 아래 줄 추가!
       console.log('📤 전송 데이터:', data);
-      try {
-        await postStudyLog(data);
-        navigate('/study');
-      } catch (err) {
-        console.error('일지 제출 실패:', err);
-      }
+      postStudyLog(data)
+        .then((res) => {
+          console.log('학습일지 작성 성공:', res.data);
+          alert('학습일지가 작성되었습니다.');
+          navigate('/studylog');
+        })
+        .catch((err) => {
+          console.error('학습일지 작성 실패:', err);
+          alert('학습일지 작성에 실패했습니다. 다시 시도해주세요.');
+        });
     };
 
     return (
