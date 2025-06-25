@@ -5,9 +5,14 @@ import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 import { getPublicStudyLogs, toggleLikeStudyLog } from '../../api/studyLog';
 
+const SUBJECTS = [
+  'Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'
+];
+
 const StudyLogPublic = () => {
   const [studyLogs, setStudyLogs] = useState([]);
-  const [likedMap, setLikedMap] = useState({}); // 각 로그의 좋아요 여부 상태
+  const [likedMap, setLikedMap] = useState({});
+  const [selectedSubject, setSelectedSubject] = useState('');
 
   useEffect(() => {
     const fetchPublicLogs = async () => {
@@ -46,6 +51,16 @@ const StudyLogPublic = () => {
     }
   };
 
+  // 과목 선택 핸들러
+  const handleSubjectChange = (e) => {
+    setSelectedSubject(e.target.value);
+  };
+
+  // 과목 필터링
+  const filteredLogs = selectedSubject
+    ? studyLogs.filter((log) => log.subject === selectedSubject)
+    : studyLogs;
+
   return (
     <div>
       <Header />
@@ -61,17 +76,15 @@ const StudyLogPublic = () => {
                 공유 학습일지
               </h1>
               <div className="d-flex align-items-center">
-                <select className="form-select w-auto d-inline-block me-2">
-                  
-                <option value="">과목 선택</option>
-                        {/* <option value="Java">Java</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="Python">Python</option>
-                        <option value="React">React</option>
-                        <option value="AWS">AWS</option>
-                        <option value="CI/CD">CI/CD</option>
-                        <option value="Springboot">Sprigboot</option>
-                        <option value="기타">기타</option> */}
+                <select
+                  className="form-select w-auto d-inline-block me-2"
+                  value={selectedSubject}
+                  onChange={handleSubjectChange}
+                >
+                  <option value="">전체 과목</option>
+                  {SUBJECTS.map((subj) => (
+                    <option key={subj} value={subj}>{subj}</option>
+                  ))}
                 </select>
                 <Link
                   to="../study/write"
@@ -83,12 +96,10 @@ const StudyLogPublic = () => {
               </div>
             </div>
 
-            {studyLogs.map((log) => (
+            {filteredLogs.map((log) => (
               <div key={log.diaryId} className="studylog-boxes card mb-4" data-aos="fade-up">
                 <div className="card-body">
-                  {/*  제목 표시 */}
                   <h5 className="fw-bold">{log.title}</h5>
-
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <div>
                       <span className="badge bg-secondary me-2">{log.studyDate}</span>
@@ -105,9 +116,7 @@ const StudyLogPublic = () => {
                       </button>
                     </div>
                   </div>
-
                   <p>{log.aiSummary}</p>
-
                   <div className="text-end">
                     <Link
                       to={`/study/public/${log.diaryId}`}

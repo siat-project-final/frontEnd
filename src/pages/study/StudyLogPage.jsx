@@ -6,6 +6,10 @@ import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 import { getMyStudyLogs } from '../../api/studyLog';
 
+const SUBJECTS = [
+  'Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'
+];
+
 const StudyLogPage = () => {
   const [studyLogs, setStudyLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
@@ -14,7 +18,7 @@ const StudyLogPage = () => {
 
   useEffect(() => {
     if (!memberId) {
-      console.warn('❌ memberId 없음 - 로그인 필요');
+      console.warn(' memberId 없음 - 로그인 필요');
       return;
     }
     const fetchLogs = async () => {
@@ -72,15 +76,10 @@ const StudyLogPage = () => {
                       value={selectedSubject}
                       onChange={handleSubjectFilter}
                     >
-                      <option value="">과목 선택</option>
-                        <option value="Java">Java</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="Python">Python</option>
-                        <option value="React">React</option>
-                        <option value="AWS">AWS</option>
-                        <option value="CI/CD">CI/CD</option>
-                        <option value="Springboot">Sprigboot</option>
-                        <option value="기타">기타</option>
+                      <option value="">전체 과목</option>
+                      {SUBJECTS.map((subj) => (
+                        <option key={subj} value={subj}>{subj}</option>
+                      ))}
                     </select>
                     <Link
                       to="./write"
@@ -108,5 +107,4 @@ const StudyLogPage = () => {
     </div>
   );
 };
-
 export default StudyLogPage;

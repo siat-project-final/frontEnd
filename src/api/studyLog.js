@@ -1,4 +1,4 @@
-import axios from './axios'; // 또는 './axiosInstance' 프로젝트 설정에 따라
+import axios from './axios'; 
 
 /** 내 학습일지 전체 조회 */
 export const getMyStudyLogs = (memberId) => {
@@ -46,7 +46,6 @@ export const getPublicStudyLogDetail = async (id) => {
 export const toggleLikeStudyLog = (diaryId, isLike) => {
   return axios.put(`/study-diary/like/${diaryId}?isLike=${isLike}`);
 };
-
 
 
 /** 댓글 작성 */
