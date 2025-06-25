@@ -20,6 +20,12 @@ export const reissueToken = (refreshToken) => {
   return axios.post('/auth/reissue', { refreshToken });
 };
 
+/** 멘토 ID 조회 (MENTOR 전용) */
+export const getMentorIdByMemberId = (memberId) => {
+  return axios.get(`/auth/mentor-id`, {
+    params: { memberId },
+  });
+};
 
 // 요청 예시
 // POST /api/auth/login { id: 'choi123', password: '1234' }
