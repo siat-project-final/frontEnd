@@ -1,26 +1,23 @@
 import axios from './axios';
 
 /** 오늘의 챌린지 문제 조회 */
-export const getTodayChallenge = (userId) => {
-  return axios.get('/challenges/questions', {
-    params: { userId },
-  });
+export const getTodayChallenge = () => {
+  return axios.get('/challenge');
 };
 
 /** 챌린지 문제 제출 */
-export const submitChallenge = (problemId, memberId, submitAnswer) => {
-  return axios.post('/challenges/submit', {
-    problemId,
+export const submitChallenge = ({ memberId, problemIds, answers, createdAt }) => {
+  return axios.post('/challenge', {
     memberId,
-    submitAnswer,
+    problemIds,
+    answers,
+    createdAt,
   });
 };
 
 /** 챌린지 히스토리 전체 조회 */
 export const getChallengeHistory = (memberId) => {
-  return axios.get('/challenges/history', {
-    params: { memberId },
-  });
+  return axios.get(`/myPage/history/challenge/${memberId}`);
 };
 
 /** 챌린지 히스토리 상세 조회 */
@@ -30,7 +27,7 @@ export const getChallengeHistoryByDate = (date) => {
 
 /** 일일 랭킹 조회 */
 export const getDailyRanking = (date) => {
-  return axios.get('/challenges/ranking', {
+  return axios.get('/challenge/rank', {
     params: { date },
   });
 };
@@ -43,23 +40,18 @@ export const checkParticipation = (memberId, date) => {
 };
 
 /** 채점 결과 조회 */
-export const getSubmissionResult = (memberId, subject) => {
-  return axios.get('/submissions/result', {
-    params: { memberId, subject },
-  });
+export const getSubmissionResult = (memberId) => {
+  return axios.get(`/challenge/${memberId}/scoring`);
 };
 
 /** 복습 과목 목록 조회 */
-export const getReviewSubjects = (memberId) => {
-  return axios.get('/review/subjects', {
-    params: { memberId },
-  });
+export const getReviewSubjects = () => {
+  return axios.get('/challenge/review');
 };
 
 /** 복습 문제 랜덤 조회 */
 export const getReviewProblems = (memberId, subject) => {
-  return axios.get('/review/problems', {
-    params: { memberId, subject },
+  return axios.get(`/challenge/review/${memberId}/${subject}`, {
   });
 };
 

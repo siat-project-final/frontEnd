@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../api/auth';
 import './SignUp.css';
+import instance from '../api/axios'; // Axios 인스턴스 가져오기
+
 
 function SignUp() {
-  const moveUrl = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     id: '',
     password: '',
     passwordConfirm: '',
-    member_name: '',
+    memberName: '',
     email: '',
-    phone: '',
+    phoneNumber: '',
     nickname: '',
     role: 'USER',
     status: 'ACTIVE',
@@ -39,9 +41,9 @@ function SignUp() {
     const signUpData = {
       id: formData.id,
       password: formData.password,
-      name: formData.member_name,
+      memberName: formData.memberName,
       email: formData.email,
-      phone: formData.phone,
+      phoneNumber: formData.phoneNumber,
       nickname: formData.nickname,
       role: formData.role,
       status: formData.status,
@@ -50,25 +52,32 @@ function SignUp() {
       current_level: formData.current_level,
     };
 
-    console.log('회원가입 정보:', signUpData);
-
     // ✅ MOCK 회원가입 처리
     if (formData.id === 'mock' && formData.password === '1234') {
       window.alert('회원가입이 완료되었습니다. (mock)');
-      moveUrl('/');
+      navigate('/', { state: { fromSignUp : true } });
       return;
     }
 
     // ✅ 실제 API 호출
-    try {
-      await signUp(signUpData);
-      window.alert('회원가입이 완료되었습니다.');
-      moveUrl('/');
-    } catch (error) {
-      console.error('회원가입 실패:', error);
-      window.alert('회원가입에 실패했습니다.');
-    }
-  };
+    const response = instance.post('/auth/signUp', signUpData)
+        .then(response => {
+          // 성공 처리
+          navigate('/');
+          if (response.status === 200) {
+            alert('회원가입이 완료되었습니다.');
+          }
+        })
+        .catch(error => {
+          // 에러 처리
+          if (error.response && error.response.status === 400) {
+            alert('이미 사용 중인 아이디입니다.');
+          } else {
+            alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+          }
+        });
+};
+
 
   return (
     <div className="signup-container">
@@ -89,8 +98,8 @@ function SignUp() {
             <input className="form-input" id="passwordConfirm" name="passwordConfirm" type="password" value={formData.passwordConfirm} onChange={handleChange} required />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="member_name">이름</label>
-            <input className="form-input" id="member_name" name="member_name" type="text" value={formData.member_name} onChange={handleChange} required />
+            <label className="form-label" htmlFor="memberName">이름</label>
+            <input className="form-input" id="memberName" name="memberName" type="text" value={formData.memberName} onChange={handleChange} required />
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="nickname">닉네임</label>
@@ -101,12 +110,12 @@ function SignUp() {
             <input className="form-input" id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="phone">휴대폰 번호</label>
-            <input className="form-input" id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} required />
+            <label className="form-label" htmlFor="phoneNumber">휴대폰 번호</label>
+            <input className="form-input" id="phoneNumber" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required />
           </div>
           <button className="signup-button" type="submit">가입하기</button>
         </form>
-        <a className="login-link" href="#" onClick={() => moveUrl('/')}>
+        <a className="login-link" href="#" onClick={() => navigate('/')}>
           이미 계정이 있으신가요? 로그인
         </a>
       </div>

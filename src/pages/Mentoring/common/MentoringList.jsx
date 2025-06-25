@@ -10,6 +10,82 @@ const MentoringList = () => {
   const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
 
+  // 더미 데이터
+  const dummyMentors = [
+    {
+      mentorName: 'Walter White',
+      position: 'Business Analyst',
+      company: 'SK 쉴더스',
+      mentor_image_url: '/assets/img/mentors/형규.png',
+    },
+    {
+      mentorName: 'Sarah Jhonson',
+      position: 'Software Engineer',
+      company: 'SK C&C',
+      mentor_image_url: '/assets/img/mentors/수현.png',
+    },
+    {
+      mentorName: 'William Anderson',
+      position: 'Cloud Engineer',
+      company: 'AWS',
+      mentor_image_url: '/assets/img/mentors/신형.png',
+    },
+    {
+      mentorName: 'Amanda Jepson',
+      position: 'Software Developer',
+      company: 'TVING',
+      mentor_image_url: '/assets/img/mentors/은정.png',
+    },
+    {
+      mentorName: 'Brian Doe',
+      position: 'Software Developer',
+      company: 'MEGAZONE CLOUD',
+      mentor_image_url: '/assets/img/mentors/태현.png',
+    },
+    {
+      mentorName: 'Josepha Palas',
+      position: 'Cloud Engineer',
+      company: 'AWS',
+      mentor_image_url: '/assets/img/mentors/영석.png',
+    },
+    {
+      mentorName: 'Emily Chen',
+      position: 'Data Scientist',
+      company: 'Google',
+      mentor_image_url: '/assets/img/mentors/형규.png',
+    },
+    {
+      mentorName: 'Michael Park',
+      position: 'AI Engineer',
+      company: 'Naver',
+      mentor_image_url: '/assets/img/mentors/수현.png',
+    },
+    {
+      mentorName: 'Sophie Kim',
+      position: 'Frontend Developer',
+      company: 'Kakao',
+      mentor_image_url: '/assets/img/mentors/신형.png',
+    },
+    {
+      mentorName: 'David Lee',
+      position: 'Backend Developer',
+      company: 'LINE',
+      mentor_image_url: '/assets/img/mentors/은정.png',
+    },
+    {
+      mentorName: 'Lisa Wang',
+      position: 'DevOps Engineer',
+      company: 'Coupang',
+      mentor_image_url: '/assets/img/mentors/태현.png',
+    },
+    {
+      mentorName: 'James Kim',
+      position: 'Security Engineer',
+      company: 'Kakao Security',
+      mentor_image_url: '/assets/img/mentors/영석.png',
+    },
+  ];
+
   useEffect(() => {
     const fetchData = async () => {
       try {

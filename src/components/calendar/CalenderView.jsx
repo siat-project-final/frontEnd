@@ -5,6 +5,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
+import { useNavigate } from 'react-router-dom';
+import instance from '../../api/axios'; // Axios 인스턴스 가져오기
 
 import Header from '../common/Header';
 import Todo from '../common/Todo';
@@ -15,6 +17,9 @@ const CalendarView = () => {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [calendarKey, setCalendarKey] = useState(Date.now()); // ✅ 강제 리렌더 키
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // [kth] 250622 : 현재 달을 기준으로 요청하기 위한 상태
+  const [currentMonthStr, setCurrentMonthStr] = useState('');
   // const [selectedDate, setSelectedDate] = useState(null);
   // const [selectedDate, setSelectedDate] = useState(() => {
   //   // 🗓 오늘 날짜 yyyy-MM-dd 포맷
@@ -39,47 +44,117 @@ const CalendarView = () => {
   const [clickTimeout, setClickTimeout] = useState(null);
   const [localTodoTrigger, setLocalTodoTrigger] = useState(Date.now());
 
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
-  const getLocalTodos = () => {
-    const data = JSON.parse(localStorage.getItem('todo-list')) || [];
-    return data.map((todo) => ({
-      title: `[TODO] ${todo.item}`,
-      start: todo.date,
-      end: todo.date,
-      backgroundColor: '#F9E79F',
-      borderColor: '#F9E79F',
-      textColor: '#000',
-      extendedProps: {
-        type: 'TODO',
-        isChecked: todo.status,
-      },
-    }));
+  // [kth] 250622 : api로 불러온 json 데이터를 캘린더 이벤트로 변환하는 함수
+  const convertJsonToCalendarEvents = (jsonData) => {
+    const events = [];
+  
+    Object.values(jsonData).forEach(({ date, subjectList, studyDiaryList, mentoringList, mentoringReservationList }) => {
+      subjectList.forEach((subject) => {
+        events.push({
+          title: `[과목] ${subject}`,
+          start: date,
+          end: date,
+          backgroundColor: '#AED6F1',
+          borderColor: '#AED6F1',
+          textColor: '#000',
+          extendedProps: { type: 'SUBJECT' }
+        });
+      });
+  
+      studyDiaryList.forEach((diary) => {
+        events.push({
+          title: `[일지] ${diary.title || '학습일지'}`,
+          start: date,
+          end: date,
+          backgroundColor: '#ABEBC6',
+          borderColor: '#ABEBC6',
+          textColor: '#000',
+          extendedProps: { type: 'DIARY', ...diary }
+        });
+      });
+  
+      mentoringList.forEach((mentoring) => {
+        events.push({
+          title: `[멘토링] ${mentoring.mentorName}`,
+          start: date,
+          end: date,
+          backgroundColor: '#F1C40F',
+          borderColor: '#F9E79F',
+          textColor: '#000',
+          extendedProps: { type: 'MENTORING', ...mentoring }
+        });
+      });
+  
+      mentoringReservationList.forEach((reservation) => {
+        events.push({
+          title: `[멘토링 예약] ${reservation.mentorName}`,
+          start: date,
+          end: date,
+          backgroundColor: '#F9E79F',
+          borderColor: '#F9E79F',
+          textColor: '#000',
+          extendedProps: { type: 'MENTORING', ...reservation }
+        });
+      });
+
+    });
+  
+    return events;
   };
 
+  // [kth] 250622 : 의존성 배열을 비워놔서 최초 렌더링시에만 조회 api 1회 요청
   useEffect(() => {
     const fetchCalendarData = async () => {
       try {
-        // 👉 백엔드 API 호출 막아둠
-        // const today = new Date();
-        // const startDate = today.toISOString().slice(0, 10);
-        // const endDate = new Date(today.setDate(today.getDate() + 30)).toISOString().slice(0, 10);
-        // const [eventRes] = await Promise.all([
-        //   getEvents(memberId, startDate, endDate),
-        // ]);
+        // memberId가 없으면 요청하지 않음
+        if (!memberId) {
+          console.log('memberId가 없습니다. 로그인이 필요합니다.');
+          return;
+        }
 
-        const calendarMapped = []; // 임시로 이벤트 없음
-        const localTodos = getLocalTodos();
+        // 현재 위치한 달을 기준으로 일정 데이터를 가져오기 위해
+        const calendarApi = calendarRef.current?.getApi();
+        const currentDate = calendarApi ? calendarApi.getDate() : new Date(); // 현재 캘린더 기준 날짜
 
-        setCalendarEvents([...calendarMapped, ...localTodos]);
-        setCalendarKey(Date.now()); // ✅ 리렌더링 트리거
+        // 파라미터에 추가할 날짜 변환을 위한 로직
+        const yyyy = currentDate.getFullYear();
+        const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const monthStr = `${yyyy}-${mm}`;
+
+        console.log(`캘린더 데이터 요청: /calendar/schedule/${memberId}/${monthStr}`);
+
+        // 서버에 스케쥴 조회 요청
+        const res = await instance.get(`/calendar/schedule/${memberId}/${monthStr}`);
+  
+        // 앞에 작성한 매핑 함수로 res.data를 캘린더 이벤트로 변환
+        const calendarMapped = convertJsonToCalendarEvents(res.data);
+  
+        setCalendarEvents([...calendarMapped]);
+        setCalendarKey(Date.now());
       } catch (error) {
-        console.error('일정 및 투두 불러오기 실패:', error);
+        console.error('캘린더 데이터 조회 실패:', error);
+        
+        // 서버 에러인 경우 더미 데이터로 대체
+        if (error.response?.status === 500 || error.response?.status === 404) {
+          console.log('서버 에러로 인해 더미 데이터를 사용합니다.');
+          const dummyData = {
+            [`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`]: {
+              date: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`,
+              subjectList: ['React', 'JavaScript'],
+              studyDiaryList: [{ title: 'React 학습일지' }],
+              mentoringList: [{ mentorName: '김멘토' }]
+            }
+          };
+          const calendarMapped = convertJsonToCalendarEvents(dummyData);
+          setCalendarEvents([...calendarMapped]);
+        }
       }
     };
 
-    if (memberId) fetchCalendarData();
-  }, [memberId, localTodoTrigger]); // ✅ todo 바뀌면 다시 불러옴
+    fetchCalendarData();
+  }, [memberId]); // memberId를 의존성 배열에 추가
 
   const handleDateClick = (info) => {
     const clickedDate = info.dateStr;
@@ -142,6 +217,34 @@ const CalendarView = () => {
             }}
             ref={calendarRef}
             height="auto"
+              // [kth] 250622 : 달 변경시 조회 api 재요청을 위한 콜백 추가
+            datesSet={(arg) => {
+              const currentDate = arg.view.currentStart;
+              const yyyy = currentDate.getFullYear();
+              const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+              const monthStr = `${yyyy}-${mm}`;
+            
+              // 🔒 이미 같은 달이면 요청 안 보냄
+              if (monthStr === currentMonthStr) return;
+            
+              // memberId가 없으면 요청하지 않음
+              if (!memberId) {
+                console.log('memberId가 없습니다. 로그인이 필요합니다.');
+                return;
+              }
+
+              instance
+                .get(`/calendar/schedule/${memberId}/${monthStr}`)
+                .then((res) => {
+                  const calendarMapped = convertJsonToCalendarEvents(res.data);
+                  setCalendarEvents(calendarMapped);
+                  setCurrentMonthStr(monthStr); // 🔑 마지막으로 요청한 달 저장
+                })
+                .catch((error) => {
+                  console.error('달 변경 시 캘린더 데이터 조회 실패:', error);
+                  // 에러가 발생해도 기존 이벤트는 유지
+                });
+            }}
           />
 
           <CalendarModal

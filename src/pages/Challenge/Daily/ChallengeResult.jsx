@@ -3,49 +3,57 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { getSubmissionResult } from '../../../api/challenge'; // ✅ axios 연동 주석
+import { getSubmissionResult } from '../../../api/challenge';
 import '../../../App.css';
 
 const ChallengeResult = () => {
   const navigate = useNavigate();
   const [resultData, setResultData] = useState([]);
   const [totalScore, setTotalScore] = useState(0);
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
-    // ✅ 실제 API 호출 시
-    // getSubmissionResult(memberId, today)
-    //   .then(res => {
-    //     setResultData(res.data.results);
-    //     setTotalScore(res.data.totalScore);
-    //   })
-    //   .catch(err => console.error('결과 불러오기 실패:', err));
+    getSubmissionResult(memberId)
+      .then(res => {
+        const processed = (res.data || []).map(item => {
+        let parsedOptions = [];
 
-    // ✅ dummy 데이터
-    const dummyResults = [
-      {
-        problemId: 1,
-        content: 'Java에서 사칙연산 계산기 만들기',
-        difficulty: 2,
-        correct: true,
-      },
-      {
-        problemId: 2,
-        content: 'Spring에서 @Service의 역할',
-        difficulty: 3,
-        correct: false,
-      },
-    ];
-    const dummyScore = dummyResults.reduce(
-      (sum, item) => sum + (item.correct ? item.difficulty : 0),
-      0
-    );
+        try {
+          // 두 번 파싱: 이중 문자열 → 배열
+          const once = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
+          parsedOptions = Array.isArray(once)
+            ? once
+            : typeof once === 'string'
+            ? JSON.parse(once)
+            : [];
+        } catch (e) {
+          console.warn(`옵션 파싱 실패 (problemId=${item.problemId}):`, e);
+          alert('문제의 선택지를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+        }
+        return {
+          ...item,
+          options: parsedOptions,
+          type: item.type || 'multiple',
+        };
+      });
+        
+        setResultData(processed);
 
-    setResultData(dummyResults);
-    setTotalScore(dummyScore);
-  }, [memberId]);
+        // 총점 계산: 상위 5문제의 difficulty 합산
+        const score = processed
+          .slice(0, 5)
+          .reduce((sum, item) => sum + (item.correct ? item.difficulty : 0), 0);
+        setTotalScore(score);
+      })
+      .catch(err => {
+        console.error('결과 불러오기 실패:', err)
+        alert('챌린지 결과를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+      });
+  
+
+  }, []);
 
   return (
     <>
@@ -55,20 +63,77 @@ const ChallengeResult = () => {
         <main className="main">
           <div className="page-title" data-aos="fade">
             <div className="heading text-center">
-              <h2>일일 챌린지</h2>
+              <h2>일일 챌린지 결과</h2>
             </div>
           </div>
 
           <section className="section">
             <div className="container" style={{ padding: '40px 20px' }}>
-              {resultData.map((item, index) => (
+              {resultData.slice(0, 5).map((item, index) => (
                 <div key={item.problemId} className="mb-4">
                   <h5>
-                    Q{index + 1}. ({item.difficulty}점) {item.correct ? '✔ 정답' : '✘ 오답'}
+                    Q{index + 1}. ({item.difficulty}점){' '}
+                    {item.correct ? (
+                      <span style={{ color: 'green' }}>✔ 정답</span>
+                    ) : (
+                      <span style={{ color: 'red' }}>✘ 오답</span>
+                    )}
                   </h5>
-                  <p className="text-muted">{item.content}</p>
+                  <pre
+                    style={{
+                      background: '#f8f9fa',
+                      padding: '15px',
+                      borderRadius: '8px',
+                      whiteSpace: 'pre-wrap',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {item.title}
+                  </pre>
+
+                  {item.type === 'multiple' && item.options && (
+                    <ul className="list-group mb-2">
+                      {item.options.map((opt, idx) => {
+                        const optionNumber = opt.split('.')[0].trim(); // 🔧 숫자만 추출: "2. String" → "2"
+
+                        return (
+                          <li
+                            key={idx}
+                            className={`list-group-item d-flex justify-content-between ${
+                              optionNumber === item.correctAnswer
+                                ? 'list-group-item-success'
+                                : optionNumber === item.submitAnswer
+                                ? 'list-group-item-danger'
+                                : ''
+                            }`}
+                          >
+                            <span>{opt}</span>
+                            {optionNumber === item.correctAnswer && (
+                              <span className="badge bg-success">정답</span>
+                            )}
+                            {optionNumber === item.submitAnswer &&
+                              optionNumber !== item.correctAnswer && (
+                                <span className="badge bg-danger">내 답안</span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+
+                  {item.type === 'text' && (
+                    <div className="text-muted">
+                      <div>
+                        <strong>내 답안:</strong> {item.submitAnswer}
+                      </div>
+                      <div>
+                        <strong>정답:</strong> {item.correctAnswer}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
+
               <div className="text-end mt-4" style={{ fontWeight: 'bold', fontSize: '18px' }}>
                 총점: {totalScore}점
               </div>

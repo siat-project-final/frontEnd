@@ -162,6 +162,13 @@
   margin-top: 2rem;
 }
 
+.studylog-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
 .mentoring-box {
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

@@ -4,19 +4,13 @@ import Sidebar from '../../components/common/Sidebar';
 import { useParams } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 // ✅ axios 연동 주석 처리
-// import { getPublicStudyLogDetail } from '../../api/studyLog';
+import { getPublicStudyLogDetail } from '../../api/studyLog';
 
 const StudyLogPublicDetail = () => {
   const { id } = useParams();
   const [log, setLog] = useState(null);
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getPublicStudyLogDetail(id)
-    //   .then(res => setLog(res.data))
-    //   .catch(err => console.error('공유 학습일지 상세 조회 실패:', err));
-
-    // ✅ 현재는 dummy 데이터 사용
     setLog({
       id: id,
       title: 'AI 요약',
@@ -33,6 +27,15 @@ const StudyLogPublicDetail = () => {
         },
       ],
     });
+    const fetchDetail = async () => {
+      try {
+        const res = await getPublicStudyLogDetail(id);
+        setLog(res.data);
+      } catch (err) {
+        console.error('공유 학습일지 상세 조회 실패:', err);
+      }
+    };
+    fetchDetail();
   }, [id]);
 
   if (!log) return <div>로딩 중...</div>;
@@ -43,13 +46,23 @@ const StudyLogPublicDetail = () => {
       <div className="container-flex" style={{ display: 'flex' }}>
         <Sidebar menuType="studylog" />
 
-        <main className="main" style={{ flex: 1 }}>
+        <main className="main" style={{ flex: 1 }} data-aos="fade-up">
           <div className="container py-5">
-            <h1 className="h4 fw-bold mb-4">공유 학습일지 상세</h1>
+            <h1
+              className="h3 fw-bold mb-4"
+              style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+            >
+              공유 학습일지 상세
+            </h1>
 
-            <div className="mb-3">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <input className="form-control w-50" value={log.title} disabled />
+            <div className="card mb-3 p-4">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <input
+                  className="form-control w-50"
+                  value={log.title}
+                  disabled
+                  style={{ backgroundColor: 'white' }}
+                />
                 <div className="d-flex align-items-center">
                   <span className="me-2">작성자: {log.author}</span>
                   <button className="btn btn-outline-success">
@@ -58,14 +71,30 @@ const StudyLogPublicDetail = () => {
                 </div>
               </div>
               <div className="d-flex gap-3 mb-3">
-                <input className="form-control" value={log.date} disabled />
-                <input className="form-control" value={log.subject} disabled />
+                <input
+                  className="form-control"
+                  value={log.date}
+                  disabled
+                  style={{ backgroundColor: 'white' }}
+                />
+                <input
+                  className="form-control"
+                  value={log.subject}
+                  disabled
+                  style={{ backgroundColor: 'white' }}
+                />
               </div>
-              <textarea className="form-control mb-3" value={log.content} rows="6" disabled />
+              <textarea
+                className="form-control mb-3"
+                value={log.content}
+                rows="6"
+                disabled
+                style={{ backgroundColor: 'white' }}
+              />
             </div>
 
             <div className="mb-4">
-              <h6 className="fw-bold mb-2">등록된 댓글</h6>
+              <h6 className="fw-bold mb-4">등록된 댓글</h6>
               {log.comments.map((c, i) => (
                 <div key={i} className="border rounded p-2 mb-2">
                   <strong>{c.user}</strong>
@@ -74,8 +103,17 @@ const StudyLogPublicDetail = () => {
                 </div>
               ))}
               <div className="d-flex align-items-center mt-3">
-                <input type="text" placeholder="댓글을 남겨보세요" className="form-control me-2" />
-                <button className="btn btn-primary">등록</button>
+                <input
+                  type="text"
+                  placeholder="댓글을 남겨보세요"
+                  className="form-control me-2 flex-grow-1"
+                />
+                <button
+                  className="btn border-0 text-white flex-shrink-0"
+                  style={{ backgroundColor: '#84cc16' }}
+                >
+                  등록
+                </button>
               </div>
             </div>
           </div>

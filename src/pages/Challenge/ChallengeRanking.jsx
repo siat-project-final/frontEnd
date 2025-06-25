@@ -12,27 +12,12 @@ const ChallengeRanking = () => {
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
-    // ✅ 실제 백엔드 연결 시
-    // getDailyRanking(today)
-    //   .then(res => {
-    //     setRankingList(res.data);
-    //   })
-    //   .catch(err => console.error('랭킹 불러오기 실패:', err));
-
-    // ✅ 더미 랭킹
-    setRankingList([
-      { userId: 1, name: '김철수', challengePoint: 15 },
-      { userId: 2, name: '이영희', challengePoint: 14 },
-      { userId: 3, name: '박준호', challengePoint: 13 },
-      { userId: 4, name: '최유진', challengePoint: 12 },
-      { userId: 5, name: '정민수', challengePoint: 11 },
-      { userId: 6, name: '한지민', challengePoint: 10 },
-      { userId: 7, name: '조성우', challengePoint: 9 },
-      { userId: 8, name: '서지훈', challengePoint: 8 },
-      { userId: 9, name: '강예림', challengePoint: 7 },
-      { userId: 10, name: '홍길동', challengePoint: 6 },
-      { userId: 11, name: '임다은', challengePoint: 5 },
-    ]);
+     getDailyRanking(today)
+      .then(res => {
+        const sorted = res.data.sort((a, b) => b.totalPoints - a.totalPoints); // 점수 내림차순
+        setRankingList(sorted);
+      })
+      .catch(err => console.error('랭킹 불러오기 실패:', err));
   }, []);
 
   const visibleList = showAll ? rankingList : rankingList.slice(0, 10);
@@ -66,8 +51,8 @@ const ChallengeRanking = () => {
                   {visibleList.map((user, index) => (
                     <tr key={user.userId}>
                       <td>{index + 1}</td>
-                      <td>{user.name}</td>
-                      <td>{user.challengePoint}</td>
+                      <td>{user.memberName}</td>
+                      <td>{user.totalPoints}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(config => {
-  const token = sessionStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -15,16 +15,18 @@ instance.interceptors.request.use(config => {
 instance.interceptors.response.use(
   res => res,
   err => {
-      // 요청 config에서 URL 추출
-      const reqUrl = err.config?.url;
-      // 로그인/회원가입 요청이면 패스(401이어도 세션 만료 처리 X)
-      if (reqUrl && reqUrl.includes('/auth')) {
-          return Promise.reject(err);
-      }
+
+    // 요청 config에서 URL 추출
+    const reqUrl = err.config?.url;
+
+    // 로그인/회원가입 요청이면 패스(401이어도 세션 만료 처리 X)
+    if (reqUrl && reqUrl.includes('/auth')) {
+      return Promise.reject(err);
+    }
 
     if (err.response && err.response.status === 401) {
       alert('세션이 만료되었습니다. 다시 로그인 해주세요.');
-      sessionStorage.removeItem('accessToken');
+      localStorage.removeItem('accessToken');
       window.location.href = '/login';
     }
     return Promise.reject(err);

@@ -5,59 +5,27 @@ import Sidebar from '../../components/common/Sidebar';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 // ✅ axios 연동 주석
-// import { getPublicStudyLogs } from '../../api/studyLog';
+import { getPublicStudyLogs } from '../../api/studyLog';
 
 const StudyLogPublic = () => {
   const [studyLogs, setStudyLogs] = useState([]);
 
   useEffect(() => {
-    // ✅ 실제 API 연동 시 사용
-    // getPublicStudyLogs({ isPublic: true })
-    //   .then(res => setStudyLogs(res.data))
-    //   .catch(err => console.error('공유 일지 조회 실패:', err));
-
-    // ✅ 현재는 dummy 사용
+    //dummy data
     setStudyLogs([
-      {
-        id: 1,
-        date: '2025-06-13',
-        subject: 'AI 개론',
-        summary: 'BERT 구조 학습함',
-        author: '이수현',
-        likes: 45,
-        comments: [
-          {
-            user: '최은정',
-            text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다아',
-            date: '2025.06.13',
-          },
-        ],
-      },
-      {
-        id: 2,
-        date: '2025-06-12',
-        subject: 'React',
-        summary: 'useEffect 훅 정리함',
-        author: '이수현',
-        likes: 20,
-        comments: [
-          {
-            user: '최은정',
-            text: '깔끔하게 정리했네요:) 덕분에 많은 도움 받고 갑니다fff아',
-            date: '2025.06.13',
-          },
-        ],
-      },
-      {
-        id: 3,
-        date: '2025-06-11',
-        subject: 'Spring Boot',
-        summary: 'JPA fetch 전략 학습함',
-        author: '이수현',
-        likes: 30,
-        comments: [],
-      },
+      { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
+      { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
+      { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
     ]);
+    const fetchPublicLogs = async () => {
+      try {
+        const res = await getPublicStudyLogs({ isPublic: true });
+        setStudyLogs(res.data);
+      } catch (err) {
+        console.error('공유 일지 조회 실패:', err);
+      }
+    };
+    fetchPublicLogs();
   }, []);
 
   return (
@@ -69,7 +37,12 @@ const StudyLogPublic = () => {
         <main className="main" style={{ flex: 1 }}>
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="h3 fw-bold page-title">공유 학습일지</h1>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+              >
+                공유 학습일지
+              </h1>
               <div className="d-flex align-items-center">
                 <select className="form-select w-auto d-inline-block me-2">
                   <option>과목</option>
@@ -85,7 +58,7 @@ const StudyLogPublic = () => {
             </div>
 
             {studyLogs.map((log) => (
-              <div key={log.id} className="card mb-4">
+              <div key={log.id} className="studylog-boxes card mb-4" data-aos="fade-up">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <div>

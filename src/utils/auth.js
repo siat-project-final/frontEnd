@@ -13,6 +13,16 @@ export const removeToken = () => {
   localStorage.removeItem('accessToken');
 };
 
+export const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch (e) {
+    return true;
+  }
+};
+
 // 인증 상태 확인
 export const isAuthenticated = () => {
   return !!getToken();
