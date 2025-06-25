@@ -46,13 +46,13 @@
         isPublic: form.isPublic === 'true' || form.isPublic === true,
         memberId,
       };
-      // ✅ 이 아래 줄 추가!
+      //  이 아래 줄 추가
       console.log('📤 전송 데이터:', data);
       postStudyLog(data)
         .then((res) => {
           console.log('학습일지 작성 성공:', res.data);
           alert('학습일지가 작성되었습니다.');
-          navigate('/studylog');
+          navigate('/study');
         })
         .catch((err) => {
           console.error('학습일지 작성 실패:', err);
@@ -143,7 +143,7 @@
                       className="form-control"
                       name="summary"
                       rows="3"
-                      readOnly
+                      onChange={handleChange}
                       value={form.summary}
                     ></textarea>
                   </div>
