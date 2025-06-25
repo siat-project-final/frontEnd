@@ -7,9 +7,6 @@ import { getTodayChallenge, submitChallenge } from '../../../api/challenge';
 import '../../../App.css';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import styled from 'styled-components';
-import useWindowSize from 'react-use/lib/useWindowSize';
-import Confetti from 'react-confetti';
 
 const ChallengeSolve = () => {
   const navigate = useNavigate();
@@ -18,8 +15,6 @@ const ChallengeSolve = () => {
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const { width, height } = useWindowSize();
 
   const progress = problems.length > 0
     ? Math.round(((currentIndex + 1) / problems.length) * 100)
@@ -82,13 +77,7 @@ const ChallengeSolve = () => {
 
     submitChallenge(requestBody)
       .then(() => {
-        // Confetti 효과 시작
-        setShowConfetti(true);
-
-        // 3초 후 결과 페이지로 이동
-        setTimeout(() => {
-          navigate('/challenge/daily/result');
-        }, 3000);
+        navigate('/challenge/daily/result');
       })
       .catch(err => {
         console.error('제출 실패:', err);
@@ -101,16 +90,6 @@ const ChallengeSolve = () => {
   return (
     <>
       <Header />
-      {showConfetti && (
-        <Confetti
-          width={width}
-          height={height}
-          recycle={false}
-          numberOfPieces={500}
-          gravity={0.05}
-          colors={['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3']}
-        />
-      )}
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
@@ -121,8 +100,20 @@ const ChallengeSolve = () => {
           </div>
 
           <section className="section">
-            <div className="container" style={{ padding: '40px 20px' }}>
-              <div style={{ width: 80, margin: '0 auto 20px' }}>
+            <div
+              className="container"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                gap: '20px',
+                marginBottom: '20px',
+                flexWrap: 'wrap',
+                flexDirection: 'row-reverse',
+              }}
+            >
+              {/*  Progress Bar */}
+              <div style={{ width: 80 }}>
                 <CircularProgressbar
                   value={progress}
                   text={`${progress}%`}
@@ -134,11 +125,14 @@ const ChallengeSolve = () => {
                   })}
                 />
               </div>
+
+              {/* 문제 출력 */}
               {currentProblem && (
-                <div className="mb-4">
+                <div className="mb-4" style={{ maxWidth: '800px', flex: '1' }}>
                   <h5 className="mb-2">
                     Q{currentIndex + 1}. (난이도: {currentProblem.difficulty})
                   </h5>
+
                   <pre
                     style={{
                       background: '#f8f9fa',
@@ -190,20 +184,28 @@ const ChallengeSolve = () => {
                       ))}
                     </div>
                   )}
+
+                  <div className="text-center mt-4">
+                    {currentIndex < problems.length - 1 ? (
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        style={buttonStyle}
+                      >
+                        다음 문제
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        onClick={handleSubmit}
+                        style={buttonStyle}
+                      >
+                        제출
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
-
-              <div className="text-center mt-4">
-                {currentIndex < problems.length - 1 ? (
-                  <button className="btn btn-dark" onClick={handleNext}>
-                    다음 문제
-                  </button>
-                ) : (
-                  <button className="btn btn-success" onClick={handleSubmit}>
-                    제출
-                  </button>
-                )}
-              </div>
             </div>
           </section>
         </main>
@@ -211,6 +213,19 @@ const ChallengeSolve = () => {
       <Footer />
     </>
   );
+};
+
+const buttonStyle = {
+  background: '#84cc16',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 24,
+  padding: '12px 32px',
+  fontWeight: 600,
+  fontSize: 16,
+  cursor: 'pointer',
+  boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
+  marginTop: '60px',
 };
 
 export default ChallengeSolve;
