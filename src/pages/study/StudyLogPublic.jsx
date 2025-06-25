@@ -66,7 +66,7 @@ const StudyLogPublic = () => {
                   <option>과목</option>
                 </select>
                 <Link
-                  to="./write"
+                  to="/study/write"
                   className="btn border-0 text-white"
                   style={{ backgroundColor: '#84cc16' }}
                 >
