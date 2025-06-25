@@ -111,18 +111,26 @@
                       />
                     </div>
                   </div>
-
                   <div className="row mb-3">
                     <div className="col-md-6">
                       <label className="form-label">과목</label>
-                      <input
-                        type="text"
-                        className="form-control"
+                      <select
+                        className="form-select"
                         name="subject"
                         value={form.subject}
                         onChange={handleChange}
-                        placeholder="과목 입력"
-                      />
+                      >
+                        <option value="">과목 선택</option>
+                        <option value="Java">Java</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="React">React</option>
+                        <option value="AWS">AWS</option>
+                        <option value="CI/CD">CI/CD</option>
+                        <option value="Springboot">Sprigboot</option>
+                        <option value="기타">기타</option>
+                        
+                      </select>
                     </div>
                   </div>
 

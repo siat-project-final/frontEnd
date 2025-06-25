@@ -37,21 +37,21 @@ const StudyLogCard = ({ log, onDelete }) => {
             />
           </div>
           <div className="col-md-2">
-            <span className="badge bg-secondary">
+            <span className={`badge ${log.isPublic ? 'bg-success' : 'bg-secondary'}`}>
               {log.isPublic ? '공개' : '비공개'}
             </span>
           </div>
           <div className="col-md-2 d-flex gap-1">
             <Link
               to={`/study/edit/${log.diaryId}`}
-              className="btn border-0 text-white w-100"
-              style={{ backgroundColor: '#84cc16' }}
+              className="btn border-0 text-white w-100 py-1"
+              style={{ backgroundColor: '#84cc16', fontSize: '0.875rem' }}
             >
               상세보기
             </Link>
             <button
-              className="btn border-0 w-100"
-              style={{ backgroundColor: '#ced4da', color: '#fff' }}
+              className="btn border-0 w-100 py-1"
+              style={{ backgroundColor: '#ced4da', color: '#fff', fontSize: '0.875rem' }}
               onClick={handleDelete}
             >
               삭제

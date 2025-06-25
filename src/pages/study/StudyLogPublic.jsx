@@ -62,7 +62,16 @@ const StudyLogPublic = () => {
               </h1>
               <div className="d-flex align-items-center">
                 <select className="form-select w-auto d-inline-block me-2">
-                  <option>과목</option>
+                  
+                <option value="">과목 선택</option>
+                        {/* <option value="Java">Java</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="React">React</option>
+                        <option value="AWS">AWS</option>
+                        <option value="CI/CD">CI/CD</option>
+                        <option value="Springboot">Sprigboot</option>
+                        <option value="기타">기타</option> */}
                 </select>
                 <Link
                   to="../study/write"
@@ -77,7 +86,7 @@ const StudyLogPublic = () => {
             {studyLogs.map((log) => (
               <div key={log.diaryId} className="studylog-boxes card mb-4" data-aos="fade-up">
                 <div className="card-body">
-                  {/* ✅ 제목 표시 */}
+                  {/*  제목 표시 */}
                   <h5 className="fw-bold">{log.title}</h5>
 
                   <div className="d-flex justify-content-between align-items-center mb-2">
