@@ -54,9 +54,9 @@ const Sidebar = ({ menuType }) => {
   if (!menu) return null;
 
   // 멘토 계정이면 예약 내역 링크를 mentor용으로 변경
-  const role = sessionStorage.getItem('userRole');
+  const role = localStorage.getItem('role');
   const items = menu.items.map((item) => {
-    if (menuType === 'mentoring' && item.label === '예약 내역' && role === 'mentor') {
+    if (menuType === 'mentoring' && item.label === '예약 내역' && role === 'MENTOR') {
       return { ...item, to: '/mentoring/mentor/register' };
     }
     return item;

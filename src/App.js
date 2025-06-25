@@ -114,7 +114,7 @@ function AppLayout() {
           <Route path="/mentoring/:id" element={<PrivateRoute><MentoringDetail /></PrivateRoute>} />
           <Route path="/mentoring/mentor/detail" element={<PrivateRoute><OtherMentoringDetail /></PrivateRoute>} />
           <Route path="/mentoring/apply" element={<PrivateRoute><MentoringApply /></PrivateRoute>} />
-          <Route path="/mentoring/cancel" element={<PrivateRoute><RegisterCancel /></PrivateRoute>} />
+          <Route path="/register/cancel" element={<PrivateRoute><RegisterCancel /></PrivateRoute>} />
           <Route path="/mentoring/mentor/reject" element={<PrivateRoute><MentoringReject /></PrivateRoute>} />
           <Route path="/mentoring/mentor/register" element={<PrivateRoute><MentorRegister /></PrivateRoute>} />
           <Route path="/mentoring/mentor/register/card" element={<PrivateRoute><MentorRegisterCard /></PrivateRoute>} />

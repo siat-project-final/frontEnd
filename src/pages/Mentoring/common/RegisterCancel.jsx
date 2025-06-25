@@ -5,7 +5,7 @@ import Footer from '../../../components/common/Footer';
 import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Todo from '../../../components/common/Todo';
-// import { cancelMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
+import { cancelMentoring } from '../../../api/mentoring';
 
 const cancelReasons = [
   '갑작스러운 일정 변경이 생겼어요.',
@@ -23,8 +23,8 @@ const RegisterCancel = () => {
   const [otherReason, setOtherReason] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-
-  const status = location.state?.status || ''; // "예약 확정" 또는 "예약 대기"
+  const reservationId = location.state?.reservationId;
+  const status = location.state?.status || '';
 
   const handleCheck = (idx) => {
     setSelected((prev) => {
@@ -45,6 +45,12 @@ const RegisterCancel = () => {
 
   const handleConfirm = async () => {
     try {
+      if (!reservationId) {
+        console.error('❌ reservationId가 없습니다.');
+        alert('예약 정보가 올바르지 않습니다.');
+        return;
+      }
+
       let selectedReasons = selected.map((idx) => cancelReasons[idx]);
       const otherIdx = cancelReasons.length - 1;
       if (selected.includes(otherIdx) && otherReason.trim() !== '') {
@@ -53,22 +59,20 @@ const RegisterCancel = () => {
 
       const reasonText = selectedReasons.join(', ');
 
-      // 실제 API 요청
-      // await cancelMentoring({
-      //   memberId: sessionStorage.getItem('memberId'),
-      //   memberName: sessionStorage.getItem('memberName'),
-      //   cancelReason: reasonText,
-      // });
+      await cancelMentoring({
+        reservationId,
+        cancelReason: reasonText,
+      });
 
       alert('예약이 취소되었습니다.');
 
       const userRole = sessionStorage.getItem('userRole');
       if (userRole === 'mentor') {
-        // 멘토인 경우 예약 ID를 전달하여 카드 삭제
-        navigate('/mentoring/mentor/register', { 
+        navigate('/mentoring/mentor/register', {
           state: { 
-            cancelledReservationId: location.state?.reservationId 
-          } 
+            cancelledReservationId: reservationId,
+            alreadyRemoved: true
+          },
         });
       } else {
         navigate('/mentoring/mentee/register');

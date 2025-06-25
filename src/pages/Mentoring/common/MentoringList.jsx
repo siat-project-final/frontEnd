@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import Todo from '../../../components/common/Todo';
-// import { getMentors } from '../../../api/mentoring'; // 실제 사용 시 주석 해제
+import { getMentors } from '../../../api/mentoring'; // ✅ 실제 API 사용
 import '../../../App.css';
 
 const MentoringList = () => {
@@ -90,9 +89,8 @@ const MentoringList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const res = await getMentors(); // 실제 호출 시
-        // setMentors(res.data);
-        setMentors(dummyMentors); // 현재는 local dummy data
+        const res = await getMentors(); // ✅ 실제 백엔드 API 호출
+        setMentors(res.data);          // ✅ 응답 데이터 state에 저장
       } catch (err) {
         console.error('멘토 목록 불러오기 실패:', err);
       }
@@ -101,16 +99,22 @@ const MentoringList = () => {
     fetchData();
   }, []);
 
+  const handleMentorClick = (mentor) => {
+    const role = sessionStorage.getItem('role');
+    if (role === 'MENTOR') {
+      alert('멘토는 멘토링 신청 권한이 없습니다.');
+      return;
+    }
+    navigate('/mentoring/detail', { state: { mentor } });
+  };
+
   return (
     <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main">
-          <h1
-            className="h3 fw-bold"
-            style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
-          >
+          <h1 className="h3 fw-bold" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
             Mentoring
           </h1>
           <p style={{ marginTop: '16px', marginLeft: '16px', whiteSpace: 'pre-line' }}>
@@ -154,14 +158,7 @@ const MentoringList = () => {
                           img.style.transform = 'scale(1)';
                         }
                       }}
-                      onClick={() => {
-                        const role = sessionStorage.getItem('userRole');
-                        if (role === 'mentor') {
-                          navigate('/mentoring/mentor/detail', { state: { mentor } });
-                        } else {
-                          navigate('/mentoring/detail', { state: { mentor } });
-                        }
-                      }}
+                      onClick={() => handleMentorClick(mentor)}
                     >
                       <div
                         style={{

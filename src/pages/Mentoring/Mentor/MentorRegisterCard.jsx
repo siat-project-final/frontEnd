@@ -17,8 +17,18 @@ const MentorRegisterCard = ({
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
 
+  const statusTextMap = {
+    PENDING: '예약 대기',
+    ACCEPTED: '예약 확정',
+    COMPLETED: '멘토링 완료',
+    REJECTED: '거절됨',
+    CANCELLED: '취소됨',
+  };
+
+  const displayStatus = statusTextMap[status] || status;
+
   const statusStyle = {
-    backgroundColor: status === '예약 대기' ? '#f1f5f9' : '#e2e8f0',
+    backgroundColor: displayStatus === '예약 대기' ? '#f1f5f9' : '#e2e8f0',
     color: '#475569',
     fontSize: '12px',
     fontWeight: '500',
@@ -45,29 +55,29 @@ const MentorRegisterCard = ({
   };
 
   const handleCompleteClick = () => {
-    onComplete(id); // 부모에서 삭제 처리
+    onComplete(id);
     setShowCompleteModal(true);
   };
 
   const handleCancelClick = () => {
-    navigate('/mentoring/cancel', { 
-      state: { 
+    navigate('/register/cancel', {
+      state: {
         reservationId: id,
         memberName: memberName,
         date: date,
-        status: status
-      } 
+        status: status,
+      },
     });
   };
 
   const handleRejectClick = () => {
-    navigate('/mentoring/mentor/reject', { 
-      state: { 
+    navigate('/mentoring/mentor/reject', {
+      state: {
         reservationId: id,
         memberName: memberName,
         date: date,
-        status: status
-      } 
+        status: status,
+      },
     });
   };
 
@@ -99,7 +109,7 @@ const MentorRegisterCard = ({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{date}</span>
-            <span style={statusStyle}>{status}</span>
+            <span style={statusStyle}>{displayStatus}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
             <span style={{ fontSize: '14px' }}>멘티: {memberName}</span>
@@ -108,7 +118,7 @@ const MentorRegisterCard = ({
 
         {/* 버튼 영역 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          {status === '예약 대기' && (
+          {status === 'PENDING' && (
             <>
               <button
                 onClick={handleAcceptClick}
@@ -125,7 +135,7 @@ const MentorRegisterCard = ({
             </>
           )}
 
-          {status === '예약 확정' && (
+          {status === 'ACCEPTED' && (
             <>
               <button
                 onClick={handleCancelClick}

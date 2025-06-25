@@ -6,13 +6,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
 import '../../../App.css';
 import Todo from '../../../components/common/Todo';
-// import { applyMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
+import { applyMentoring } from '../../../api/mentoring'; // 실제 연동 시 사용
 
 const options = [
-  { label: 'siat 수업 관련', value: 'siat' },
-  { label: '커리어 조언', value: 'career' },
-  { label: '회사 적응 팁', value: 'adapt' },
-  { label: '장애 극복', value: 'overcome' },
+  { label: 'siat 수업 관련', value: 'siat 수업 관련' },
+  { label: '커리어 조언', value: '커리어 조언' },
+  { label: '회사 적응 팁', value: '회사 적응 팁' },
+  { label: '장애 극복', value: '장애 극복' },
   { label: '기타', value: 'other' },
 ];
 
@@ -26,7 +26,8 @@ const MentoringApply = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { mentor, selectedDate } = location.state || {};
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
+    console.log('✅ 현재 로그인된 memberId:', memberId);
 
   const handleCheck = (value) => {
     setSelected((prev) =>
@@ -64,14 +65,14 @@ const MentoringApply = () => {
       : selected;
 
     try {
-      // 실제 API 연동
-      // await applyMentoring({
-      //   mentorId: mentor.id, // mentor.mentorId 사용 가능
-      //   memberId,
-      //   date: selectedDate,
-      //   Introduction: intro,
-      //   subject: finalTopics.join(', '),
-      // });
+
+       await applyMentoring({
+         mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
+         memberId,
+         date: `${selectedDate}T00:00:00`,
+         introduction: intro,
+         subject: finalTopics.join(', '),
+       });
 
       // 성공 시 예약 목록으로 이동
       navigate('/mentoring/mentee/register', {

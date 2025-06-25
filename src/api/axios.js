@@ -15,6 +15,7 @@ instance.interceptors.request.use(config => {
 instance.interceptors.response.use(
   res => res,
   err => {
+
     // 요청 config에서 URL 추출
     const reqUrl = err.config?.url;
 

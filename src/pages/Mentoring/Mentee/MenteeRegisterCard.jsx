@@ -1,9 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
+const MenteeRegisterCard = ({
+                              reservationId,
+                              date,
+                              mentorName,
+                              status,
+                              mentorImageUrl,
+                              subject,
+                              onCancel,
+                            }) => {
   const navigate = useNavigate();
-  const isConfirmed = status === '예약 대기';
+
+  // ✅ 상태 영어 → 한글 변환
+  const statusToKorean = {
+    PENDING: '예약 대기',
+    ACCEPTED: '예약 확정',
+    CANCELLED: '예약 취소',
+    REJECTED: '예약 거절',
+  };
+
+  const isConfirmed = status === 'PENDING';
 
   const defaultMentorImages = [
     '/assets/img/mentors/mentor1.jpg',
@@ -12,10 +29,10 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
   ];
 
   const getMentorImage = () => {
-    if (mentorImg && mentorImg !== '') {
-      return mentorImg;
+    if (mentorImageUrl && mentorImageUrl !== '') {
+      return mentorImageUrl;
     }
-    const nameHash = name ? name.charCodeAt(0) % 3 : 0;
+    const nameHash = mentorName ? mentorName.charCodeAt(0) % 3 : 0;
     return defaultMentorImages[nameHash];
   };
 
@@ -28,13 +45,30 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
     borderRadius: '9999px',
   };
 
+  const handleProfileClick = () => {
+    navigate('/mentoring/detail', {
+      state: {
+        mentor: {
+          name: mentorName,
+          mentor_image_url: mentorImageUrl,
+          position: '직함', // ❗ position과 company는 예약 목록에서 내려줘야 함
+          company: '회사명',
+        },
+        selectedDate: date.split(' ')[0], // 예약한 날짜만 전달
+        mode: 'readOnly', // 캘린더 잠금용
+      },
+    });
+  };
   const handleCancel = () => {
     onCancel();
-    navigate('/mentoring/cancel');
+    navigate('/register/cancel', {
+      state: {
+        reservationId,
+        status,
+      },
+    });
   };
-
-  const profileLink = `https://example.com/profile/${encodeURIComponent(name)}`;
-
+  
   return (
     <div
       style={{
@@ -62,14 +96,13 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{date}</span>
-          <span style={statusStyle}>{status}</span>
+          <span style={statusStyle}>{statusToKorean[status] || status}</span>
         </div>
 
-        {/* 멘토 이미지 + 이름 +  링크 (예약 확정일 때만 표시) */}
         <div style={{ display: 'flex', alignItems: 'center', color: '#475569' }}>
           <img
             src={getMentorImage()}
-            alt={name}
+            alt={mentorName}
             style={{
               width: '32px',
               height: '32px',
@@ -83,12 +116,11 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
               e.target.src = '/assets/img/mentors/mentor1.jpg';
             }}
           />
-          <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{name}</span>
+          <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
-          {/* 링크는 예약 확정일 때만 표시 */}
-          {status === '예약 확정' && (
+          {status === 'ACCEPTED' && (
             <a
-              href={profileLink}
+              href={handleProfileClick}
               target="_blank"
               rel="noopener noreferrer"
               title="프로필 보기"
@@ -102,11 +134,17 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
             </a>
           )}
         </div>
+
+        {/* 대화 주제 표시 */}
+        <div style={{ marginTop: '8px', fontSize: '14px', color: '#475569' }}>
+          🗣 <strong>{subject}</strong>
+        </div>
       </div>
 
-      {/* 예약 취소 버튼 */}
+      
       <button
         onClick={handleCancel}
+        disabled={!(status === 'PENDING' || status === 'ACCEPTED')}
         style={{
           backgroundColor: '#84cc16',
           color: 'white',
@@ -115,13 +153,15 @@ const MenteeRegisterCard = ({ date, name, status, mentorImg, onCancel }) => {
           borderRadius: '24px',
           padding: '10px 20px',
           fontSize: '14px',
-          cursor: 'pointer',
+          cursor: (status === 'PENDING' || status === 'ACCEPTED') ? 'pointer' : 'not-allowed',
+          opacity: (status === 'PENDING' || status === 'ACCEPTED') ? 1 : 0.4,
           whiteSpace: 'nowrap',
           boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
         }}
       >
         예약 취소
       </button>
+
     </div>
   );
 };
