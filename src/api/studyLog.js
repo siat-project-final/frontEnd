@@ -29,7 +29,7 @@ export const deleteStudyLog = (diaryId, memberId) => {
 
 /** AI 요약 생성 */
 export const summarizeContent = (content) => {
-  return axios.post('/study-diary/ai-summary', { text: content });
+  return axios.post('/study-diary/ai-summary', { text : content });
 };
 
 /** 공개 학습일지 전체 조회 */
