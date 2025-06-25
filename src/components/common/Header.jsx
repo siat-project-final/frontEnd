@@ -4,8 +4,29 @@ import { NavLink } from 'react-router-dom';
 const Header = ({ menuType }) => (
   <header id="header" className="header d-flex align-items-center sticky-top">
     <div className="container-fluid container-xl position-relative d-flex align-items-center">
-      <NavLink to="/" className="logo d-flex align-items-center me-auto">
-        <h1 className="sitename">SIAT</h1>
+            {/* 투명한 더미 요소 - 로고 크기만큼 공간 차지 */}
+            <div className="me-auto"style={{ 
+        width: '180px', 
+        height: '50px',
+        flexShrink: 0 }}>
+        </div>
+    <NavLink to="/" className="d-flex align-items-center"  style={{ 
+        position: 'absolute',
+        left: '15px',
+        top: '60%',
+        transform: 'translateY(-50%)',
+        zIndex: 10
+      }}>
+    <img
+          src="/assets/img/mentors/siatlogo.png"
+          alt="SIAT Logo"
+          style={{ 
+            width: '180px', 
+            height: '80px',
+            maxHeight: '80px',
+            display: 'block'
+          }}
+        />
       </NavLink>
 
       <nav id="navmenu" className="navmenu">
@@ -38,8 +59,21 @@ const Header = ({ menuType }) => (
               MyPage
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/mentee-alarm">
+          <li className="alarm-item" style={{ 
+            listStyle: 'none',
+            padding: '0',
+            margin: '0',
+            border: 'none'
+          }}>
+            <NavLink to="/mentee-alarm" style={{
+              color: 'inherit',
+              padding: '0',
+              fontSize: 'inherit',
+              fontWeight: 'inherit',
+              textDecoration: 'none',
+              borderBottom: 'none',
+              transition: 'none'
+            }}>
               <img
                 src="/assets/img/mentors/bell.png"
                 alt="Notifications"
