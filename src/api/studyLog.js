@@ -47,6 +47,8 @@ export const toggleLikeStudyLog = (diaryId, isLike) => {
   return axios.put(`/study-diary/like/${diaryId}?isLike=${isLike}`);
 };
 
+
+
 /** 댓글 작성 */
 export const commentOnStudyLog = (diaryId, memberId, contents) => {
   return axios.post(`/study-diary/${diaryId}/comments`, {

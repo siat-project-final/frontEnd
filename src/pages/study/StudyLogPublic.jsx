@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 import { getPublicStudyLogs, toggleLikeStudyLog } from '../../api/studyLog';
 
 const StudyLogPublic = () => {
-  
-
   const [studyLogs, setStudyLogs] = useState([]);
   const [likedMap, setLikedMap] = useState({}); // 각 로그의 좋아요 여부 상태
 
   useEffect(() => {
-    console.log('StudyLogPublic 컴포넌트가 마운트되었습니다.');
     const fetchPublicLogs = async () => {
       try {
         const res = await getPublicStudyLogs();
         setStudyLogs(res.data);
 
-        // 초기 좋아요 여부 상태 설정 (localStorage 기준)
         const likedStates = {};
         res.data.forEach((log) => {
           likedStates[log.diaryId] = localStorage.getItem(`liked-${log.diaryId}`) === 'true';
@@ -37,7 +32,6 @@ const StudyLogPublic = () => {
     try {
       await toggleLikeStudyLog(diaryId, !isLiked);
 
-      // UI 상태 업데이트
       setStudyLogs((prevLogs) =>
         prevLogs.map((log) =>
           log.diaryId === diaryId
@@ -60,14 +54,21 @@ const StudyLogPublic = () => {
         <main className="main" style={{ flex: 1 }}>
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="h3 fw-bold mb-0" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+              >
                 공유 학습일지
               </h1>
               <div className="d-flex align-items-center">
                 <select className="form-select w-auto d-inline-block me-2">
                   <option>과목</option>
                 </select>
-                <Link to="../study/write" className="btn border-0 text-white" style={{ backgroundColor: '#84cc16' }}>
+                <Link
+                  to="../study/write"
+                  className="btn border-0 text-white"
+                  style={{ backgroundColor: '#84cc16' }}
+                >
                   일지 작성하기
                 </Link>
               </div>
@@ -76,6 +77,9 @@ const StudyLogPublic = () => {
             {studyLogs.map((log) => (
               <div key={log.diaryId} className="studylog-boxes card mb-4" data-aos="fade-up">
                 <div className="card-body">
+                  {/* ✅ 제목 표시 */}
+                  <h5 className="fw-bold">{log.title}</h5>
+
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <div>
                       <span className="badge bg-secondary me-2">{log.studyDate}</span>
@@ -92,9 +96,14 @@ const StudyLogPublic = () => {
                       </button>
                     </div>
                   </div>
+
                   <p>{log.aiSummary}</p>
+
                   <div className="text-end">
-                    <Link to={`/study/public/${log.diaryId}`} className="btn btn-outline-secondary btn-sm">
+                    <Link
+                      to={`/study/public/${log.diaryId}`}
+                      className="btn btn-outline-secondary btn-sm"
+                    >
                       상세 보기
                     </Link>
                   </div>

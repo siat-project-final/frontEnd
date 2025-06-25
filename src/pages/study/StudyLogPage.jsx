@@ -4,7 +4,6 @@ import Sidebar from '../../components/common/Sidebar';
 import StudyLogCard from '../../components/studyCard/StudyLogCard';
 import { Link } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
-// ✅ axios 함수 주석 처리
 import { getMyStudyLogs } from '../../api/studyLog';
 
 const StudyLogPage = () => {
@@ -12,11 +11,6 @@ const StudyLogPage = () => {
   const memberId = sessionStorage.getItem('memberId');
 
   useEffect(() => {
-    // setStudyLogs([
-    //   { id: 1, date: '2025-06-13', subject: 'AI 개론', summary: 'BERT 구조 학습함' },
-    //   { id: 2, date: '2025-06-12', subject: 'React', summary: 'useEffect 훅 정리함' },
-    //   { id: 3, date: '2025-06-11', subject: 'Spring Boot', summary: 'JPA fetch 전략 학습함' },
-    // ]);
     if (!memberId) {
       console.warn('❌ memberId 없음 - 로그인 필요');
       return;
@@ -32,6 +26,11 @@ const StudyLogPage = () => {
     };
     fetchLogs();
   }, [memberId]);
+
+  // ✅ 삭제 후 목록에서 제거
+  const handleDelete = (diaryId) => {
+    setStudyLogs((prev) => prev.filter((log) => log.diaryId !== diaryId));
+  };
 
   return (
     <div>
@@ -65,14 +64,13 @@ const StudyLogPage = () => {
 
                 {studyLogs.map((log) => (
                   <div key={log.diaryId} data-aos="fade-up">
-                    <StudyLogCard log={log} />
+                    <StudyLogCard log={log} onDelete={handleDelete} />
                   </div>
                 ))}
               </div>
             </main>
           </div>
         </div>
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>
