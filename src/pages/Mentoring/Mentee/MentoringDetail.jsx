@@ -18,6 +18,7 @@ const MentoringDetail = () => {
     company: 'Tech Innovators Inc.',
     mentor_image_url: '/assets/img/mentors/mentor1.jpg',
   };
+  
 
   const mentor = {
     name: mentorData.name,

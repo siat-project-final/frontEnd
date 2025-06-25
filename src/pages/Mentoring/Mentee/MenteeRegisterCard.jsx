@@ -15,7 +15,7 @@ const MenteeRegisterCard = ({
   // ✅ 상태 영어 → 한글 변환
   const statusToKorean = {
     PENDING: '예약 대기',
-    CONFIRMED: '예약 확정',
+    ACCEPTED: '예약 확정',
     CANCELLED: '예약 취소',
     REJECTED: '예약 거절',
   };
@@ -45,6 +45,20 @@ const MenteeRegisterCard = ({
     borderRadius: '9999px',
   };
 
+  const handleProfileClick = () => {
+    navigate('/mentoring/detail', {
+      state: {
+        mentor: {
+          name: mentorName,
+          mentor_image_url: mentorImageUrl,
+          position: '직함', // ❗ position과 company는 예약 목록에서 내려줘야 함
+          company: '회사명',
+        },
+        selectedDate: date.split(' ')[0], // 예약한 날짜만 전달
+        mode: 'readOnly', // 캘린더 잠금용
+      },
+    });
+  };
   const handleCancel = () => {
     onCancel();
     navigate('/register/cancel', {
@@ -54,9 +68,7 @@ const MenteeRegisterCard = ({
       },
     });
   };
-
-  const profileLink = `https://example.com/profile/${encodeURIComponent(mentorName)}`;
-
+  
   return (
     <div
       style={{
@@ -106,9 +118,9 @@ const MenteeRegisterCard = ({
           />
           <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
-          {status === 'CONFIRMED' && (
+          {status === 'ACCEPTED' && (
             <a
-              href={profileLink}
+              href={handleProfileClick}
               target="_blank"
               rel="noopener noreferrer"
               title="프로필 보기"
@@ -129,8 +141,10 @@ const MenteeRegisterCard = ({
         </div>
       </div>
 
+      
       <button
         onClick={handleCancel}
+        disabled={!(status === 'PENDING' || status === 'ACCEPTED')}
         style={{
           backgroundColor: '#84cc16',
           color: 'white',
@@ -139,13 +153,15 @@ const MenteeRegisterCard = ({
           borderRadius: '24px',
           padding: '10px 20px',
           fontSize: '14px',
-          cursor: 'pointer',
+          cursor: (status === 'PENDING' || status === 'ACCEPTED') ? 'pointer' : 'not-allowed',
+          opacity: (status === 'PENDING' || status === 'ACCEPTED') ? 1 : 0.4,
           whiteSpace: 'nowrap',
           boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
         }}
       >
         예약 취소
       </button>
+
     </div>
   );
 };

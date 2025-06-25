@@ -60,7 +60,7 @@ const MentorRegisterCard = ({
   };
 
   const handleCancelClick = () => {
-    navigate('/mentoring/cancel', {
+    navigate('/register/cancel', {
       state: {
         reservationId: id,
         memberName: memberName,
