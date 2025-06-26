@@ -22,6 +22,14 @@ const CalendarView = () => {
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMonthStr, setCurrentMonthStr] = useState('');
+
+  const getTodayString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
   const [selectedDate, setSelectedDate] = useState(() => {
     return sessionStorage.getItem('selectedDate') || getTodayString();
   });
@@ -40,13 +48,7 @@ const CalendarView = () => {
     기타: '#D7DBDD',
   };
 
-  const getTodayString = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  };
+
 
   const fetchWrittenLogs = async () => {
     try {
