@@ -50,14 +50,20 @@ const ReviewSolve = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="page-title" data-aos="fade">
-            <div className="heading text-center">
-              <h2>복습 문제 풀이</h2>
-              <p className="text-muted" style={{ fontSize: '14px' }}>
-                주어진 문제를 읽고 정답을 입력하세요.
-              </p>
+          <div className="container" style={{ paddingTop: '20px', paddingBottom: '0px' }}>
+            <div className="d-flex align-items-center" style={{ marginBottom: '0px' }}>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginLeft: '16px', color: '#84cc16' }}
+              >
+                복습 문제 풀이
+              </h1>  
             </div>
+            <p className="text-muted" style={{ fontSize: '20px', marginLeft: '16px', marginTop: '30px' }}>
+              주어진 문제를 읽고 정답을 입력하세요.
+            </p>
           </div>
+
 
           <section className="section">
             <div className="container" style={{ padding: '40px 20px' }}>

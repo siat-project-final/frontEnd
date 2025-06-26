@@ -36,14 +36,20 @@ const ReviewMain = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="page-title" data-aos="fade">
-            <div className="heading text-center">
-              <h2>종합 챌린지</h2>
-              <p className="text-muted" style={{ fontSize: '14px' }}>
-                100% 학습한 과목만 복습에 참여할 수 있어요.
-              </p>
+          <div className="container" style={{ paddingTop: '20px', paddingBottom: '0px' }}>
+            <div className="d-flex align-items-center" style={{ marginBottom: '0px' }}>
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginLeft: '16px', color: '#84cc16' }}
+              >
+                종합 챌린지
+              </h1>  
             </div>
+            <p className="text-muted" style={{ fontSize: '20px', marginLeft: '16px', marginTop: '10px' }}>
+                  100% 학습한 과목만 복습에 참여할 수 있어요.
+            </p>
           </div>
+
 
           <section className="section">
             <div className="container">
@@ -74,7 +80,6 @@ const ReviewMain = () => {
           </section>
         </main>
       </div>
-      <Footer />
     </>
   );
 };
