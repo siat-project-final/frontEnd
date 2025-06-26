@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
-// ✅ axios 연동 주석
 import { postStudyLog, summarizeContent } from '../../api/studyLog';
+
+const SUBJECTS = [
+  'Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'
+];
 
 const WriteStudyLogPage = () => {
   const [form, setForm] = useState({
@@ -16,7 +19,7 @@ const WriteStudyLogPage = () => {
     content: '',
     summary: '',
   });
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,12 +28,15 @@ const WriteStudyLogPage = () => {
   };
 
   const handleSummary = async () => {
-    try {
-      const res = await summarizeContent(form.content);
-      setForm((prev) => ({ ...prev, summary: res.data.summary }));
-    } catch (err) {
-      console.error('요약 실패:', err);
-    }
+    alert('AI 요약을 실행합니다. 잠시 기다려주세요...');
+    summarizeContent(form.content)
+      .then(res => {
+        setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
+        alert('AI 요약이 완료되었습니다. 결과를 확인해주세요.');
+      })
+      .catch(err => {
+        console.error('요약 실패:', err);
+      });
   };
 
   const handleSubmit = async (e) => {
@@ -40,12 +46,15 @@ const WriteStudyLogPage = () => {
       isPublic: form.isPublic === 'true' || form.isPublic === true,
       memberId,
     };
-    try {
-      await postStudyLog(data);
-      navigate('/study');
-    } catch (err) {
-      console.error('일지 제출 실패:', err);
-    }
+    console.log('📤 전송 데이터:', data);
+    postStudyLog(data)
+      .then((res) => {
+        alert('학습일지가 작성되었습니다.');
+        navigate('/study');
+      })
+      .catch((err) => {
+        alert('학습일지 작성에 실패했습니다. 다시 시도해주세요.');
+      });
   };
 
   return (
@@ -99,18 +108,21 @@ const WriteStudyLogPage = () => {
                     />
                   </div>
                 </div>
-
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label className="form-label">과목</label>
-                    <input
-                      type="text"
-                      className="form-control"
+                    <select
+                      className="form-select"
                       name="subject"
                       value={form.subject}
                       onChange={handleChange}
-                      placeholder="과목 입력"
-                    />
+                      required
+                    >
+                      <option value="">과목 선택</option>
+                      {SUBJECTS.map((subj) => (
+                        <option key={subj} value={subj}>{subj}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -131,7 +143,7 @@ const WriteStudyLogPage = () => {
                     className="form-control"
                     name="summary"
                     rows="3"
-                    readOnly
+                    onChange={handleChange}
                     value={form.summary}
                   ></textarea>
                 </div>
@@ -158,6 +170,7 @@ const WriteStudyLogPage = () => {
           <Todo />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

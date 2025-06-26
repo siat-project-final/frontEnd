@@ -103,7 +103,10 @@ const ChallengeMain = () => {
                   <div className="card p-4 shadow-sm">
                     <h5 className="mb-3">오늘의 랭킹 TOP 3</h5>
                     <ul className="list-group list-group-flush">
-                      {ranking.slice().reverse().map((user, idx) => (
+                      {ranking.slice()
+                              .sort((a, b) => a.rank - b.rank) // rank 기준 내림차순 정렬
+                              .slice(0, 3) // TOP 3만 표시 (선택사항)
+                              .map((user, idx) => (
                         <li
                           key={idx}
                           className="list-group-item d-flex justify-content-between"
