@@ -48,7 +48,7 @@ function Login() {
 
         if (role === 'MENTOR') {
           try {
-            const mentorRes = await instance.get(`/mentors/my-id?memberId=${memberId}`);
+            const mentorRes = await instance.get(`/auth/mentor-id?memberId=${memberId}`);
             localStorage.setItem('mentorId', mentorRes.data);
             console.log('✅ mentorId 저장 완료:', mentorRes.data);
           } catch (err) {
