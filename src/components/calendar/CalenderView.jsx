@@ -1,3 +1,4 @@
+// 생략한 import는 동일
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
@@ -18,11 +19,6 @@ const CalendarView = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [calendarEvents, setCalendarEvents] = useState([]);
-  const [calendarKey, setCalendarKey] = useState(Date.now());
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentMonthStr, setCurrentMonthStr] = useState('');
-
   const getTodayString = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -30,6 +26,11 @@ const CalendarView = () => {
     const dd = String(today.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   };
+
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [calendarKey, setCalendarKey] = useState(Date.now());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentMonthStr, setCurrentMonthStr] = useState('');
   const [selectedDate, setSelectedDate] = useState(() => {
     return sessionStorage.getItem('selectedDate') || getTodayString();
   });
@@ -47,8 +48,6 @@ const CalendarView = () => {
     C: '#A9DFBF',
     기타: '#D7DBDD',
   };
-
-
 
   const fetchWrittenLogs = async () => {
     try {
@@ -76,7 +75,7 @@ const CalendarView = () => {
     Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList }]) => {
       const normalizedDate = date.includes('T') ? date.split('T')[0] : date;
 
-      subjectList.forEach((subject) => {
+      subjectList?.forEach((subject) => {
         const color = SUBJECT_COLORS[subject] || SUBJECT_COLORS['기타'];
         events.push({
           title: `[과목] ${subject}`,
@@ -89,7 +88,7 @@ const CalendarView = () => {
         });
       });
 
-      if (studyDiaryList.length > 0) {
+      if (studyDiaryList?.length > 0) {
         studyDiaryList.forEach((diary) => {
           events.push({
             title: `[일지] ${diary.title || '학습일지'}`,
@@ -101,7 +100,7 @@ const CalendarView = () => {
             extendedProps: { type: 'DIARY', ...diary }
           });
         });
-      } else if (subjectList.length > 0 && !writtenDatesSet?.has(normalizedDate)) {
+      } else if (subjectList?.length > 0 && !writtenDatesSet?.has(normalizedDate)) {
         events.push({
           title: `[미작성] 학습일지`,
           start: date,
@@ -208,11 +207,11 @@ const CalendarView = () => {
             initialView="dayGridMonth"
             customButtons={{
               myPrev: {
-                text: '',
+                text: '‹',
                 click: () => calendarRef.current.getApi().prev(),
               },
               myNext: {
-                text: '',
+                text: '›',
                 click: () => calendarRef.current.getApi().next(),
               },
             }}
