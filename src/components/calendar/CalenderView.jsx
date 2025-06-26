@@ -1,4 +1,3 @@
-// 생략한 import는 동일
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
@@ -56,10 +55,7 @@ const CalendarView = () => {
         res.data
           .map((log) => {
             if (!log.studyDate) return null;
-            if (typeof log.studyDate === 'string') {
-              return log.studyDate.includes('T') ? log.studyDate.split('T')[0] : log.studyDate;
-            }
-            return null;
+            return log.studyDate.split('T')[0];
           })
           .filter(Boolean)
       );
@@ -73,7 +69,7 @@ const CalendarView = () => {
     const events = [];
 
     Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList }]) => {
-      const normalizedDate = date.includes('T') ? date.split('T')[0] : date;
+      const normalizedDate = date.split('T')[0];
 
       subjectList?.forEach((subject) => {
         const color = SUBJECT_COLORS[subject] || SUBJECT_COLORS['기타'];
@@ -146,7 +142,7 @@ const CalendarView = () => {
       const res = await instance.get(`/calendar/schedule/${memberId}/${monthStr}`);
       const calendarMapped = convertJsonToCalendarEvents(res.data, writtenDatesSet);
       setCalendarEvents(calendarMapped);
-      setCalendarKey(Date.now());
+      // setCalendarKey(Date.now());
     } catch (error) {
       console.error('캘린더 데이터 조회 실패:', error);
     }
@@ -200,25 +196,151 @@ const CalendarView = () => {
       <Header />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
+        {/* <div
+          style={{
+            width: '1700px',           // 캘린더 너비 고정
+            margin: '0 auto',          // 가운데 정렬 (좌우 여백 자동)
+            padding: '0 20px',         // 내부 여백
+          }}
+        > */}
+
+          <style>
+            {`
+              .fc .fc-toolbar {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 16px !important;
+                position: relative !important;
+                height: 60px !important;
+              }
+
+              .fc .fc-toolbar-title {
+                font-size: 24px !important;
+                font-weight: bold !important;
+                position: absolute !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-width: none !important;
+                padding: 0 16px !important;
+                white-space: nowrap !important;
+                overflow: visible !important;
+                text-overflow: unset !important;
+                text-align: center !important;
+
+              }
+
+              .fc-myPrev-button,
+              .fc-myNext-button {
+                background: none !important;
+                border: none !important;
+                width: 24px !important;
+                height: 32px !important;
+                cursor: pointer !important;
+                position: absolute !important;
+                top: 52% !important;
+                transform: translateY(-50%) !important;
+                z-index: 1 !important;
+                outline: none !important;
+                box-shadow: none !important;
+              }
+
+              .fc-myPrev-button {
+                left: calc(50% - 250px) !important;
+              }
+
+              .fc-myNext-button {
+                right: calc(50% - 250px) !important;
+              }
+
+              .fc-myPrev-button::before,
+              .fc-myNext-button::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 52% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 24px !important;
+                height: 24px !important;
+                background-size: contain !important;
+                background-repeat: no-repeat !important;
+              }
+
+              .fc-myPrev-button::before {
+                background-image: url('/assets/img/mentors/chevron-left.png') !important;
+              }
+
+              .fc-myNext-button::before {
+                background-image: url('/assets/img/mentors/chevron-right.png') !important;
+              }
+
+              .fc-today-button {
+                margin-right: 450px !important;
+                background-color: #84cc16 !important;
+                border-color: #84cc16 !important;
+                color: white !important;
+              }
+            `}
+          </style>
+
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-            key={calendarKey}
+            // key={calendarKey}
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
             customButtons={{
               myPrev: {
-                text: '‹',
-                click: () => calendarRef.current.getApi().prev(),
+                text: '',
+                click: () => {
+                  const calendarApi = calendarRef.current?.getApi();
+                  console.log('[이전 달 버튼 클릭됨]');
+                  if (!calendarApi) {
+                    console.error('[myPrev] calendarApi is undefined');
+                    return;
+                  }
+                  calendarApi.prev();
+                  console.log('[myPrev] calendar 이동 완료');
+                }
               },
               myNext: {
-                text: '›',
-                click: () => calendarRef.current.getApi().next(),
+                text: '',
+                click: () => {
+                  const calendarApi = calendarRef.current?.getApi();
+                  console.log('[다음 달 버튼 클릭됨]');
+                  if (!calendarApi) {
+                    console.error('[myNext] calendarApi is undefined');
+                    return;
+                  }
+                  calendarApi.next();
+                  console.log('[myNext] calendar 이동 완료');
+                }
               },
+              myToday: {
+                text: '오늘',
+                click: () => {
+                  const calendarApi = calendarRef.current?.getApi();
+                  console.log('[오늘 버튼 클릭됨]');
+                  if (!calendarApi) {
+                    console.error('[myToday] calendarApi is undefined');
+                    return;
+                  }
+                  calendarApi.today();
+                  console.log('[myToday] 오늘로 이동 완료');
+                }
+              }
             }}
+            
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
               right: 'myNext today',
+            }}
+            dayCellClassNames={(arg) => {
+              const day = arg.date.getDay();
+              if (day === 0) return ['fc-sunday'];
+              if (day === 6) return ['fc-saturday'];
+              return [];
             }}
             events={calendarEvents}
             selectable={true}
@@ -246,8 +368,10 @@ const CalendarView = () => {
               }
             }}
           />
+
           <CalendarModal isOpen={isModalOpen} onClose={handleCloseModal} selectedDate={selectedDate} />
         </div>
+
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo selectedDate={selectedDate} onTodoChange={() => setLocalTodoTrigger(Date.now())} />
         </div>
