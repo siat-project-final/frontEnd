@@ -15,7 +15,7 @@ import CalendarModal from './CalendarModal';
 const CalendarView = () => {
   const calendarRef = useRef(null);
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [calendarKey, setCalendarKey] = useState(Date.now()); // ✅ 강제 리렌더 키
+  const [calendarKey, setCalendarKey] = useState(Date.now()); // 강제 리렌더 키
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // [kth] 250622 : 현재 달을 기준으로 요청하기 위한 상태
@@ -257,16 +257,131 @@ const CalendarView = () => {
               }
 
               .fc-today-button {
-                margin-right: 20px !important;
+                margin-right: 0 !important;
                 background-color: #84cc16 !important;
                 border-color: #84cc16 !important;
                 color: white !important;
+                position: absolute !important;
+                right: calc(50% - 200px) !important;
+                top: 52% !important;
+                transform: translateY(-50%) !important;
+                z-index: 1 !important;
               }
+                /* 날짜 기본 글씨: 검정 */
+              .fc-daygrid-day-number {
+                color: #000 !important;
+                text-align: left !important;
+                padding-left: 6px !important;
+                font-weight: 500;
+              }
+
+              /* 날짜 셀 전체를 왼쪽 정렬로 바꾸기 위한 flex 설정 */
+              .fc-daygrid-day-frame {
+                display: flex !important;
+                flex-direction: column;
+                align-items: flex-start !important;
+                padding: 8px !important;
+                height: 100px !important;
+                min-height: 100px !important;
+              }
+
+              /* 날짜 셀 자체의 높이 조정 */
+              .fc-daygrid-day {
+                height: 100px !important;
+                min-height: 100px !important;
+              }
+
+              /* 날짜 셀 내부 컨테이너 높이 조정 */
+              .fc-daygrid-day-frame {
+                height: 100px !important;
+                min-height: 100px !important;
+              }
+
+              /* 테이블 행 높이 고정 */
+              .fc-daygrid-day-row {
+                height: 100px !important;
+                min-height: 100px !important;
+              }
+
+              /* 테이블 셀 높이 고정 */
+              .fc-daygrid-day td {
+                height: 100px !important;
+                min-height: 100px !important;
+                vertical-align: top !important;
+              }
+
+              /* 요일 헤더: 왼쪽 정렬 + 글자색 변경 */
+              .fc .fc-col-header-cell {
+                color: #000 !important;
+                text-align: left !important;
+                padding-left: 6px !important;
+              }
+
+              .fc .fc-col-header-cell .fc-col-header-cell-cushion {
+                color: #000 !important;
+                font-weight: bold !important;
+              }
+
+              /* 일요일 날짜 빨간색 */
+              .fc-day-sun .fc-daygrid-day-number {
+                color: #ff4d4f !important;
+              }
+
+              /* 토요일 날짜 빨간색 */
+              .fc-day-sat .fc-daygrid-day-number {
+                color: #ff4d4f !important;
+              }
+              /* 이벤트 막대 너비를 셀 전체로 설정 */
+              .fc .fc-daygrid-event {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
+                padding: 2px 4px !important;
+                border-radius: 2px !important;
+              }
+              
+              /* 이벤트 막대를 셀 너비에 맞게 복원 */
+              .fc-daygrid-event-harness {
+                width: 100% !important;
+                margin: 1px 0 !important;
+              }
+
+              .fc-event {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 2px 4px !important;
+                box-sizing: border-box !important;
+              }
+
+              /* 이벤트 컨테이너도 전체 너비로 */
+              .fc-daygrid-event-dot {
+                display: none !important;
+              }
+
+              /* 이벤트 텍스트가 잘리지 않도록 */
+              .fc-event-title {
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                font-size: 13px !important;
+                line-height: 1.3 !important;
+                font-weight: 500 !important;
+              }
+
+              /* 셀 내부 패딩 조정 */
+              .fc-daygrid-day-events {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+              }
+
             `}
+            
           </style>
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-            key={calendarKey} // ✅ 핵심!
+            key={calendarKey} 
             plugins={[
               dayGridPlugin,
               timeGridPlugin,
@@ -275,6 +390,7 @@ const CalendarView = () => {
               resourceTimelinePlugin,
             ]}
             initialView="dayGridMonth"
+            
             customButtons={{
               myPrev: {
                 text: '‹',
@@ -305,7 +421,7 @@ const CalendarView = () => {
               const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
               const monthStr = `${yyyy}-${mm}`;
             
-              // 🔒 이미 같은 달이면 요청 안 보냄
+              // 이미 같은 달이면 요청 안 보냄
               if (monthStr === currentMonthStr) return;
             
               // memberId가 없으면 요청하지 않음
@@ -319,7 +435,7 @@ const CalendarView = () => {
                 .then((res) => {
                   const calendarMapped = convertJsonToCalendarEvents(res.data);
                   setCalendarEvents(calendarMapped);
-                  setCurrentMonthStr(monthStr); // 🔑 마지막으로 요청한 달 저장
+                  setCurrentMonthStr(monthStr); // 마지막으로 요청한 달 저장
                 })
                 .catch((error) => {
                   console.error('달 변경 시 캘린더 데이터 조회 실패:', error);
