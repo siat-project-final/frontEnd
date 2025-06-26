@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
-import { useNavigate } from 'react-router-dom';
-import instance from '../../api/axios'; // Axios 인스턴스 가져오기
+import instance from '../../api/axios';
+import { getMyStudyLogs } from '../../api/studyLog';
 
 import Header from '../common/Header';
 import Todo from '../common/Todo';
@@ -14,29 +15,13 @@ import CalendarModal from './CalendarModal';
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
-  const [calendarEvents, setCalendarEvents] = useState([]);
-  const [calendarKey, setCalendarKey] = useState(Date.now()); // ✅ 강제 리렌더 키
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // [kth] 250622 : 현재 달을 기준으로 요청하기 위한 상태
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [calendarKey, setCalendarKey] = useState(Date.now());
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMonthStr, setCurrentMonthStr] = useState('');
-  // const [selectedDate, setSelectedDate] = useState(null);
-  // const [selectedDate, setSelectedDate] = useState(() => {
-  //   // 🗓 오늘 날짜 yyyy-MM-dd 포맷
-  //   const today = new Date();
-  //   const yyyy = today.getFullYear();
-  //   const mm = String(today.getMonth() + 1).padStart(2, '0');
-  //   const dd = String(today.getDate()).padStart(2, '0');
-  //   return `${yyyy}-${mm}-${dd}`;
-  // });
-  const getTodayString = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  };
-  
   const [selectedDate, setSelectedDate] = useState(() => {
     return sessionStorage.getItem('selectedDate') || getTodayString();
   });
@@ -45,49 +30,100 @@ const CalendarView = () => {
   const [localTodoTrigger, setLocalTodoTrigger] = useState(Date.now());
 
   const memberId = localStorage.getItem('memberId');
+  const [writtenDates, setWrittenDates] = useState(null);
 
-  // [kth] 250622 : api로 불러온 json 데이터를 캘린더 이벤트로 변환하는 함수
-  const convertJsonToCalendarEvents = (jsonData) => {
+  const SUBJECT_COLORS = {
+    Python: '#85C1E9',
+    Java: '#F7DC6F',
+    JavaScript: '#F5B041',
+    C: '#A9DFBF',
+    기타: '#D7DBDD',
+  };
+
+  const getTodayString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const fetchWrittenLogs = async () => {
+    try {
+      const res = await getMyStudyLogs(memberId);
+      const dates = new Set(
+        res.data
+          .map((log) => {
+            if (!log.studyDate) return null;
+            if (typeof log.studyDate === 'string') {
+              return log.studyDate.includes('T') ? log.studyDate.split('T')[0] : log.studyDate;
+            }
+            return null;
+          })
+          .filter(Boolean)
+      );
+      setWrittenDates(dates);
+    } catch (err) {
+      console.error('작성된 학습일지 불러오기 실패:', err);
+    }
+  };
+
+  const convertJsonToCalendarEvents = (jsonData, writtenDatesSet) => {
     const events = [];
-  
-    Object.values(jsonData).forEach(({ date, subjectList, studyDiaryList, mentoringList, mentoringReservationList }) => {
+
+    Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList }]) => {
+      const normalizedDate = date.includes('T') ? date.split('T')[0] : date;
+
       subjectList.forEach((subject) => {
+        const color = SUBJECT_COLORS[subject] || SUBJECT_COLORS['기타'];
         events.push({
           title: `[과목] ${subject}`,
           start: date,
           end: date,
-          backgroundColor: '#AED6F1',
-          borderColor: '#AED6F1',
+          backgroundColor: color,
+          borderColor: color,
           textColor: '#000',
-          extendedProps: { type: 'SUBJECT' }
+          extendedProps: { type: 'SUBJECT', subject }
         });
       });
-  
-      studyDiaryList.forEach((diary) => {
+
+      if (studyDiaryList.length > 0) {
+        studyDiaryList.forEach((diary) => {
+          events.push({
+            title: `[일지] ${diary.title || '학습일지'}`,
+            start: date,
+            end: date,
+            backgroundColor: '#ABEBC6',
+            borderColor: '#ABEBC6',
+            textColor: '#000',
+            extendedProps: { type: 'DIARY', ...diary }
+          });
+        });
+      } else if (subjectList.length > 0 && !writtenDatesSet?.has(normalizedDate)) {
         events.push({
-          title: `[일지] ${diary.title || '학습일지'}`,
+          title: `[미작성] 학습일지`,
           start: date,
           end: date,
-          backgroundColor: '#ABEBC6',
-          borderColor: '#ABEBC6',
+          backgroundColor: '#F1948A',
+          borderColor: '#F1948A',
           textColor: '#000',
-          extendedProps: { type: 'DIARY', ...diary }
+          extendedProps: { type: 'UNWRITTEN_DIARY', date }
         });
-      });
-  
-      mentoringList.forEach((mentoring) => {
+      }
+
+      mentoringList?.forEach((mentoring) => {
         events.push({
           title: `[멘토링] ${mentoring.mentorName}`,
           start: date,
           end: date,
           backgroundColor: '#F1C40F',
-          borderColor: '#F9E79F',
+          borderColor: '#F1C40F',
           textColor: '#000',
           extendedProps: { type: 'MENTORING', ...mentoring }
         });
       });
-  
-      mentoringReservationList.forEach((reservation) => {
+
+      mentoringReservationList?.forEach((reservation) => {
         events.push({
           title: `[멘토링 예약] ${reservation.mentorName}`,
           start: date,
@@ -98,63 +134,43 @@ const CalendarView = () => {
           extendedProps: { type: 'MENTORING', ...reservation }
         });
       });
-
     });
-  
+
     return events;
   };
 
-  // [kth] 250622 : 의존성 배열을 비워놔서 최초 렌더링시에만 조회 api 1회 요청
+  const fetchCalendarData = async (monthStr, writtenDatesSet) => {
+    try {
+      if (!memberId) return;
+      const res = await instance.get(`/calendar/schedule/${memberId}/${monthStr}`);
+      const calendarMapped = convertJsonToCalendarEvents(res.data, writtenDatesSet);
+      setCalendarEvents(calendarMapped);
+      setCalendarKey(Date.now());
+    } catch (error) {
+      console.error('캘린더 데이터 조회 실패:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCalendarData = async () => {
-      try {
-        // memberId가 없으면 요청하지 않음
-        if (!memberId) {
-          console.log('memberId가 없습니다. 로그인이 필요합니다.');
-          return;
-        }
+    fetchWrittenLogs();
+  }, [memberId]);
 
-        // 현재 위치한 달을 기준으로 일정 데이터를 가져오기 위해
-        const calendarApi = calendarRef.current?.getApi();
-        const currentDate = calendarApi ? calendarApi.getDate() : new Date(); // 현재 캘린더 기준 날짜
+  useEffect(() => {
+    if (writtenDates !== null) {
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
+      fetchCalendarData(monthStr, writtenDates);
+    }
+  }, [writtenDates]);
 
-        // 파라미터에 추가할 날짜 변환을 위한 로직
-        const yyyy = currentDate.getFullYear();
-        const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const monthStr = `${yyyy}-${mm}`;
-
-        console.log(`캘린더 데이터 요청: /calendar/schedule/${memberId}/${monthStr}`);
-
-        // 서버에 스케쥴 조회 요청
-        const res = await instance.get(`/calendar/schedule/${memberId}/${monthStr}`);
-  
-        // 앞에 작성한 매핑 함수로 res.data를 캘린더 이벤트로 변환
-        const calendarMapped = convertJsonToCalendarEvents(res.data);
-  
-        setCalendarEvents([...calendarMapped]);
-        setCalendarKey(Date.now());
-      } catch (error) {
-        console.error('캘린더 데이터 조회 실패:', error);
-        
-        // 서버 에러인 경우 더미 데이터로 대체
-        if (error.response?.status === 500 || error.response?.status === 404) {
-          console.log('서버 에러로 인해 더미 데이터를 사용합니다.');
-          const dummyData = {
-            [`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`]: {
-              date: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`,
-              subjectList: ['React', 'JavaScript'],
-              studyDiaryList: [{ title: 'React 학습일지' }],
-              mentoringList: [{ mentorName: '김멘토' }]
-            }
-          };
-          const calendarMapped = convertJsonToCalendarEvents(dummyData);
-          setCalendarEvents([...calendarMapped]);
-        }
-      }
-    };
-
-    fetchCalendarData();
-  }, [memberId]); // memberId를 의존성 배열에 추가
+  useEffect(() => {
+    if (location.state?.reload) {
+      fetchWrittenLogs();
+    }
+  }, [location.state]);
 
   const handleDateClick = (info) => {
     const clickedDate = info.dateStr;
@@ -185,14 +201,8 @@ const CalendarView = () => {
         <div style={{ flex: 1 }}>
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-            key={calendarKey} // ✅ 핵심!
-            plugins={[
-              dayGridPlugin,
-              timeGridPlugin,
-              listPlugin,
-              interactionPlugin,
-              resourceTimelinePlugin,
-            ]}
+            key={calendarKey}
+            plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
             customButtons={{
               myPrev: {
@@ -213,52 +223,32 @@ const CalendarView = () => {
             selectable={true}
             dateClick={handleDateClick}
             eventClick={(info) => {
-              alert(`이벤트 클릭: ${info.event.title}`);
+              const { type, diaryId, date } = info.event.extendedProps;
+              if (type === 'DIARY') {
+                navigate(`/study-log/${diaryId}`);
+              } else if (type === 'UNWRITTEN_DIARY') {
+                navigate(`/study/write?date=${date}`);
+              } else if (type === 'MENTORING') {
+                alert(`멘토링: ${info.event.title}`);
+              }
             }}
             ref={calendarRef}
             height="auto"
-              // [kth] 250622 : 달 변경시 조회 api 재요청을 위한 콜백 추가
             datesSet={(arg) => {
               const currentDate = arg.view.currentStart;
               const yyyy = currentDate.getFullYear();
               const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
               const monthStr = `${yyyy}-${mm}`;
-            
-              // 🔒 이미 같은 달이면 요청 안 보냄
-              if (monthStr === currentMonthStr) return;
-            
-              // memberId가 없으면 요청하지 않음
-              if (!memberId) {
-                console.log('memberId가 없습니다. 로그인이 필요합니다.');
-                return;
+              if (monthStr !== currentMonthStr && writtenDates !== null) {
+                fetchCalendarData(monthStr, writtenDates);
+                setCurrentMonthStr(monthStr);
               }
-
-              instance
-                .get(`/calendar/schedule/${memberId}/${monthStr}`)
-                .then((res) => {
-                  const calendarMapped = convertJsonToCalendarEvents(res.data);
-                  setCalendarEvents(calendarMapped);
-                  setCurrentMonthStr(monthStr); // 🔑 마지막으로 요청한 달 저장
-                })
-                .catch((error) => {
-                  console.error('달 변경 시 캘린더 데이터 조회 실패:', error);
-                  // 에러가 발생해도 기존 이벤트는 유지
-                });
             }}
           />
-
-          <CalendarModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            selectedDate={selectedDate}
-          />
+          <CalendarModal isOpen={isModalOpen} onClose={handleCloseModal} selectedDate={selectedDate} />
         </div>
-
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
-          <Todo
-            selectedDate={selectedDate}
-            onTodoChange={() => setLocalTodoTrigger(Date.now())}
-          />
+          <Todo selectedDate={selectedDate} onTodoChange={() => setLocalTodoTrigger(Date.now())} />
         </div>
       </div>
     </div>

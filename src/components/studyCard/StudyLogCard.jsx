@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { deleteStudyLog } from '../../api/studyLog';
 
-const StudyLogCard = ({ log }) => {
-  // focus 상태 관리
+const StudyLogCard = ({ log, onDelete }) => {
   const [focus, setFocus] = useState({ date: false, subject: false, summary: false });
-  // focus 스타일
+
   const getFocusStyle = (key) =>
     focus[key]
       ? {
@@ -14,59 +14,105 @@ const StudyLogCard = ({ log }) => {
           backgroundColor: 'white',
         }
       : { backgroundColor: 'white' };
+
+  const handleDelete = async () => {
+    try {
+      await deleteStudyLog(log.diaryId);
+      alert('삭제 완료되었습니다.');
+      onDelete(log.diaryId);
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
+  console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}`);
+
   return (
     <div className="card mb-4">
       <div className="card-body">
-        <div className="row mb-3">
-          <div className="col-md-3">
+        {/* 상단 행 */}
+        <div className="row mb-3 align-items-center">
+          {/* 날짜 */}
+          <div className="col-md-2">
             <input
               type="text"
               className="form-control"
-              defaultValue={log.date}
+              value={log.studyDate || log.date || ''}
               readOnly
               style={getFocusStyle('date')}
               onFocus={() => setFocus((f) => ({ ...f, date: true }))}
               onBlur={() => setFocus((f) => ({ ...f, date: false }))}
             />
           </div>
-          <div className="col-md-5">
+
+          {/* 제목 */}
+          <div className="col-md-4">
             <input
               type="text"
-              className="form-control"
-              defaultValue={log.subject}
+              className="form-control fw-bold"
+              value={log.title || ''}
               readOnly
               style={getFocusStyle('subject')}
               onFocus={() => setFocus((f) => ({ ...f, subject: true }))}
               onBlur={() => setFocus((f) => ({ ...f, subject: false }))}
             />
           </div>
+
+          {/* 과목 뱃지 */}
           <div className="col-md-2">
-            <Link
-              to={`/study/edit/${log.id}`}
-              className="btn border-0 text-white w-100"
-              style={{ backgroundColor: '#84cc16' }}
-            >
-              수정
-            </Link>
+            <span className="badge bg-primary">
+              {log.subject || '미지정'}
+            </span>
           </div>
-          <div className="col-md-2">
+
+          {/* 공개 여부 뱃지 */}
+          <div className="col-md-1">
+            <span
+              className={`badge ${
+                log.isPublic ? 'bg-success' : 'bg-secondary'
+              }`}
+            >
+              {log.isPublic ? '공개' : '비공개'}
+            </span>
+          </div>
+
+          {/* 버튼 */}
+          <div className="col-md-3 d-flex gap-1">
+            <Link
+              to={`/study/edit/${log.diaryId}`}
+              className="btn border-0 text-white w-100 py-1"
+              style={{
+                backgroundColor: '#84cc16',
+                fontSize: '0.875rem',
+              }}
+            >
+              상세보기
+            </Link>
             <button
-              className="btn border-0 w-100"
-              style={{ backgroundColor: '#ced4da', color: '#fff' }}
+              className="btn border-0 w-100 py-1"
+              style={{
+                backgroundColor: '#ced4da',
+                color: '#fff',
+                fontSize: '0.875rem',
+              }}
+              onClick={handleDelete}
             >
               삭제
             </button>
           </div>
         </div>
+
+        {/* AI 요약 */}
         <textarea
           className="form-control"
           rows="3"
-          defaultValue={log.summary}
+          value={log.aiSummary || log.summary || ''}
           readOnly
           style={getFocusStyle('summary')}
           onFocus={() => setFocus((f) => ({ ...f, summary: true }))}
           onBlur={() => setFocus((f) => ({ ...f, summary: false }))}
-        ></textarea>
+        />
       </div>
     </div>
   );

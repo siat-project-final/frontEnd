@@ -140,6 +140,10 @@ function App() {
     AOS.init();
     const preloader = document.getElementById('preloader');
     if (preloader) preloader.style.display = 'none';
+     // ✅ 테스트용 memberId 강제 주입
+    sessionStorage.setItem('memberId', '1');  // 또는 실제 테스트 ID
+    // 🔍 확인용 로그
+  console.log('✅ sessionStorage 설정 완료:', sessionStorage.getItem('memberId'));
   }, []);
 
   return (
