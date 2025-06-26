@@ -21,13 +21,19 @@ const ChallengeMain = () => {
         .then(res => {
           setTodayChallenge(res.data[0]);
         })
-        .catch(err => console.error('챌린지 과목 데이터 불러오기 실패:', err));
+        .catch(err => {
+          console.error('챌린지 과목 데이터 불러오기 실패:', err)
+          alert('챌린지 과목 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+        });
 
       getDailyRanking(today)
         .then(res => {
           setRanking(res.data);;
         })
-        .catch(err => console.error('랭킹 불러오기 실패:', err));
+        .catch(err => {
+          console.error('랭킹 불러오기 실패:', err)
+          alert('랭킹 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+        });
     };
 
     fetchData();
@@ -55,11 +61,9 @@ const ChallengeMain = () => {
                     {todayChallenge ? (
                       <>
                         <p className="mb-2">
-                          <strong>{todayChallenge.title}</strong>
+                          <strong>{todayChallenge.subject}</strong>
                         </p>
-                        <p className="text-muted" style={{ fontSize: '14px' }}>
-                          {todayChallenge.description}
-                        </p>
+                        <br />
                         <button
                           className="btn btn-dark mb-2"
                           onClick={() => navigate('/challenge/daily')}
@@ -99,7 +103,10 @@ const ChallengeMain = () => {
                   <div className="card p-4 shadow-sm">
                     <h5 className="mb-3">오늘의 랭킹 TOP 3</h5>
                     <ul className="list-group list-group-flush">
-                      {ranking.map((user, idx) => (
+                      {ranking.slice()
+                              .sort((a, b) => a.rank - b.rank) // rank 기준 내림차순 정렬
+                              .slice(0, 3) // TOP 3만 표시 (선택사항)
+                              .map((user, idx) => (
                         <li
                           key={idx}
                           className="list-group-item d-flex justify-content-between"

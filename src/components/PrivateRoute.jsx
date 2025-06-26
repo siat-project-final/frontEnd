@@ -1,13 +1,12 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { isAuthenticated } from '../utils/auth';
-import { useLocation } from 'react-router-dom';
 
 function PrivateRoute({ children }) {
   const isAuth = isAuthenticated();
   const location = useLocation();
 
-  // 로그인 페이지로 부터의 fromLogin이 true면 무조건 통과
+  // 로그인 or 회원가입 직후면 무조건 통과
   if (location.state?.fromLogin || location.state?.fromSignUp) {
     return children;
   }
@@ -16,7 +15,6 @@ function PrivateRoute({ children }) {
   if (!isAuth) {
     return <Navigate to="/login" replace />;
   }
-
 
   return children;
 }

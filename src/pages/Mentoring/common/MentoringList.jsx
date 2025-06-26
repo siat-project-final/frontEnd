@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import Todo from '../../../components/common/Todo';
-// import { getMentors } from '../../../api/mentoring'; // 실제 사용 시 주석 해제
+import { getMentors } from '../../../api/mentoring'; // ✅ 실제 API 사용
 import '../../../App.css';
 
 const MentoringList = () => {
@@ -17,82 +16,81 @@ const MentoringList = () => {
       mentorName: 'Walter White',
       position: 'Business Analyst',
       company: 'SK 쉴더스',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
+      mentor_image_url: '/assets/img/mentors/형규.png',
     },
     {
       mentorName: 'Sarah Jhonson',
       position: 'Software Engineer',
       company: 'SK C&C',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
+      mentor_image_url: '/assets/img/mentors/수현.png',
     },
     {
       mentorName: 'William Anderson',
       position: 'Cloud Engineer',
       company: 'AWS',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
+      mentor_image_url: '/assets/img/mentors/신형.png',
     },
     {
       mentorName: 'Amanda Jepson',
       position: 'Software Developer',
       company: 'TVING',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
+      mentor_image_url: '/assets/img/mentors/은정.png',
     },
     {
       mentorName: 'Brian Doe',
       position: 'Software Developer',
       company: 'MEGAZONE CLOUD',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
+      mentor_image_url: '/assets/img/mentors/태현.png',
     },
     {
       mentorName: 'Josepha Palas',
       position: 'Cloud Engineer',
       company: 'AWS',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
+      mentor_image_url: '/assets/img/mentors/영석.png',
     },
     {
       mentorName: 'Emily Chen',
       position: 'Data Scientist',
       company: 'Google',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
+      mentor_image_url: '/assets/img/mentors/형규.png',
     },
     {
       mentorName: 'Michael Park',
       position: 'AI Engineer',
       company: 'Naver',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
+      mentor_image_url: '/assets/img/mentors/수현.png',
     },
     {
       mentorName: 'Sophie Kim',
       position: 'Frontend Developer',
       company: 'Kakao',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
+      mentor_image_url: '/assets/img/mentors/신형.png',
     },
     {
       mentorName: 'David Lee',
       position: 'Backend Developer',
       company: 'LINE',
-      mentor_image_url: '/assets/img/mentors/mentor1.jpg',
+      mentor_image_url: '/assets/img/mentors/은정.png',
     },
     {
       mentorName: 'Lisa Wang',
       position: 'DevOps Engineer',
       company: 'Coupang',
-      mentor_image_url: '/assets/img/mentors/mentor2.jpg',
+      mentor_image_url: '/assets/img/mentors/태현.png',
     },
     {
       mentorName: 'James Kim',
       position: 'Security Engineer',
       company: 'Kakao Security',
-      mentor_image_url: '/assets/img/mentors/mentor3.jpg',
+      mentor_image_url: '/assets/img/mentors/영석.png',
     },
   ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const res = await getMentors(); // 실제 호출 시
-        // setMentors(res.data);
-        setMentors(dummyMentors); // 현재는 local dummy data
+        const res = await getMentors(); // ✅ 실제 백엔드 API 호출
+        setMentors(res.data);          // ✅ 응답 데이터 state에 저장
       } catch (err) {
         console.error('멘토 목록 불러오기 실패:', err);
       }
@@ -101,16 +99,22 @@ const MentoringList = () => {
     fetchData();
   }, []);
 
+  const handleMentorClick = (mentor) => {
+    const role = sessionStorage.getItem('role');
+    if (role === 'MENTOR') {
+      alert('멘토는 멘토링 신청 권한이 없습니다.');
+      return;
+    }
+    navigate('/mentoring/detail', { state: { mentor } });
+  };
+
   return (
     <div>
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main">
-          <h1
-            className="h3 fw-bold"
-            style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
-          >
+          <h1 className="h3 fw-bold" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
             Mentoring
           </h1>
           <p style={{ marginTop: '16px', marginLeft: '16px', whiteSpace: 'pre-line' }}>
@@ -154,14 +158,7 @@ const MentoringList = () => {
                           img.style.transform = 'scale(1)';
                         }
                       }}
-                      onClick={() => {
-                        const role = sessionStorage.getItem('userRole');
-                        if (role === 'mentor') {
-                          navigate('/mentoring/mentor/detail', { state: { mentor } });
-                        } else {
-                          navigate('/mentoring/detail', { state: { mentor } });
-                        }
-                      }}
+                      onClick={() => handleMentorClick(mentor)}
                     >
                       <div
                         style={{

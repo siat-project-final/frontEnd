@@ -1,9 +1,20 @@
-// src/components/studyCard/StudyLogCard.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { deleteStudyLog } from '../../api/studyLog';
 
 const StudyLogCard = ({ log, onDelete }) => {
+  const [focus, setFocus] = useState({ date: false, subject: false, summary: false });
+
+  const getFocusStyle = (key) =>
+    focus[key]
+      ? {
+          borderColor: '#84cc16',
+          boxShadow: '0 0 0 0.2rem rgba(132,204,22,0.25)',
+          outline: 'none',
+          backgroundColor: 'white',
+        }
+      : { backgroundColor: 'white' };
+
   const handleDelete = async () => {
     try {
       await deleteStudyLog(log.diaryId);
@@ -15,10 +26,7 @@ const StudyLogCard = ({ log, onDelete }) => {
     }
   };
 
-  // 카드 렌더 로그
-  console.log(
-    `🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}`,
-  );
+  console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}`);
 
   return (
     <div className="card mb-4">
@@ -30,8 +38,11 @@ const StudyLogCard = ({ log, onDelete }) => {
             <input
               type="text"
               className="form-control"
-              value={log.studyDate || ''}
+              value={log.studyDate || log.date || ''}
               readOnly
+              style={getFocusStyle('date')}
+              onFocus={() => setFocus((f) => ({ ...f, date: true }))}
+              onBlur={() => setFocus((f) => ({ ...f, date: false }))}
             />
           </div>
 
@@ -42,6 +53,9 @@ const StudyLogCard = ({ log, onDelete }) => {
               className="form-control fw-bold"
               value={log.title || ''}
               readOnly
+              style={getFocusStyle('subject')}
+              onFocus={() => setFocus((f) => ({ ...f, subject: true }))}
+              onBlur={() => setFocus((f) => ({ ...f, subject: false }))}
             />
           </div>
 
@@ -93,8 +107,11 @@ const StudyLogCard = ({ log, onDelete }) => {
         <textarea
           className="form-control"
           rows="3"
-          value={log.aiSummary || ''}
+          value={log.aiSummary || log.summary || ''}
           readOnly
+          style={getFocusStyle('summary')}
+          onFocus={() => setFocus((f) => ({ ...f, summary: true }))}
+          onBlur={() => setFocus((f) => ({ ...f, summary: false }))}
         />
       </div>
     </div>

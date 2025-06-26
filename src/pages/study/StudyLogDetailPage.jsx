@@ -24,10 +24,9 @@ const StudyLogDetailPage = () => {
     const fetchLog = async () => {
       try {
         const res = await getMyStudyLogById(id);
-
-        console.log('🔥 getMyStudyLogById 응답:', res); // ← 여기!
+        console.log('🔥 getMyStudyLogById 응답:', res);
         setFormData(res.data);
-        setOriginalData(res.data); // 백업용 원본 저장
+        setOriginalData(res.data);
       } catch {
         alert('해당 일지를 불러올 수 없습니다.');
         navigate('/study');
@@ -46,7 +45,7 @@ const StudyLogDetailPage = () => {
     const updateData = { ...formData, memberId };
     try {
       await updateStudyLog(id, updateData);
-      const res = await getMyStudyLogById(id); // 수정 후 재조회로 최신 데이터 반영
+      const res = await getMyStudyLogById(id);
       setFormData(res.data);
       setOriginalData(res.data);
       setIsEditMode(false);
@@ -59,7 +58,7 @@ const StudyLogDetailPage = () => {
 
   const handleCancel = () => {
     if (originalData) {
-      setFormData(originalData); // 원래 내용으로 되돌림
+      setFormData(originalData);
     }
     setIsEditMode(false);
   };
@@ -71,10 +70,7 @@ const StudyLogDetailPage = () => {
         <Sidebar menuType="studylog" />
         <main className="main">
           <div className="container py-5">
-            <h1
-              className="h3 fw-bold mb-0"
-              style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
-            >
+            <h1 className="h3 fw-bold mb-0" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
               학습일지 상세
             </h1>
             <div className="studylog-boxes">
@@ -149,45 +145,39 @@ const StudyLogDetailPage = () => {
                 </div>
 
                 <div className="d-flex justify-content-end gap-3">
-                {!isEditMode ? (
-                  <button
-                    type="button"
-                    className="btn border-0 text-white"
-                    style={{ backgroundColor: '#84cc16' }}
-                    onClick={(e) => {
-                      e.preventDefault();           // form 안에서의 submit 방지
-                      setTimeout(() => {
-                        setIsEditMode(true);       // 리렌더 타이밍 문제 해결
-                      }, 0);
-                    }}
-                  >
-                    수정하기
-                  </button>
-                ) : (
-                  <>
-                    <button
-                      type="submit"
-                      className="btn border-0 text-white"
-                      style={{ backgroundColor: '#84cc16' }}
-                    >
-                      수정 완료
-                    </button>
+                  {!isEditMode ? (
                     <button
                       type="button"
-                      className="btn btn-secondary"
-                      onClick={handleCancel}
+                      className="btn border-0 text-white"
+                      style={{ backgroundColor: '#84cc16' }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setTimeout(() => {
+                          setIsEditMode(true);
+                        }, 0);
+                      }}
                     >
-                      취소
+                      수정하기
                     </button>
-                  </>
-                )}
-
+                  ) : (
+                    <>
+                      <button
+                        type="submit"
+                        className="btn border-0 text-white"
+                        style={{ backgroundColor: '#84cc16' }}
+                      >
+                        수정 완료
+                      </button>
+                      <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+                        취소
+                      </button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
           </div>
         </main>
-
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>

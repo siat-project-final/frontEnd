@@ -5,66 +5,49 @@ import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { getTodayChallenge, submitChallenge } from '../../../api/challenge';
 import '../../../App.css';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 const ChallengeSolve = () => {
   const navigate = useNavigate();
-  const memberId = sessionStorage.getItem('memberId');
+  const memberId = localStorage.getItem('memberId');
 
   const [problems, setProblems] = useState([]);
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ✅ 더미 데이터
-  const dummyProblems = [
-    {
-      id: 1,
-      difficulty: 1,
-      type: 'text',
-      text: '문제 1: 1 + 1은?',
-      correctAnswer: '2',
-    },
-    {
-      id: 2,
-      difficulty: 2,
-      type: 'text',
-      text: '문제 2: 3 + 4는?',
-      correctAnswer: '7',
-    },
-    {
-      id: 3,
-      difficulty: 2,
-      type: 'multiple',
-      text: '문제 3: 다음 중 프론트엔드 프레임워크가 아닌 것은?',
-      options: ['React', 'Vue', 'Spring', 'Svelte'],
-      correctAnswer: 'Spring',
-    },
-    {
-      id: 4,
-      difficulty: 3,
-      type: 'multiple',
-      text: '문제 4: 자바스크립트의 배열 메서드가 아닌 것은?',
-      options: ['map', 'filter', 'reduce', 'insert'],
-      correctAnswer: 'insert',
-    },
-    {
-      id: 5,
-      difficulty: 1,
-      type: 'text',
-      text: '문제 5: 10 / 2는?',
-      correctAnswer: '5',
-    },
-  ];
+  const progress = problems.length > 0
+    ? Math.round(((currentIndex + 1) / problems.length) * 100)
+    : 0;
 
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    if (!memberId) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
 
-    // 실제 API 연결 시
-    // getTodayChallenge(memberId)
-    //   .then(res => setProblems(res.data))
-    //   .catch(err => console.error('문제 불러오기 실패:', err));
+    getTodayChallenge()
+      .then(res => {
+        const parsed = res.data.map(p => {
+          let options = [];
+          try {
+            const once = typeof p.choices === 'string' ? JSON.parse(p.choices) : p.choices;
+            options = typeof once === 'string' ? JSON.parse(once) : once;
+          } catch (e) {
+            console.error(`선택지 파싱 실패 (problemId=${p.problemId || p.id}):`, e);
+            alert('문제의 선택지를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+          }
+          return { ...p, options, type: 'choice' };
+        });
 
-    setProblems(dummyProblems);
-  }, [memberId]);
+        setProblems(parsed);
+      })
+      .catch(err => {
+        console.error('문제 불러오기 실패:', err);
+        alert('오늘의 챌린지 문제를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
+      });
+  }, []);
 
   const handleChange = (problemId, value) => {
     setAnswers(prev => ({ ...prev, [problemId]: value }));
@@ -78,27 +61,28 @@ const ChallengeSolve = () => {
 
   const handleSubmit = () => {
     const submissionData = problems.map(p => ({
-      problemId: p.id,
-      submitAnswer: answers[p.id] || '',
+      problemId: p.problemId,
+      submitAnswer: answers[p.problemId] ?? null,
       memberId,
     }));
 
-    // 실제 API 호출
-    // Promise.all(
-    //   submissionData.map(data =>
-    //     submitChallenge(data.problemId, data.memberId, data.submitAnswer)
-    //   )
-    // )
-    //   .then(() => {
-    //     navigate('/challenge/daily/result');
-    //   })
-    //   .catch(err => {
-    //     console.error('제출 실패:', err);
-    //     alert('제출에 실패했습니다.');
-    //   });
+    const requestBody = {
+      memberId,
+      problemIds: submissionData.map(data => data.problemId),
+      answers: submissionData.map(data =>
+        data.submitAnswer !== null ? parseInt(data.submitAnswer) : null
+      ),
+      createdAt: new Date().toISOString(),
+    };
 
-    console.log('제출 데이터:', submissionData);
-    navigate('/challenge/daily/result');
+    submitChallenge(requestBody)
+      .then(() => {
+        navigate('/challenge/daily/result');
+      })
+      .catch(err => {
+        console.error('제출 실패:', err);
+        alert('제출에 실패했습니다. 나중에 다시 시도해주세요.');
+      });
   };
 
   const currentProblem = problems[currentIndex];
@@ -116,12 +100,39 @@ const ChallengeSolve = () => {
           </div>
 
           <section className="section">
-            <div className="container" style={{ padding: '40px 20px' }}>
+            <div
+              className="container"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                gap: '20px',
+                marginBottom: '20px',
+                flexWrap: 'wrap',
+                flexDirection: 'row-reverse',
+              }}
+            >
+              {/*  Progress Bar */}
+              <div style={{ width: 80 }}>
+                <CircularProgressbar
+                  value={progress}
+                  text={`${progress}%`}
+                  strokeWidth={10}
+                  styles={buildStyles({
+                    pathColor: '#00c853',
+                    textColor: '#333',
+                    trailColor: '#e0e0e0',
+                  })}
+                />
+              </div>
+
+              {/* 문제 출력 */}
               {currentProblem && (
-                <div className="mb-4">
+                <div className="mb-4" style={{ maxWidth: '800px', flex: '1' }}>
                   <h5 className="mb-2">
                     Q{currentIndex + 1}. (난이도: {currentProblem.difficulty})
                   </h5>
+
                   <pre
                     style={{
                       background: '#f8f9fa',
@@ -132,7 +143,7 @@ const ChallengeSolve = () => {
                       fontSize: '15px',
                     }}
                   >
-                    {currentProblem.text}
+                    {currentProblem.title}
                   </pre>
 
                   {currentProblem.type === 'text' ? (
@@ -140,9 +151,9 @@ const ChallengeSolve = () => {
                       type="text"
                       className="form-control mt-2"
                       placeholder="정답을 입력하세요"
-                      value={answers[currentProblem.id] || ''}
+                      value={answers[currentProblem.problemId] || ''}
                       onChange={(e) =>
-                        handleChange(currentProblem.id, e.target.value)
+                        handleChange(currentProblem.problemId, e.target.value)
                       }
                     />
                   ) : (
@@ -152,20 +163,20 @@ const ChallengeSolve = () => {
                           <input
                             className="form-check-input"
                             type="radio"
-                            name={`question-${currentProblem.id}`}
+                            name={`question-${currentProblem.problemId}`}
                             value={option}
-                            checked={answers[currentProblem.id] === option}
+                            checked={answers[currentProblem.problemId] === option}
                             onChange={(e) =>
                               handleChange(
-                                currentProblem.id,
-                                e.target.value
+                                currentProblem.problemId,
+                                parseInt(e.target.value)
                               )
                             }
-                            id={`option-${currentProblem.id}-${idx}`}
+                            id={`option-${currentProblem.problemId}-${idx}`}
                           />
                           <label
                             className="form-check-label"
-                            htmlFor={`option-${currentProblem.id}-${idx}`}
+                            htmlFor={`option-${currentProblem.problemId}-${idx}`}
                           >
                             {option}
                           </label>
@@ -173,20 +184,28 @@ const ChallengeSolve = () => {
                       ))}
                     </div>
                   )}
+
+                  <div className="text-center mt-4">
+                    {currentIndex < problems.length - 1 ? (
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        style={buttonStyle}
+                      >
+                        다음 문제
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        onClick={handleSubmit}
+                        style={buttonStyle}
+                      >
+                        제출
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
-
-              <div className="text-center mt-4">
-                {currentIndex < problems.length - 1 ? (
-                  <button className="btn btn-dark" onClick={handleNext}>
-                    다음 문제
-                  </button>
-                ) : (
-                  <button className="btn btn-success" onClick={handleSubmit}>
-                    제출
-                  </button>
-                )}
-              </div>
             </div>
           </section>
         </main>
@@ -194,6 +213,19 @@ const ChallengeSolve = () => {
       <Footer />
     </>
   );
+};
+
+const buttonStyle = {
+  background: '#84cc16',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 24,
+  padding: '12px 32px',
+  fontWeight: 600,
+  fontSize: 16,
+  cursor: 'pointer',
+  boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
+  marginTop: '60px',
 };
 
 export default ChallengeSolve;

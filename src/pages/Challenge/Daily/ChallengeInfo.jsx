@@ -43,12 +43,23 @@ const ChallengeInfo = () => {
             <div className="container text-center" style={{ padding: '40px 20px' }}>
               {!hasParticipated ? (
                 <>
-                  <p style={{ fontSize: '1.1rem' }}>
-                    오늘의 문제에 도전해보세요! 커리큘럼 기반 문제 5개가 준비되어 있습니다.
+                  <p style={{ fontSize: '20px', marginBottom: '80px'}}>
+                    일일챌린지에 도전하세요! 오늘 수강하신 강의 내용을 기반으로 5개의 문제가 출제됩니다.
                   </p>
                   <button
                     className="btn btn-dark mt-4"
                     onClick={() => navigate('/challenge/daily/solve')}
+                    style={{
+                        background: '#84cc16',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 24,
+                        padding: '12px 32px',
+                        fontWeight: 600,
+                        fontSize: 16,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
+                       }}
                   >
                     문제 풀기
                   </button>

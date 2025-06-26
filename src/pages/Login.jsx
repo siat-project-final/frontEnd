@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-import instance from '../api/axios'; // Axios 인스턴스 가져오기
-import { signIn } from '../api/auth'; // 로그인 API 함수 가져오기
+import instance from '../api/axios'; // Axios 인스턴스
+import { signIn } from '../api/auth'; // 로그인 API
 
 function Login() {
   const navigate = useNavigate();
@@ -16,23 +16,49 @@ function Login() {
       localStorage.setItem('accessToken', 'mock-token');
       localStorage.setItem('refreshToken', 'mock-refresh');
       localStorage.setItem('memberId', 'mock-id');
-
+      sessionStorage.setItem('memberId', 'mock-id');
       alert('MOCK 로그인 성공');
       navigate('/home', { state: { fromLogin: true } });
       return;
     }
+
+    if (id === 'admin' && password === 'admin123') {
+      localStorage.setItem('accessToken', 'admin-token');
+      localStorage.setItem('refreshToken', 'admin-refresh');
+      localStorage.setItem('memberId', 'admin-id');
+      sessionStorage.setItem('memberId', 'admin-id');
+      sessionStorage.setItem('userRole', 'admin');
+      sessionStorage.setItem('memberName', '관리자');
+      alert('ADMIN 로그인 성공');
+      navigate('/home', { state: { fromLogin: true } });
+      return;
+    }
+
     try {
       const response = await signIn({ id, password });
       if (response.status === 200) {
-        // 예시: 토큰 저장 및 페이지 이동
-        const { accessToken, refreshToken } = response.data;
+        const { accessToken, refreshToken, memberId, id, memberName, role } = response.data;
+
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-        localStorage.setItem('memberId', response.data.memberId);
-        localStorage.setItem('id', response.data.id);
-        localStorage.setItem('memberName', response.data.memberName);
+        localStorage.setItem('memberId', memberId);
+        localStorage.setItem('id', id);
+        localStorage.setItem('memberName', memberName);
+        localStorage.setItem('role', role);
 
-        localStorage.setItem('role', response.data.role);
+        if (role === 'MENTOR') {
+          try {
+            const mentorRes = await instance.get(`/auth/mentor-id?memberId=${memberId}`);
+            localStorage.setItem('mentorId', mentorRes.data);
+            console.log('✅ mentorId 저장 완료:', mentorRes.data);
+          } catch (err) {
+            console.error('❌ mentorId 조회 실패:', err);
+          }
+        }
+
+        sessionStorage.setItem('memberId', memberId);
+        sessionStorage.setItem('userRole', role);
+        sessionStorage.setItem('memberName', memberName);
 
         navigate('/home', { state: { fromLogin: true } });
       }
