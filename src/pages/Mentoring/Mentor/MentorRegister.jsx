@@ -8,22 +8,30 @@ import { getMentorReservations, acceptMentoring, completeMentoring } from '../..
 
 const MentorRegister = () => {
     const [reservations, setReservations] = useState([]);
-    const memberId = localStorage.getItem('memberId');
+    // const memberId = localStorage.getItem('memberId');
     const location = useLocation();
     const navigate = useNavigate();
+    const memberId = localStorage.getItem('memberId');
+    const mentorId = localStorage.getItem('mentorId'); 
 
     console.log('🏁 MentorRegister 컴포넌트 마운트');
-    console.log('🆔 memberId:', memberId);
+    console.log('🆔 memberId (로그인된 사용자):', memberId);
     console.log('📍 location.state:', location.state);
 
     useEffect(() => {
         if (!memberId) return;
-        
+
         const fetchReservations = async () => {
             try {
-                console.log('🔍 예약 목록 조회 시작, memberId:', memberId);
-                const response = await getMentorReservations(memberId);
+                console.log('🔍 예약 목록 조회 시작, mentorId:', memberId);
+                const response = await getMentorReservations(mentorId);
                 console.log('📡 API 응답 전체:', response.data);
+                if (response.data.length === 0) {
+                    console.warn('⚠️ 해당 mentorId로 조회된 예약이 없습니다.');
+                }
+                response.data.forEach((res, idx) => {
+                    console.log(`📦 예약 ${idx + 1}:`, res);
+                });
                 setReservations(response.data);
             } catch (error) {
                 console.error('❌ 멘토 예약 조회 실패:', error);
@@ -70,30 +78,26 @@ const MentorRegister = () => {
     };
 
     const handleComplete = async (reservationId) => {
-  try {
-    const reservation = reservations.find(res => res.reservationId === reservationId);
-    console.log(reservations)
-    console.log(reservation)
-    const mentorId = localStorage.getItem('memberId');
-    const menteeId = reservation.menteeId;
-    console.log("1111111111" + menteeId)
+        try {
+            const reservation = reservations.find(res => res.reservationId === reservationId);
+            const mentorId = localStorage.getItem('memberId');
+            const menteeId = reservation.menteeId;
 
-    if (!mentorId || !menteeId) {
-      alert('멘토링 완료를 위한 필수 정보가 누락되었습니다.');
-      return;
-    }
+            console.log('✅ 멘토링 완료 요청 정보:', { reservationId, mentorId, menteeId });
 
-    await completeMentoring({ reservationId, mentorId, menteeId });
+            if (!mentorId || !menteeId) {
+                alert('멘토링 완료를 위한 필수 정보가 누락되었습니다.');
+                return;
+            }
 
-    const updated = reservations.filter(res => res.reservationId !== reservationId);
-    setReservations(updated);
-  } catch (error) {
-    console.error('멘토링 완료 처리 실패:', error);
-    alert('멘토링 완료 처리 중 오류가 발생했습니다.');
-  }
-};
-    
-    
+            await completeMentoring({ reservationId, mentorId, menteeId });
+            const updated = reservations.filter(res => res.reservationId !== reservationId);
+            setReservations(updated);
+        } catch (error) {
+            console.error('멘토링 완료 처리 실패:', error);
+            alert('멘토링 완료 처리 중 오류가 발생했습니다.');
+        }
+    };
 
     return (
         <>
