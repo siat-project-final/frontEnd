@@ -4,11 +4,11 @@
 --------------------------------------------------------------*/
 /* Fonts */
 :root {
-  --default-font: 'KakaoSmallSans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  --default-font: 'Open Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
-  --heading-font: 'KakaoBigSans', sans-serif;
-  --nav-font: 'KakaoSmallSans', sans-serif;
+  --heading-font: 'Raleway', sans-serif;
+  --nav-font: 'Poppins', sans-serif;
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
@@ -313,7 +313,7 @@ h6 {
     display: flex;
     list-style: none;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
   }
   .navmenu li {
     position: relative;
@@ -322,8 +322,8 @@ h6 {
   .navmenu a:focus {
     color: #374151;
     padding: 0.5rem 0;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.2rem;
+    font-weight: 700;
     text-decoration: none;
     transition: color 0.3s ease, border-bottom 0.3s ease;
     border-bottom: 2px solid transparent;
@@ -338,14 +338,14 @@ h6 {
     border-bottom: 2px solid #84cc16;
   }
   .navmenu .dropdown ul {
-    margin: 0;
+    margin-top: 28px;
     padding: 10px 0;
     background: #fff;
     display: block;
     position: absolute;
     visibility: hidden;
-    left: 14px;
-    top: 130%;
+    left: 0;
+    top: 50%;
     opacity: 0;
     transition: 0.3s;
     border-radius: 0.5rem;
@@ -353,12 +353,17 @@ h6 {
     box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
   }
   .navmenu .dropdown ul li {
-    min-width: 200px;
+    min-width: 40px;
   }
   .navmenu .dropdown ul a {
     padding: 10px 20px;
-    font-size: 15px;
+    font-size: 10px;
     color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+    display: block;
   }
   .navmenu .dropdown ul a:hover {
     color: #84cc16;
@@ -1686,3 +1691,5 @@ section,
 --------------------------------------------------------------*/
 
 /*# sourceMappingURL=main.css.map */
+
+
