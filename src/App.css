@@ -68,3 +68,34 @@
   font-weight: 600;
 }
 
+
+
+/* 요일 텍스트 왼쪽 정렬 */
+/* .fc .fc-col-header-cell-cushion {
+  display: block;
+  text-align: left;
+  padding-left: 6px;
+} */
+
+.fc-header-toolbar {
+  margin-top: 15px; /* 원하는 만큼 조절 */
+}
+
+
+.fc-button-myPrev,
+.fc-button-myNext {
+  background: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.fc-myPrev-button,
+.fc-myNext-button {
+  background: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+
