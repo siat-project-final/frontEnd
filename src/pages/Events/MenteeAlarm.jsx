@@ -70,15 +70,13 @@ const MenteeAlarm = () => {
                           marginBottom: '15px',
                           borderRadius: '12px',
                           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                          whiteSpace: 'pre-line',
                         }}
                       >
                         <div style={{ flex: 1, marginRight: 16 }}>
                           <b>{alert.title}</b>
                           <p style={{ marginTop: 8, whiteSpace: 'pre-line' }}>
                             {alert.contents}
-                            {alert.type === 'CANCELLED' && alert.cancelReason
-                              ? `\n취소 사유: ${alert.cancelReason}`
-                              : ''}
                           </p>
                         </div>
                         <button

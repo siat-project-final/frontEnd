@@ -75,6 +75,7 @@ const MentorAlarm = () => {
             marginBottom: '15px',
             borderRadius: '12px',
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            whiteSpace: 'pre-line',
           }}
         >
           <div style={{ flex: 1 }}>

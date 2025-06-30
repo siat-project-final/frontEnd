@@ -27,6 +27,7 @@ const MentoringApply = () => {
   const location = useLocation();
   const { mentor, selectedDate } = location.state || {};
   const memberId = localStorage.getItem('memberId');
+  const menteeName = localStorage.getItem('memberName');
     console.log('✅ 현재 로그인된 memberId:', memberId);
 
   const handleCheck = (value) => {
@@ -65,13 +66,14 @@ const MentoringApply = () => {
       : selected;
 
     try {
-
        await applyMentoring({
          mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
-         memberId,
+         memberId: Number(memberId),
+         menteeName: menteeName,
          date: `${selectedDate}T00:00:00`,
          introduction: intro,
          subject: finalTopics.join(', '),
+         mentorMemberId: Number(mentor.mentorMemberId),
        });
 
       // 성공 시 예약 목록으로 이동

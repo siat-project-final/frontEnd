@@ -13,13 +13,15 @@ export const getMentorDetail = (mentorId) => {
 };
 
 /** 멘토링 신청 (멘티) */
-export const applyMentoring = ({ mentorId, memberId, date, introduction, subject }) => {
+export const applyMentoring = ({ mentorId, memberId, menteeName, date, introduction, subject, mentorMemberId }) => {
   return axios.post('/reservations', {
     mentorId,          // Long
     menteeId: memberId,          // Long
+    menteeName,          // String
     date,              // ISO 형식 문자열
     introduction,      // String
     subject,           // String (comma로 연결된 주제 목록)
+    mentorMemberId, 
   });
 };
 
@@ -39,15 +41,23 @@ export const acceptMentoring = (reservationId) => {
 };
 
 /** 멘토 - 예약 거절 */
-export const rejectMentoring = (reservationId, cancelReason) => {
+export const rejectMentoring = (reservationId, rejectReason) => {
   return axios.put(`/reservations/mentor/${reservationId}/reject`, {
-    cancelReason, // MentoringReservationRejectRequestDto
+    rejectReason, // MentoringReservationRejectRequestDto
   });
 };
 
 /** 멘티 - 예약 취소 */
 export const cancelMentoring = ({ reservationId, memberName, cancelReason }) => {
   return axios.put(`/reservations/mentee/${reservationId}/cancel`, {
+    memberName,
+    cancelReason,
+  });
+};
+
+/** 멘토 - 예약 취소 */
+export const cancelMentoringMentor = ({ reservationId, memberName, cancelReason }) => {
+  return axios.put(`/reservations/mentor/${reservationId}/cancel`, {
     memberName,
     cancelReason,
   });

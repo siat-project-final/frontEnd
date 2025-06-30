@@ -100,7 +100,7 @@ const MentoringList = () => {
   }, []);
 
   const handleMentorClick = (mentor) => {
-    const role = sessionStorage.getItem('role');
+    const role = localStorage.getItem('role');
     if (role === 'MENTOR') {
       alert('멘토는 멘토링 신청 권한이 없습니다.');
       return;
