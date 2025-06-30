@@ -3,7 +3,11 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { getTodayChallenge, getDailyRanking } from '../../api/challenge';
+import {
+  getTodayChallenge,
+  getDailyRanking,
+  checkParticipation,
+} from '../../api/challenge';
 import '../../App.css';
 
 const ChallengeMain = () => {
@@ -12,31 +16,35 @@ const ChallengeMain = () => {
 
   const [todayChallenge, setTodayChallenge] = useState(null);
   const [ranking, setRanking] = useState([]);
+  const [hasParticipated, setHasParticipated] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0];
 
-      getTodayChallenge()
-        .then(res => {
-          setTodayChallenge(res.data[0]);
-        })
-        .catch(err => {
-          console.error('챌린지 과목 데이터 불러오기 실패:', err);
-          alert('챌린지 과목 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
-        });
+    getTodayChallenge()
+      .then(res => {
+        setTodayChallenge(res.data[0]);
+      })
+      .catch(err => {
+        console.error('챌린지 과목 데이터 불러오기 실패:', err);
+        alert('챌린지 과목 데이터를 불러오는 데 실패했습니다.');
+      });
 
-      getDailyRanking(today)
-        .then(res => {
-          setRanking(res.data);
-        })
-        .catch(err => {
-          console.error('랭킹 불러오기 실패:', err);
-          alert('랭킹 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
-        });
-    };
+    getDailyRanking(today)
+      .then(res => {
+        setRanking(res.data);
+      })
+      .catch(err => {
+        console.error('랭킹 불러오기 실패:', err);
+      });
 
-    fetchData();
+    checkParticipation(memberId, today)
+      .then(res => {
+        setHasParticipated(res.data.participated); // ✅ 서버 응답: { participated: true/false }
+      })
+      .catch(err => {
+        console.error('참여 여부 확인 실패:', err);
+      });
   }, []);
 
   return (
@@ -56,7 +64,6 @@ const ChallengeMain = () => {
             </div>
           </div>
 
-          {/* 카드 영역 */}
           <section className="section">
             <div className="container" style={{ paddingTop: '10px', paddingBottom: '40px' }}>
               <div className="row g-4 justify-content-center">
@@ -70,17 +77,21 @@ const ChallengeMain = () => {
                           <strong>{todayChallenge.subject}</strong>
                         </p>
                         <br />
-                        <button
-                          className="btn btn-dark mb-2"
-                          onClick={() => navigate('/challenge/daily')}
-                          style={{
-                            backgroundColor: '#84cc16',
-                            color: '#fff',
-                            border: 'none',
-                          }}
-                        >
-                          오늘 문제 풀기
-                        </button>
+                        {!hasParticipated ? (
+                          <button
+                            className="btn btn-dark mb-2"
+                            onClick={() => navigate('/challenge/daily')}
+                            style={{
+                              backgroundColor: '#84cc16',
+                              color: '#fff',
+                              border: 'none',
+                            }}
+                          >
+                            오늘 문제 풀기
+                          </button>
+                        ) : (
+                          <p className="text-muted">오늘의 챌린지를 이미 완료했습니다.</p>
+                        )}
                         <button
                           className="btn btn-outline-dark"
                           onClick={() => navigate('/challenge/ranking')}
@@ -127,20 +138,21 @@ const ChallengeMain = () => {
                   <div className="card p-4 shadow-sm">
                     <h5 className="mb-3">오늘의 랭킹 TOP 3</h5>
                     <ul className="list-group list-group-flush">
-                      {ranking.slice()
-                              .sort((a, b) => a.rank - b.rank) // rank 기준 내림차순 정렬
-                              .slice(0, 3) // TOP 3만 표시 (선택사항)
-                              .map((user, idx) => (
-                        <li
-                          key={idx}
-                          className="list-group-item d-flex justify-content-between"
-                        >
-                          <span>
-                            {user.rank}위. {user.memberName}
-                          </span>
-                          <span>{user.totalPoints}점</span>
-                        </li>
-                      ))}
+                      {ranking
+                        .slice()
+                        .sort((a, b) => a.rank - b.rank)
+                        .slice(0, 3)
+                        .map((user, idx) => (
+                          <li
+                            key={idx}
+                            className="list-group-item d-flex justify-content-between"
+                          >
+                            <span>
+                              {user.rank}위. {user.memberName}
+                            </span>
+                            <span>{user.totalPoints}점</span>
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 </div>

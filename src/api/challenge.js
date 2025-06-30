@@ -34,11 +34,10 @@ export const getDailyRanking = (date) => {
 
 /** 챌린지 참여 여부 확인 */
 export const checkParticipation = (memberId, date) => {
-  return axios.get('/submissions/check', {
+  return axios.get('/challenge/participation', {
     params: { memberId, date },
   });
 };
-
 /** 채점 결과 조회 */
 export const getSubmissionResult = (memberId) => {
   return axios.get(`/challenge/${memberId}/scoring`);
