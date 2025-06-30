@@ -276,7 +276,7 @@ const CalendarView = () => {
               }
 
               .fc-today-button {
-                margin-right: 450px !important;
+                margin-right: 10px !important;
                 background-color: #84cc16 !important;
                 border-color: #84cc16 !important;
                 color: white !important;
