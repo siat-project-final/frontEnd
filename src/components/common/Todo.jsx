@@ -109,14 +109,21 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [ys] 250628: 수정 완료 핸들러
   const handleEditComplete = async (id) => {
-    if (!editingText.trim()) { // 수정 내용이 비어있으면 저장하지 않고 모드 종료
+    // 수정 내용이 비어있으면 저장하지 않고 모드 종료 (취소로 간주)
+    if (!editingText.trim()) {
       setEditingId(null);
       setEditingText('');
+      // 선택적으로, 내용이 지워진 경우 원래 텍스트로 되돌리고 싶을 수 있습니다.
+      // setTodos(prevTodos =>
+      //   prevTodos.map(todo =>
+      //     todo.id === id ? { ...todo, item: originalTextForThisTodo } : todo // 원래 텍스트를 저장해야 함
+      //   )
+      // );
       return;
     }
 
     try {
-      await instance.patch(`/todos/${id}`, {
+      await instance.put(`/todos/${id}`, {
         contents: editingText.trim()
       });
 
@@ -126,11 +133,13 @@ const Todo = ({ selectedDate, onTodoChange }) => {
           todo.id === id ? { ...todo, item: editingText.trim() } : todo
         )
       );
+    } catch (err) {
+      console.error('할 일 수정 실패:', err);
+    } finally {
+      // API 호출 시도 후에는 항상 수정 모드를 종료하고 수정 텍스트를 초기화합니다.
       setEditingId(null); // 수정 모드 종료
       setEditingText(''); // 수정 텍스트 초기화
       onTodoChange?.();
-    } catch (err) {
-      console.error('할 일 수정 실패:', err);
     }
   };
 
