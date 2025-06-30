@@ -1,4 +1,3 @@
-front
 # # 베이스 이미지 pull
 # FROM node:20
 
