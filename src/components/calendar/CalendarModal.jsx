@@ -1,192 +1,402 @@
-import React, { useRef, useEffect, useState } from 'react';
+// import React, { useState, useEffect } from 'react';
 
-const CalendarModal = ({ isOpen, onClose, selectedDate }) => {
-  const modalRef = useRef(null);
-  const isDragging = useRef(false);
-  const offset = useRef({ x: 0, y: 0 });
-  const [isCollapsed, setIsCollapsed] = useState(false); //  토글 상태
+// const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
+//   const [useAllDay, setUseAllDay] = useState(true);
+//   const [startTime, setStartTime] = useState("08:00");
+//   const [endTime, setEndTime] = useState("18:00");
+//   const [startDate, setStartDate] = useState('');
+//   const [endDate, setEndDate] = useState('');
+//   const [titleError, setTitleError] = useState('');
+
+//   useEffect(() => {
+//     if (useAllDay) {
+//       setStartTime("00:00");
+//       setEndTime("23:59");
+//     } else {
+//       setStartTime("08:00");
+//       setEndTime("18:00");
+//     }
+//   }, [useAllDay]);
+
+//   useEffect(() => {
+//     if (isOpen && selectionInfo) {
+//       setStartDate(selectionInfo.start);
+//       setEndDate(selectionInfo.end);
+//       setTitleError('');
+//     }
+//   }, [isOpen, selectionInfo]);
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+
+//     const title = e.target.title.value;
+//     const content = e.target.content.value;
+//     if (!title) {
+//       setTitleError('입력 필수');
+//       return;
+//     }
+//     setTitleError('');
+
+//     const eventTitle = useAllDay ? title : `${title} ${startTime}~${endTime}`;
+
+//     const newEvent = {
+//       title: eventTitle,
+//       start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
+//       end: `${endDate}T${useAllDay ? '23:59' : endTime}`,
+//       backgroundColor: '#AED6F1',
+//       borderColor: '#AED6F1',
+//       textColor: '#000',
+//       allDay: useAllDay,
+//       extendedProps: {
+//         content,
+//         type: 'USER_ADDED',
+//       },
+//     };
+
+//     onSubmitEvent(newEvent);
+//     onClose();
+//   };
+
+//   if (!isOpen) return null;
+
+//   return (
+//     <>
+//       <style>{`
+//         .modal-overlay {
+//           position: fixed;
+//           top: 0;
+//           left: 0;
+//           width: 100%;
+//           height: 100%;
+//           background: rgba(0,0,0,0.4);
+//           display: flex;
+//           justify-content: center;
+//           align-items: center;
+//           z-index: 3000; 
+//         }
+
+//         .modal-content {
+//           background: white;
+//           padding: 20px;
+//           border-radius: 8px;
+//           width: 90%;
+//           max-width: 500px;
+//           position: relative;
+//         }
+
+//         .modal-content form {
+//           display: flex;
+//           flex-direction: column;
+//           gap: 15px;
+//         }
+
+//         .modal-content label {
+//           font-weight: bold;
+//         }
+
+//         .modal-content input,
+//         .modal-content textarea {
+//           padding: 8px;
+//           border: 1px solid #ddd;
+//           border-radius: 4px;
+//           font-size: 14px;
+//         }
+
+//         .modal-content input:focus,
+//         .modal-content textarea:focus {
+//           outline: none;
+//           border: 2px solid #84cc16;
+//           box-shadow: 0 0 3px #84cc16;
+//         }
+
+//         .modal-content input[disabled] {
+//           background-color: #e9ecef;
+//           color: #555;
+//         }
+
+//         .modal-content textarea {
+//           min-height: 100px;
+//           resize: vertical;
+//         }
+
+//         .modal-content button[type="submit"] {
+//           background: #84cc16;
+//           width: 35%;
+//           margin: 0 auto;
+//           color: white;
+//           padding: 10px;
+//           border: none;
+//           border-radius: 4px;
+//           cursor: pointer;
+//           font-size: 16px;
+//         }
+
+//         .modal-content button[type="submit"]:hover {
+//           background: #84cc16;
+//         }
+
+//         .close-button {
+//           position: absolute;
+//           top: 10px;
+//           right: 10px;
+//           background: none;
+//           border: none;
+//           font-size: 20px;
+//           cursor: pointer;
+//           color: #666;
+//         }
+
+//         .close-button:hover {
+//           color: #333;
+//         }
+//       `}</style>
+
+//       <div className="modal-overlay">
+//         <div className="modal-content">
+//           <form onSubmit={handleSubmit}>
+//             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+//               <label>일정명 *</label>
+//               {titleError && <span style={{ color: 'red', fontSize: '12px' }}>{titleError}</span>}
+//             </div>
+//             <input type="text" name="title" placeholder="일정명을 입력하세요" />
+
+//             <label>시작일자</label>
+//             <input type="date" name="startDate" value={startDate} onChange={e => setStartDate(e.target.value)} />
+//             <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} disabled={useAllDay} />
+
+//             <label>종료일자</label>
+//             <input type="date" name="endDate" value={endDate} onChange={e => setEndDate(e.target.value)} />
+//             <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} disabled={useAllDay} />
+
+//             <label>일정내용</label>
+//             <textarea name="content" placeholder="일정 내용을 입력하세요" />
+
+//             <div>
+//               <input
+//                 type="checkbox"
+//                 id="allDay"
+//                 checked={useAllDay}
+//                 onChange={() => setUseAllDay(!useAllDay)}
+//                 style={{ marginRight: '5px' }}
+//               />
+//               <label htmlFor="allDay">하루 종일</label>
+//             </div>
+
+//             <button type="submit">일정등록</button>
+//           </form>
+
+//           <button onClick={onClose} className="close-button">
+//             <img src="/assets/img/mentors/x.png" alt="닫기" />
+//           </button>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default CalendarModal;
+
+import React, { useState, useEffect } from 'react';
+
+const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
+  const [useAllDay, setUseAllDay] = useState(true);
+  const [startTime, setStartTime] = useState("08:00");
+  const [endTime, setEndTime] = useState("18:00");
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [titleError, setTitleError] = useState('');
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!isDragging.current) return;
+    if (useAllDay) {
+      setStartTime("00:00");
+      setEndTime("23:59");
+    } else {
+      setStartTime("08:00");
+      setEndTime("18:00");
+    }
+  }, [useAllDay]);
 
-      const x = e.clientX - offset.current.x;
-      const y = e.clientY - offset.current.y;
+  useEffect(() => {
+    if (isOpen && selectionInfo) {
+      setStartDate(selectionInfo.start);
+      setEndDate(selectionInfo.end);
+      setTitleError('');
+    }
+  }, [isOpen, selectionInfo]);
 
-      modalRef.current.style.left = `${x}px`;
-      modalRef.current.style.top = `${y}px`;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const title = e.target.title.value;
+    const content = e.target.content.value;
+
+    if (!title) {
+      setTitleError('입력 필수');
+      return;
+    }
+    setTitleError('');
+
+    const eventTitle = useAllDay ? title : `${title} ${startTime}~${endTime}`;
+
+    // ✅ 종료일 하루 뒤로 보정
+    const adjustedEndDate = new Date(endDate);
+    if (useAllDay) {
+      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+    }
+    const adjustedEndStr = adjustedEndDate.toISOString().split('T')[0];
+
+    const newEvent = {
+      title: eventTitle,
+      start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
+      end: `${adjustedEndStr}T${useAllDay ? '00:00' : endTime}`,
+      backgroundColor: '#AED6F1',
+      borderColor: '#AED6F1',
+      textColor: '#000',
+      allDay: useAllDay,
+      extendedProps: {
+        content,
+        type: 'USER_ADDED',
+      },
     };
 
-    const handleMouseUp = () => {
-      isDragging.current = false;
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, []);
-
-  const handleMouseDown = (e) => {
-    const rect = modalRef.current.getBoundingClientRect();
-    offset.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-    isDragging.current = true;
+    onSubmitEvent(newEvent);
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="calendar-modal-overlay">
+    <>
       <style>{`
-        .calendar-modal-overlay {
+        .modal-overlay {
           position: fixed;
           top: 0;
           left: 0;
-          width: 100vw;
-          height: 100vh;
-          background-color: rgba(0, 0, 0, 0);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-
-        .calendar-modal {
-          position: absolute;
-          top: 25%;
-          left: 40%;
-          background-color: #ffffff;
-          width: 280px;
-          border-radius: 12px;
-          padding: 32px 24px;
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-          transition: height 0.3s ease;
-        }
-
-        .modal-header {
           width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.4);
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
+          z-index: 3000; 
+        }
+
+        .modal-content {
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          width: 90%;
+          max-width: 500px;
           position: relative;
-          margin-bottom: 20px;
-          cursor: move;
         }
 
-        .modal-date {
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          font-weight: 600;
-          font-size: 15px;
-        }
-
-        .menu-icon-button,
-        .close-button {
-          background: transparent;
-          border: none;
-          cursor: pointer;
-        }
-
-        .menu-buttons {
+        .modal-content form {
           display: flex;
           flex-direction: column;
-          width: 100%;
-          gap: 12px;
-          transition: max-height 0.3s ease, opacity 0.3s ease;
-          overflow: hidden;
+          gap: 15px;
         }
 
-        .menu-buttons.collapsed {
-          max-height: 0;
-          opacity: 0;
-          pointer-events: none;
+        .modal-content label {
+          font-weight: bold;
         }
 
-        .menu-button {
-          background: #F0FFF5;
+        .modal-content input,
+        .modal-content textarea {
+          padding: 8px;
           border: 1px solid #ddd;
-          border-radius: 8px;
-          padding: 12px 0;
-          font-size: 16px;
-          font-weight: 500;
-          color: #7ED321;
-          cursor: pointer;
-          text-align: center;
-          transition: background-color 0.2s ease;
+          border-radius: 4px;
+          font-size: 14px;
         }
 
-        .menu-button:hover {
-          background-color: #e3fbe9;
+        .modal-content input:focus,
+        .modal-content textarea:focus {
+          outline: none;
+          border: 2px solid #84cc16;
+          box-shadow: 0 0 3px #84cc16;
+        }
+
+        .modal-content input[disabled] {
+          background-color: #e9ecef;
+          color: #555;
+        }
+
+        .modal-content textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+
+        .modal-content button[type="submit"] {
+          background: #84cc16;
+          width: 35%;
+          margin: 0 auto;
+          color: white;
+          padding: 10px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 16px;
+        }
+
+        .modal-content button[type="submit"]:hover {
+          background: #84cc16;
+        }
+
+        .close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: none;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+          color: #666;
+        }
+
+        .close-button:hover {
+          color: #333;
         }
       `}</style>
 
-      <div className="calendar-modal" ref={modalRef}>
-        {/* 헤더: 드래그 + 토글 아이콘 */}
-        <div className="modal-header" onMouseDown={handleMouseDown}>
-          <button
-            className="menu-icon-button"
-            onClick={(e) => {
-              e.stopPropagation(); // 드래그 방지
-              setIsCollapsed((prev) => !prev);
-            }}
-          >
-            <img
-              src={
-                isCollapsed
-                  ? '/assets/img/mentors/list-collapse.png' // 접힌 상태 아이콘
-                  : '/assets/img/mentors/align-justify.png' // 펼친 상태 아이콘
-              }
-              alt={isCollapsed ? '펼치기' : '접기'}
-              style={{ width: '20px', height: '20px' }}
-              draggable="false"
-            />
-          </button>
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <label>일정명 *</label>
+              {titleError && <span style={{ color: 'red', fontSize: '12px' }}>{titleError}</span>}
+            </div>
+            <input type="text" name="title" placeholder="일정명을 입력하세요" />
 
-          <div className="modal-date">
-            {selectedDate &&
-              (() => {
-                const date = new Date(selectedDate);
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                const weekDay = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-                return `${year}.${month}.${day} (${weekDay})`;
-              })()}
-          </div>
+            <label>시작일자</label>
+            <input type="date" name="startDate" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} disabled={useAllDay} />
 
-          <button className="close-button" onClick={onClose}>
-            <img
-              src="/assets/img/mentors/x.png"
-              alt="닫기"
-              style={{ width: '20px', height: '20px' }}
-            />
-          </button>
-        </div>
+            <label>종료일자</label>
+            <input type="date" name="endDate" value={endDate} onChange={e => setEndDate(e.target.value)} />
+            <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} disabled={useAllDay} />
 
-        {/* 본문 영역: 토글에 따라 열림/닫힘 */}
-        <div className={`menu-buttons ${isCollapsed ? 'collapsed' : ''}`}>
-          <button className="menu-button">
-            <b>커리큘럼</b>
-          </button>
-          <button className="menu-button">
-            <b>멘토링</b>
-          </button>
-          <button className="menu-button">
-            <b>학습일지</b>
-          </button>
-          <button className="menu-button">
-            <b>TODO</b>
+            <label>일정내용</label>
+            <textarea name="content" placeholder="일정 내용을 입력하세요" />
+
+            <div>
+              <input
+                type="checkbox"
+                id="allDay"
+                checked={useAllDay}
+                onChange={() => setUseAllDay(!useAllDay)}
+                style={{ marginRight: '5px' }}
+              />
+              <label htmlFor="allDay">하루 종일</label>
+            </div>
+
+            <button type="submit">일정등록</button>
+          </form>
+
+          <button onClick={onClose} className="close-button">
+            <img src="/assets/img/mentors/x.png" alt="닫기" />
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
