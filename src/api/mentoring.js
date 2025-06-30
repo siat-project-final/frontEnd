@@ -41,15 +41,23 @@ export const acceptMentoring = (reservationId) => {
 };
 
 /** 멘토 - 예약 거절 */
-export const rejectMentoring = (reservationId, cancelReason) => {
+export const rejectMentoring = (reservationId, rejectReason) => {
   return axios.put(`/reservations/mentor/${reservationId}/reject`, {
-    cancelReason, // MentoringReservationRejectRequestDto
+    rejectReason, // MentoringReservationRejectRequestDto
   });
 };
 
 /** 멘티 - 예약 취소 */
 export const cancelMentoring = ({ reservationId, memberName, cancelReason }) => {
   return axios.put(`/reservations/mentee/${reservationId}/cancel`, {
+    memberName,
+    cancelReason,
+  });
+};
+
+/** 멘토 - 예약 취소 */
+export const cancelMentoringMentor = ({ reservationId, memberName, cancelReason }) => {
+  return axios.put(`/reservations/mentor/${reservationId}/cancel`, {
     memberName,
     cancelReason,
   });
