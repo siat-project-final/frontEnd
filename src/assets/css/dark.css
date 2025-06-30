@@ -645,7 +645,7 @@
 
 .dark-mode .fc-button-primary:hover {
   background-color: #f0f0f0 !important; /* hover 시 밝은 회색 */
-  color: #000000 !important;
+  color: #1e1e1e !important;
   border-color: #bbbbbb !important;
 }
 
