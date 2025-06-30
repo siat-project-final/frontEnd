@@ -63,7 +63,7 @@ function SignUp() {
     const response = instance.post('/auth/signUp', signUpData)
         .then(response => {
           // 성공 처리
-          navigate('/');
+          navigate('/login');
           if (response.status === 200) {
             alert('회원가입이 완료되었습니다.');
           }
