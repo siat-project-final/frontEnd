@@ -4,7 +4,7 @@ import instance from '../../api/axios'; // Axios 인스턴스 가져오기
 const Todo = ({ selectedDate, onTodoChange }) => {
   const [input, setInput] = useState('');
   const [todos, setTodos] = useState([]);
-  // [kth] 250628: 수정 모드를 위한 상태 추가: 어떤 투두가 수정 중인지, 어떤 값을 가지는지
+  // [ys] 250628: 수정 모드를 위한 상태 추가: 어떤 투두가 수정 중인지, 어떤 값을 가지는지
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState('');
 
@@ -66,7 +66,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [kth] 250628: 투두 체크박스 토글 함수
+  // [ys] 250628: 투두 체크박스 토글 함수
   const toggleTodo = async (id, currentStatus) => {
     try {
       // API 호출로 투두 상태 업데이트
@@ -86,7 +86,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [kth] 250628: 투두 삭제 함수
+  // [ys] 250628: 투두 삭제 함수
   const deleteTodo = async (id) => {
     try {
       // API 호출로 투두 삭제
@@ -100,14 +100,14 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [kth] 250628: 수정 모드 시작 핸들러
+  // [ys] 250628: 수정 모드 시작 핸들러
   const handleDoubleClick = (todo) => {
     console.log("더블클릭 발생:", todo.id); // 이 줄 추가
     setEditingId(todo.id);
     setEditingText(todo.item);
   };
 
-  // [kth] 250628: 수정 완료 핸들러
+  // [ys] 250628: 수정 완료 핸들러
   const handleEditComplete = async (id) => {
     if (!editingText.trim()) { // 수정 내용이 비어있으면 저장하지 않고 모드 종료
       setEditingId(null);
@@ -134,7 +134,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [kth] 250628: 수정 중 Enter 키 입력 처리
+  // [ys] 250628: 수정 중 Enter 키 입력 처리
   const handleEditKeyDown = (e, id) => {
     if (e.key === 'Enter') {
       handleEditComplete(id);
@@ -190,7 +190,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
                 onChange={() => toggleTodo(todo.id, todo.status)} // 현재 상태 전달
                 style={{ marginRight: '8px' }}
               />
-              {/* [kth] 250628: 수정 모드일 때와 아닐 때 렌더링 분기 */}
+              {/* [ys] 250628: 수정 모드일 때와 아닐 때 렌더링 분기 */}
               {editingId === todo.id ? (
                 <input
                   type="text"
