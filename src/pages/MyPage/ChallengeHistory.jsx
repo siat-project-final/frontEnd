@@ -14,6 +14,7 @@ const ChallengeHistory = () => {
     const fetchHistory = async () => {
       getChallengeHistory(memberId)
       .then(res => {
+          console.log('📦 히스토리 API 응답:', res.data);
           setHistoryList(res.data);
         })
         .catch(err => console.error('챌린지 히스토리 조회 실패:', err));;
@@ -63,7 +64,10 @@ const ChallengeHistory = () => {
                       <p className="info-value">{item.totalPoints}</p>
                     </div>
                   </div>
-                  <Link to="/mypage/review-history" className="detail-btn">
+                  <Link
+                    to={`/challenge/daily/result?date=${item.date}`}
+                    className="detail-btn"
+                  >
                     상세보기
                   </Link>
                 </div>

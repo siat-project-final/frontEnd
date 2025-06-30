@@ -39,8 +39,10 @@ export const checkParticipation = (memberId, date) => {
   });
 };
 /** 채점 결과 조회 */
-export const getSubmissionResult = (memberId) => {
-  return axios.get(`/challenge/${memberId}/scoring`);
+export const getSubmissionResult = (memberId, date) => {
+  return axios.get(`/challenge/${memberId}/scoring`, {
+    params: { date }
+  });
 };
 
 /** 복습 과목 목록 조회 */
