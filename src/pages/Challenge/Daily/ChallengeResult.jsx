@@ -1,59 +1,63 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getSubmissionResult } from '../../../api/challenge';
 import '../../../App.css';
 
 const ChallengeResult = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // 추가
+  const query = new URLSearchParams(location.search);
+  const dateParam = query.get('date');
+
   const [resultData, setResultData] = useState([]);
   const [totalScore, setTotalScore] = useState(0);
   const memberId = localStorage.getItem('memberId');
 
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const fetch = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const date = dateParam || today;
 
-    getSubmissionResult(memberId)
-      .then(res => {
-        const processed = (res.data || []).map(item => {
-        let parsedOptions = [];
+      getSubmissionResult(memberId, date) // ✅ 날짜 전달
+        .then(res => {
+          const processed = (res.data || []).map(item => {
+            // 옵션 파싱 로직 그대로 유지
+            let parsedOptions = [];
+            try {
+              const once = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
+              parsedOptions = Array.isArray(once)
+                ? once
+                : typeof once === 'string'
+                ? JSON.parse(once)
+                : [];
+            } catch (e) {
+              console.warn(`옵션 파싱 실패 (problemId=${item.problemId}):`, e);
+              alert('문제의 선택지를 불러오는 데 실패했습니다.');
+            }
+            return {
+              ...item,
+              options: parsedOptions,
+              type: item.type || 'multiple',
+            };
+          });
 
-        try {
-          // 두 번 파싱: 이중 문자열 → 배열
-          const once = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
-          parsedOptions = Array.isArray(once)
-            ? once
-            : typeof once === 'string'
-            ? JSON.parse(once)
-            : [];
-        } catch (e) {
-          console.warn(`옵션 파싱 실패 (problemId=${item.problemId}):`, e);
-          alert('문제의 선택지를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
-        }
-        return {
-          ...item,
-          options: parsedOptions,
-          type: item.type || 'multiple',
-        };
-      });
-        
-        setResultData(processed);
+          setResultData(processed);
 
-        // 총점 계산: 상위 5문제의 difficulty 합산
-        const score = processed
-          .slice(0, 5)
-          .reduce((sum, item) => sum + (item.correct ? item.difficulty : 0), 0);
-        setTotalScore(score);
-      })
-      .catch(err => {
-        console.error('결과 불러오기 실패:', err)
-        alert('챌린지 결과를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
-      });
-  
+          const score = processed
+            .slice(0, 5)
+            .reduce((sum, item) => sum + (item.correct ? item.difficulty : 0), 0);
+          setTotalScore(score);
+        })
+        .catch(err => {
+          console.error('결과 불러오기 실패:', err);
+          alert('챌린지 결과를 불러오는 데 실패했습니다.');
+        });
+    };
 
-  }, []);
+    fetch();
+  }, [memberId, dateParam]);
 
   return (
     <>
@@ -147,7 +151,6 @@ const ChallengeResult = () => {
           </section>
         </main>
       </div>
-      <Footer />
     </>
   );
 };
