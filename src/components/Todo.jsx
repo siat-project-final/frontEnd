@@ -102,7 +102,6 @@ const Todo = ({ selectedDate, onTodoChange }) => {
 
   // [kth] 250628: 수정 모드 시작 핸들러
   const handleDoubleClick = (todo) => {
-    console.log("더블클릭 발생:", todo.id); // 이 줄 추가
     setEditingId(todo.id);
     setEditingText(todo.item);
   };
