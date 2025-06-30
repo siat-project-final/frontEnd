@@ -5,7 +5,7 @@ import Footer from '../../../components/common/Footer';
 import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Todo from '../../../components/common/Todo';
-import { cancelMentoring } from '../../../api/mentoring';
+import { cancelMentoring, cancelMentoringMentor } from '../../../api/mentoring';
 
 const cancelReasons = [
   '갑작스러운 일정 변경이 생겼어요.',
@@ -59,15 +59,17 @@ const RegisterCancel = () => {
 
       const reasonText = selectedReasons.join(', ');
 
-      await cancelMentoring({
-        reservationId,
-        cancelReason: reasonText,
-      });
+      
 
-      alert('예약이 취소되었습니다.');
+      const userRole = localStorage.getItem('role');
+      if (userRole === 'MENTOR') {
+        await cancelMentoringMentor({
+            reservationId,
+            cancelReason: reasonText,
+        });
 
-      const userRole = sessionStorage.getItem('userRole');
-      if (userRole === 'mentor') {
+        alert('예약이 취소되었습니다.');
+
         navigate('/mentoring/mentor/register', {
           state: { 
             cancelledReservationId: reservationId,
@@ -75,7 +77,14 @@ const RegisterCancel = () => {
           },
         });
       } else {
-        navigate('/mentoring/mentee/register');
+          await cancelMentoring({
+            reservationId,
+            cancelReason: reasonText,
+          });
+
+          alert('예약이 취소되었습니다.');
+
+          navigate('/mentoring/mentee/register');
       }
 
     } catch (error) {
