@@ -13,13 +13,15 @@ export const getMentorDetail = (mentorId) => {
 };
 
 /** 멘토링 신청 (멘티) */
-export const applyMentoring = ({ mentorId, memberId, date, introduction, subject }) => {
+export const applyMentoring = ({ mentorId, memberId, menteeName, date, introduction, subject, mentorMemberId }) => {
   return axios.post('/reservations', {
     mentorId,          // Long
     menteeId: memberId,          // Long
+    menteeName,          // String
     date,              // ISO 형식 문자열
     introduction,      // String
     subject,           // String (comma로 연결된 주제 목록)
+    mentorMemberId, 
   });
 };
 
