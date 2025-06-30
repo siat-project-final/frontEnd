@@ -27,7 +27,10 @@ const CalendarView = () => {
   };
 
   const [serverEvents, setServerEvents] = useState([]);
-  const [localEvents, setLocalEvents] = useState([]);
+  const [localEvents, setLocalEvents] = useState(() => {
+    const savedEvents = localStorage.getItem('localCalendarEvents');
+    return savedEvents ? JSON.parse(savedEvents) : [];
+  });
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -170,6 +173,10 @@ const CalendarView = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    localStorage.setItem('localCalendarEvents', JSON.stringify(localEvents));
+  }, [localEvents]);
+
   const handleSelect = (selectInfo) => {
     const { startStr, endStr, allDay } = selectInfo;
     const endDate = new Date(endStr);
@@ -191,7 +198,8 @@ const CalendarView = () => {
 
   const handleAddEvent = (eventData) => {
     setLocalEvents((prevEvents) => {
-      return [...prevEvents, { ...eventData, id: `local-${Date.now()}` }];
+      const newId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      return [...prevEvents, { ...eventData, id: newId }];
     });
   };
 

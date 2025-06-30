@@ -58,7 +58,7 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete }) =
         }
         .modal-content .button-container {
           display: flex;
-          justify-content: flex-end;
+          justify-content: center;
           gap: 10px;
         }
         .modal-content button {
@@ -72,7 +72,7 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete }) =
           color: white;
         }
         .delete-button {
-          background-color: #e53e3e;
+          background-color: #84cc16;
           color: white;
         }
         .close-button {
