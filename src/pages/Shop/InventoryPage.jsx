@@ -1,4 +1,3 @@
-// src/pages/Shop/InventoryPage.jsx
 import React, { useState } from 'react';
 import kangsim from '../../assets/img/stickers/강심이.png';
 import gosim from '../../assets/img/stickers/고심이.png';
@@ -21,36 +20,42 @@ const InventoryPage = () => {
 
   return (
     <div className="min-h-screen px-6 py-10 bg-gradient-to-br from-white to-zinc-100 dark:from-neutral-900 dark:to-neutral-800">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-2">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-center text-indigo-700 dark:text-indigo-300 mb-3">
           🎒 내 스티커 인벤토리
         </h1>
-        <p className="text-center text-zinc-600 dark:text-zinc-300 mb-8">
-          사용하고 싶은 스티커를 선택하세요!
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-10">
+          사용하고 싶은 스티커를 클릭하세요!
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {myInventory.map((sticker) => (
-            <div
-              key={sticker.id}
-              onClick={() => handleSelect(sticker.id)}
-              className={`cursor-pointer bg-white dark:bg-neutral-800 rounded-xl shadow-md p-4 flex flex-col items-center transition-transform transform hover:scale-105 hover:shadow-lg border-2 ${
-                selectedId === sticker.id ? 'border-blue-500' : 'border-transparent'
-              }`}
-            >
-              <img
-                src={sticker.image}
-                alt={sticker.name}
-                className="w-20 h-20 object-contain mb-2 drop-shadow"
-              />
-              <h3 className="text-lg font-semibold text-center text-zinc-700 dark:text-white">
-                {sticker.name}
-              </h3>
-              {selectedId === sticker.id && (
-                <p className="text-sm text-blue-500 mt-2">✅ 선택됨</p>
-              )}
-            </div>
-          ))}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+          {myInventory.map((sticker) => {
+            const isSelected = selectedId === sticker.id;
+
+            return (
+              <div
+                key={sticker.id}
+                onClick={() => handleSelect(sticker.id)}
+                className={`relative cursor-pointer rounded-2xl shadow-xl p-5 bg-white dark:bg-neutral-800 flex flex-col items-center transition-all hover:scale-105 ${
+                  isSelected ? 'ring-4 ring-indigo-500' : 'ring-1 ring-gray-200 dark:ring-gray-700'
+                }`}
+              >
+                <img
+                  src={sticker.image}
+                  alt={sticker.name}
+                  className="w-28 h-28 object-contain mb-3 drop-shadow-xl"
+                />
+                <h3 className="text-xl font-semibold text-center text-zinc-800 dark:text-white">
+                  {sticker.name}
+                </h3>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 bg-indigo-500 text-white text-xs px-2 py-1 rounded-full shadow-md">
+                    ✅ 선택됨
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
