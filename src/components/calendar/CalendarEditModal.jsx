@@ -69,7 +69,7 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
 
     setTitleError('');
 
-    const eventTitle = useAllDay ? title : `${title} ${startTime}~${endTime}`;
+    const eventTitle = title;
 
     // 종일 이벤트의 경우 FullCalendar 형식에 맞게 종료일을 다음날로 설정
     let actualEndDate = endDate;

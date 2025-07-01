@@ -199,9 +199,19 @@ const CalendarView = () => {
   };
 
   const handleAddEvent = (eventData) => {
+    const dateOnly = (dateStr) => dateStr.split('T')[0];
     setLocalEvents((prevEvents) => {
       const newId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      return [...prevEvents, { ...eventData, id: newId }];
+      return [
+        ...prevEvents,
+        {
+          ...eventData,
+          id: newId,
+          start: dateOnly(eventData.start),
+          end: dateOnly(eventData.end),
+          allDay: true,
+        }
+      ];
     });
   };
 
@@ -247,15 +257,16 @@ const CalendarView = () => {
   };
 
   const handleSaveEdit = (updatedEventData) => {
+    const dateOnly = (dateStr) => dateStr.split('T')[0];
     if (selectedEvent) {
       setLocalEvents(prev => prev.map(event => 
         event.id === selectedEvent.id 
           ? { 
               ...event, 
               title: updatedEventData.title, 
-              start: updatedEventData.start,
-              end: updatedEventData.end,
-              allDay: updatedEventData.allDay,
+              start: dateOnly(updatedEventData.start),
+              end: dateOnly(updatedEventData.end),
+              allDay: true,
               extendedProps: {
                 ...event.extendedProps,
                 content: updatedEventData.content
@@ -265,6 +276,16 @@ const CalendarView = () => {
       ));
     }
     handleCloseEditModal();
+  };
+
+  // 우선순위 함수 추가
+  const eventPriority = (event) => {
+    const type = event.extendedProps?.type;
+    if (type === 'SUBJECT') return 1;
+    if (type === 'MENTORING') return 2;
+    if (type === 'UNWRITTEN_DIARY') return 3;
+    if (type === 'USER_ADDED') return 4;
+    return 99;
   };
 
   return (
@@ -434,7 +455,7 @@ const CalendarView = () => {
               if (day === 6) return ['fc-saturday'];
               return [];
             }}
-            events={[...serverEvents, ...localEvents]}
+            events={[...serverEvents, ...localEvents].sort((a, b) => eventPriority(b) - eventPriority(a))}
             selectable={true}
             select={handleSelect}
             eventClick={handleEventClick}
