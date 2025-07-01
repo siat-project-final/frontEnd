@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenteeRegisterCard from './MenteeRegisterCard';
 import Todo from '../../../components/common/Todo';
 import { getMentoringReservations } from '../../../api/mentoring';
 
-const RESERVATION_STATUS = {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  CANCELED: 'CANCELED',
-  REJECTED: 'REJECTED',
-};
-
 const MenteeRegister = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const memberId = localStorage.getItem('memberId');
 
@@ -32,20 +26,12 @@ const MenteeRegister = () => {
     const fetchReservations = async () => {
       try {
         const response = await getMentoringReservations(memberId);
-        console.log('📦 전체 응답 데이터:', response.data); // 👈 여기 확인 필수
-  
-        const filtered = response.data.filter(
-          (res) => res.status !== 'CANCELLED' && res.status !== 'REJECTED'
-        );
-  
-        const formatted = filtered.map((res) => {
-          console.log('🔍 단건 reservation 데이터:', res); // 👈 여기서 res.subject 있는지 확인
-          return {
-            ...res,
-            date: formatDate(res.date),
-          };
-        });
-  
+
+        const formatted = response.data.map((res) => ({
+          ...res,
+          date: formatDate(res.date),
+        }));
+
         setReservations(formatted);
       } catch (error) {
         console.error('❌ 예약 조회 실패:', error);
@@ -55,9 +41,31 @@ const MenteeRegister = () => {
     if (memberId) fetchReservations();
   }, [memberId]);
 
+  // "닫기" 후 목록에서 제거
+  useEffect(() => {
+    if (location.state?.cancelledReservationId && !location.state?.alreadyRemoved) {
+      setReservations((prev) =>
+        prev.filter((res) => res.reservationId !== location.state.cancelledReservationId)
+      );
+
+      navigate(location.pathname, {
+        replace: true,
+        state: {
+          ...location.state,
+          alreadyRemoved: true,
+        },
+      });
+    }
+  }, [location.state, navigate, location.pathname]);
+
   const handleCancelReservation = (reservationId) => {
-    const updated = reservations.filter((res) => res.reservationId !== reservationId);
-    setReservations(updated);
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.reservationId === reservationId
+          ? { ...res, status: 'CANCELLED' }
+          : res
+      )
+    );
   };
 
   const renderEmptyMessage = () => {

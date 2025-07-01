@@ -35,12 +35,16 @@ const MentoringDetail = () => {
   const handleDateClick = (date) => {
     setSelectedDate(date);
   };
-
+  const localDate = new Date(selectedDate);
+  const year = localDate.getFullYear();
+  const month = String(localDate.getMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getDate()).padStart(2, '0');
+  const selectedDateStr = `${year}-${month}-${day}`;
   const handleApplyClick = () => {
     navigate('/mentoring/apply', {
       state: {
-        mentor: mentorData,
-        selectedDate: selectedDate.toISOString().split('T')[0],
+        mentor: mentorData,  
+        selectedDate: selectedDateStr,
       },
     });
   };
@@ -94,8 +98,8 @@ const MentoringDetail = () => {
                 <div style={{ color: '#000', fontWeight: 600, fontSize: 18, marginBottom: 4 }}>
                   {mentor.name}
                 </div>
-                <div style={{ color: '#374151', fontWeight: 500, fontSize: 15, marginBottom: 8 }}>
-                  {mentor.position} at {mentor.company}
+                <div style={{ color: '#374151', fontWeight: 500, fontSize: 15, marginBottom: 8, textAlign: 'center', whiteSpace: 'pre-line' }}>
+                  {`${mentor.position}\nat ${mentor.company}`}
                 </div>
                 <div style={{ color: '#6b7280', fontWeight: 500, fontSize: 14, marginBottom: 8 }}>
                   Career
@@ -139,9 +143,14 @@ const MentoringDetail = () => {
                     onChange={setSelectedDate}
                     value={selectedDate}
                     formatDay={(locale, date) => date.getDate()}
-                    tileClassName={({ date }) => {
-                      return date.getTime() === selectedDate.getTime() ? 'selected-date' : null;
+                    tileDisabled={({ date }) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      return date < today;  // 🔥 오늘 이전이면 비활성화
                     }}
+                    tileClassName={({ date }) =>
+                      date.getTime() === selectedDate.getTime() ? 'selected-date' : null
+                    }
                   />
                   <style>
                     {`
