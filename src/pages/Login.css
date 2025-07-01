@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f0f7f0;
   padding: 1rem;
+  background-color: #f0f7f0;
 }
 
 .login-box {
@@ -18,7 +18,7 @@
   font-weight: bold;
   color: #2e7d32;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: -2rem;
 }
 
 .login-form {
@@ -87,18 +87,17 @@
 }
 
 .login-button.primary {
-  background-color: #2e7d32;
+  background-color: #84cc16;
   color: white;
 }
 
 .login-button.primary:hover {
-  background-color: #1b5e20;
+  background-color: #66a30b;
 }
 
 .login-button.secondary {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
+  color: #84cc16;
+  border: 1px solid #84cc16;
 }
 
 .login-button.secondary:hover {

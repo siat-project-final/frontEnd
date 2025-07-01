@@ -12,28 +12,6 @@ function Login() {
   const loginHandler = async (event) => {
     event.preventDefault();
 
-    if (id === 'mock' && password === '1234') {
-      localStorage.setItem('accessToken', 'mock-token');
-      localStorage.setItem('refreshToken', 'mock-refresh');
-      localStorage.setItem('memberId', 'mock-id');
-      sessionStorage.setItem('memberId', 'mock-id');
-      alert('MOCK 로그인 성공');
-      navigate('/home', { state: { fromLogin: true } });
-      return;
-    }
-
-    if (id === 'admin' && password === 'admin123') {
-      localStorage.setItem('accessToken', 'admin-token');
-      localStorage.setItem('refreshToken', 'admin-refresh');
-      localStorage.setItem('memberId', 'admin-id');
-      sessionStorage.setItem('memberId', 'admin-id');
-      sessionStorage.setItem('userRole', 'admin');
-      sessionStorage.setItem('memberName', '관리자');
-      alert('ADMIN 로그인 성공');
-      navigate('/home', { state: { fromLogin: true } });
-      return;
-    }
-
     try {
       const response = await signIn({ id, password });
       if (response.status === 200) {
@@ -70,20 +48,31 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1 className="login-title">로그인</h1>
-        <form onSubmit={loginHandler}>
+        <h1 className="login-title">     
+          <img
+          src="/assets/img/mentors/siatlogo.png"
+          alt="SIAT Logo"
+          style={{ 
+            width: '300px', 
+            height: '200px',
+            maxHeight: '200px',
+            display: 'block',
+            marginLeft: '100px'
+          }}/>
+        </h1>
+        <form onSubmit={loginHandler} style={{ borderRadius: '4%', padding: '30px', backgroundColor: 'white', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
           <div className="form-group">
-            <label htmlFor="id">아이디</label>
+            <label htmlFor="id" style={{ fontWeight: 'bold', fontSize: '15px' }}>아이디</label>
             <input
               id="id"
-              type="text"
+              type="text" 
               value={id}
               onChange={(e) => setId(e.target.value)}
               placeholder="ID"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">비밀번호</label>
+            <label htmlFor="password" style={{ fontWeight: 'bold', fontSize: '15px' }}>비밀번호</label>
             <input
               id="password"
               type="password"
@@ -92,7 +81,7 @@ function Login() {
               placeholder="********"
             />
           </div>
-          <div className="button-group">
+          <div className="button-group" style={{ marginTop: '3rem' }}>
             <button className="login-button primary" type="submit">
               로그인
             </button>
