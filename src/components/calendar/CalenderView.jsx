@@ -12,6 +12,7 @@ import { getMyStudyLogs } from '../../api/studyLog';
 import Header from '../common/Header';
 import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
+import FooterBag from './FooterBag';
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
@@ -48,6 +49,7 @@ const CalendarView = () => {
     기타: '#D7DBDD',
   };
 
+  // 작성된 학습일지 날짜 Set
   const fetchWrittenLogs = async () => {
     try {
       const res = await getMyStudyLogs(memberId);
@@ -65,11 +67,35 @@ const CalendarView = () => {
     }
   };
 
+  // 중복 스티커 방지: 날짜별 1개만
   const convertJsonToCalendarEvents = (jsonData, writtenDatesSet) => {
     const events = [];
+    const stickerDateSet = new Set();
 
-    Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList }]) => {
+    Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList, sticker }]) => {
       const normalizedDate = date.split('T')[0];
+
+      // 스티커 중복 방지 (start, end는 date 그대로!)
+      if (
+        sticker &&
+        !stickerDateSet.has(normalizedDate) &&
+        !events.some(
+          (ev) =>
+            ev.extendedProps?.type === 'STICKER' &&
+            ev.start.split('T')[0] === normalizedDate
+        )
+      ) {
+        events.push({
+          title: '',
+          start: date,
+          end: date,
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          textColor: 'transparent',
+          extendedProps: { type: 'STICKER', image: sticker }
+        });
+        stickerDateSet.add(normalizedDate);
+      }
 
       subjectList?.forEach((subject) => {
         const color = SUBJECT_COLORS[subject] || SUBJECT_COLORS['기타'];
@@ -142,7 +168,6 @@ const CalendarView = () => {
       const res = await instance.get(`/calendar/schedule/${memberId}/${monthStr}`);
       const calendarMapped = convertJsonToCalendarEvents(res.data, writtenDatesSet);
       setCalendarEvents(calendarMapped);
-      // setCalendarKey(Date.now());
     } catch (error) {
       console.error('캘린더 데이터 조회 실패:', error);
     }
@@ -190,20 +215,45 @@ const CalendarView = () => {
   };
 
   const handleCloseModal = () => setIsModalOpen(false);
+const handleEventReceive = (info) => {
+  const calendarApi      = calendarRef.current.getApi();
+  const droppedDate      = info.event.startStr;                 // 'YYYY-MM-DD'
+  const droppedStickerId = info.event.extendedProps.stickerId;
+  const droppedImage     = info.event.extendedProps.image;
 
+  // ✔️ 고유 키: sticker-<id>-<date>
+  const eventId = `sticker-${droppedStickerId}-${droppedDate}`;
+
+  // ────────────── 중복 여부 검사
+  if (calendarApi.getEventById(eventId)) {
+    console.log('중복 스티커: 추가하지 않음');
+    info.revert();
+    return;
+  }
+
+  // ────────────── 중복 아님 → 실제로 캘린더에 추가
+  calendarApi.addEvent({
+    id: eventId,
+    title: '',
+    start: droppedDate,
+    allDay: true,
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    textColor: 'transparent',
+    extendedProps: {
+      type: 'STICKER',
+      stickerId: droppedStickerId,
+      image: droppedImage,
+    },
+  });
+
+  info.event.remove();   // 드래그 원본 제거
+};
   return (
     <div>
       <Header />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-        {/* <div
-          style={{
-            width: '1700px',           // 캘린더 너비 고정
-            margin: '0 auto',          // 가운데 정렬 (좌우 여백 자동)
-            padding: '0 20px',         // 내부 여백
-          }}
-        > */}
-
           <style>
             {`
               .fc .fc-toolbar {
@@ -214,7 +264,6 @@ const CalendarView = () => {
                 position: relative !important;
                 height: 60px !important;
               }
-
               .fc .fc-toolbar-title {
                 font-size: 24px !important;
                 font-weight: bold !important;
@@ -228,9 +277,7 @@ const CalendarView = () => {
                 overflow: visible !important;
                 text-overflow: unset !important;
                 text-align: center !important;
-
               }
-
               .fc-myPrev-button,
               .fc-myNext-button {
                 background: none !important;
@@ -245,15 +292,12 @@ const CalendarView = () => {
                 outline: none !important;
                 box-shadow: none !important;
               }
-
               .fc-myPrev-button {
                 left: calc(50% - 250px) !important;
               }
-
               .fc-myNext-button {
                 right: calc(50% - 250px) !important;
               }
-
               .fc-myPrev-button::before,
               .fc-myNext-button::before {
                 content: '' !important;
@@ -266,15 +310,12 @@ const CalendarView = () => {
                 background-size: contain !important;
                 background-repeat: no-repeat !important;
               }
-
               .fc-myPrev-button::before {
                 background-image: url('/assets/img/mentors/chevron-left.png') !important;
               }
-
               .fc-myNext-button::before {
                 background-image: url('/assets/img/mentors/chevron-right.png') !important;
               }
-
               .fc-today-button {
                 margin-right: 450px !important;
                 background-color: #84cc16 !important;
@@ -286,7 +327,6 @@ const CalendarView = () => {
 
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-            // key={calendarKey}
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
             customButtons={{
@@ -294,43 +334,27 @@ const CalendarView = () => {
                 text: '',
                 click: () => {
                   const calendarApi = calendarRef.current?.getApi();
-                  console.log('[이전 달 버튼 클릭됨]');
-                  if (!calendarApi) {
-                    console.error('[myPrev] calendarApi is undefined');
-                    return;
-                  }
+                  if (!calendarApi) return;
                   calendarApi.prev();
-                  console.log('[myPrev] calendar 이동 완료');
                 }
               },
               myNext: {
                 text: '',
                 click: () => {
                   const calendarApi = calendarRef.current?.getApi();
-                  console.log('[다음 달 버튼 클릭됨]');
-                  if (!calendarApi) {
-                    console.error('[myNext] calendarApi is undefined');
-                    return;
-                  }
+                  if (!calendarApi) return;
                   calendarApi.next();
-                  console.log('[myNext] calendar 이동 완료');
                 }
               },
               myToday: {
                 text: '오늘',
                 click: () => {
                   const calendarApi = calendarRef.current?.getApi();
-                  console.log('[오늘 버튼 클릭됨]');
-                  if (!calendarApi) {
-                    console.error('[myToday] calendarApi is undefined');
-                    return;
-                  }
+                  if (!calendarApi) return;
                   calendarApi.today();
-                  console.log('[myToday] 오늘로 이동 완료');
                 }
               }
             }}
-            
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
@@ -343,6 +367,26 @@ const CalendarView = () => {
               return [];
             }}
             events={calendarEvents}
+            eventContent={(arg) => {
+              const { type, image } = arg.event.extendedProps;
+              if (type === 'STICKER' && image) {
+                return {
+                  domNodes: [
+                    (() => {
+                      const img = document.createElement('img');
+                      img.src = image;
+                      img.alt = '';
+                      img.style.width = '40px';
+                      img.style.height = '40px';
+                      img.style.objectFit = 'contain';
+                      img.style.pointerEvents = 'none';
+                      return img;
+                    })()
+                  ]
+                };
+              }
+              return { html: `<div>${arg.event.title}</div>` };
+            }}
             selectable={true}
             dateClick={handleDateClick}
             eventClick={(info) => {
@@ -357,6 +401,9 @@ const CalendarView = () => {
             }}
             ref={calendarRef}
             height="auto"
+            droppable={true}
+            editable={true}
+            eventReceive={handleEventReceive}
             datesSet={(arg) => {
               const currentDate = arg.view.currentStart;
               const yyyy = currentDate.getFullYear();
@@ -376,6 +423,7 @@ const CalendarView = () => {
           <Todo selectedDate={selectedDate} onTodoChange={() => setLocalTodoTrigger(Date.now())} />
         </div>
       </div>
+      <FooterBag />
     </div>
   );
 };

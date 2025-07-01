@@ -77,7 +77,7 @@ const Header = ({ menuType }) => (
           
           <li className="dropdown">
             <NavLink
-              to="/mypage/shop"
+              to="/shop"
               className={({ isActive }) => (isActive || menuType === 'shop' ? 'active' : '')}
             >
               Shop
