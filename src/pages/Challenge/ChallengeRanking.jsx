@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { getDailyRanking } from '../../api/challenge'; // ✅ axios 통신 함수
 import '../../App.css';
@@ -72,7 +71,7 @@ const ChallengeRanking = () => {
           </section>
         </main>
       </div>
-      <Footer />
+      
     </>
   );
 };
