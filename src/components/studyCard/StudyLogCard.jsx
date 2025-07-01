@@ -1,3 +1,4 @@
+// src/components/StudyLogCard.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { deleteStudyLog } from '../../api/studyLog';
@@ -26,7 +27,7 @@ const StudyLogCard = ({ log, onDelete }) => {
     }
   };
 
-  console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}`);
+  console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}, selectedPeriods=${log.selectedPeriods}`);
 
   return (
     <div className="card mb-4">
@@ -59,15 +60,11 @@ const StudyLogCard = ({ log, onDelete }) => {
             />
           </div>
 
-          {/* 과목 뱃지 */}
-          <div className="col-md-2">
+          {/* 과목 뱃지 및 공개 여부 뱃지 통합 컬럼 */}
+          <div className="col-md-2 d-flex align-items-center gap-2"> {/* 너비 조정 및 gap 추가 */}
             <span className="badge bg-primary">
               {log.subject || '미지정'}
             </span>
-          </div>
-
-          {/* 공개 여부 뱃지 */}
-          <div className="col-md-1">
             <span
               className={`badge ${
                 log.isPublic ? 'bg-success' : 'bg-secondary'
@@ -77,29 +74,56 @@ const StudyLogCard = ({ log, onDelete }) => {
             </span>
           </div>
 
-          {/* 버튼 */}
-          <div className="col-md-3 d-flex gap-1">
-            <Link
-              to={`/study/edit/${log.diaryId}`}
-              className="btn border-0 text-white w-100 py-1"
-              style={{
-                backgroundColor: '#84cc16',
-                fontSize: '0.875rem',
-              }}
-            >
-              상세보기
-            </Link>
-            <button
-              className="btn border-0 w-100 py-1"
-              style={{
-                backgroundColor: '#ced4da',
-                color: '#fff',
-                fontSize: '0.875rem',
-              }}
-              onClick={handleDelete}
-            >
-              삭제
-            </button>
+          {/* 체크박스 그룹과 버튼들 */}
+          <div className="col-md-4 d-flex align-items-center gap-2"> {/* 이 부분의 col-md-* 너비를 조정하여 공간을 확보하세요 (예: col-md-4) */}
+            {/* 체크박스 그룹 */}
+            <div className="d-flex align-items-center gap-1"> {/* 체크박스 사이 간격 조정 */}
+              {['하루', '일주일', '한 달', '세 달'].map((period) => (
+                <div key={period} className="form-check form-check-inline m-0">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`card-checkbox-${log.diaryId}-${period}`}
+                    // log.selectedPeriods가 배열이고 해당 기간을 포함하는지 확인
+                    checked={Array.isArray(log.selectedPeriods) && log.selectedPeriods.includes(period)}
+                    readOnly // 목록에서는 수정 불가능하게 설정
+                    disabled // 사용자 클릭을 완전히 막기 위해 disabled 추가
+                  />
+                  <label className="form-check-label" htmlFor={`card-checkbox-${log.diaryId}-${period}`} style={{ fontSize: '0.8rem' }}>
+                    {period}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            {/* 버튼들 */}
+            <div className="d-flex gap-1 flex-grow-1 justify-content-end"> {/* 버튼들을 오른쪽으로 정렬 */}
+                <Link
+                to={`/study/edit/${log.diaryId}`}
+                className="btn border-0 text-white py-1" // w-100 제거, flex-grow-1로 조절
+                style={{
+                    backgroundColor: '#84cc16',
+                    fontSize: '0.875rem',
+                    flexGrow: 1, // 버튼이 남은 공간을 채우도록
+                    maxWidth: '100px' // 버튼 최대 너비 설정 (선택 사항)
+                }}
+                >
+                상세보기
+                </Link>
+                <button
+                className="btn border-0 py-1" // w-100 제거
+                style={{
+                    backgroundColor: '#ced4da',
+                    color: '#fff',
+                    fontSize: '0.875rem',
+                    flexGrow: 1, // 버튼이 남은 공간을 채우도록
+                    maxWidth: '100px' // 버튼 최대 너비 설정 (선택 사항)
+                }}
+                onClick={handleDelete}
+                >
+                삭제
+                </button>
+            </div>
           </div>
         </div>
 

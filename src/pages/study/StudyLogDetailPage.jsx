@@ -16,6 +16,8 @@ const StudyLogDetailPage = () => {
     date: '',
     contents: '',
     summary: '',
+    // 새로운 필드 추가: 선택된 기간 (예: ['하루', '일주일'] )
+    selectedPeriods: [], // 초기값은 빈 배열
   });
   const [originalData, setOriginalData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -25,8 +27,13 @@ const StudyLogDetailPage = () => {
       try {
         const res = await getMyStudyLogById(id);
         console.log('🔥 getMyStudyLogById 응답:', res);
-        setFormData(res.data);
-        setOriginalData(res.data);
+        // 서버 응답에 selectedPeriods가 없다면 빈 배열로 초기화
+        const initialData = {
+          ...res.data,
+          selectedPeriods: res.data.selectedPeriods || [], // 서버 응답에 이 필드가 포함되어야 합니다.
+        };
+        setFormData(initialData);
+        setOriginalData(initialData);
       } catch {
         alert('해당 일지를 불러올 수 없습니다.');
         navigate('/study');
@@ -40,14 +47,44 @@ const StudyLogDetailPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 체크박스 변경 핸들러 추가
+  const handlePeriodChange = (e) => {
+    const { value, checked } = e.target;
+    setFormData((prev) => {
+      const currentPeriods = prev.selectedPeriods || []; // 안전하게 빈 배열로 시작
+      if (checked) {
+        // 체크박스 선택 시 추가
+        return {
+          ...prev,
+          selectedPeriods: [...currentPeriods, value],
+        };
+      } else {
+        // 체크박스 해제 시 제거
+        return {
+          ...prev,
+          selectedPeriods: currentPeriods.filter((period) => period !== value),
+        };
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateData = { ...formData, memberId };
+    // memberId와 formData를 함께 전송할 데이터 생성
+    const updateData = {
+      ...formData,
+      memberId: parseInt(memberId), // memberId를 숫자로 변환하여 전송 (API 요구사항에 따라)
+    };
     try {
       await updateStudyLog(id, updateData);
       const res = await getMyStudyLogById(id);
-      setFormData(res.data);
-      setOriginalData(res.data);
+      // 서버에서 가져온 데이터로 originalData 및 formData 업데이트
+      const updatedData = {
+        ...res.data,
+        selectedPeriods: res.data.selectedPeriods || [],
+      };
+      setFormData(updatedData);
+      setOriginalData(updatedData);
       setIsEditMode(false);
       alert('수정이 완료되었습니다.');
     } catch (err) {
@@ -107,7 +144,8 @@ const StudyLogDetailPage = () => {
                   </div>
                 </div>
 
-                <div className="row mb-3">
+                <div className="row mb-3 align-items-end"> {/* align-items-end 추가 */}
+                  {/* 과목 필드 너비 조정: col-md-3으로 줄임 */}
                   <div className="col-md-6">
                     <label className="form-label">과목</label>
                     <input
@@ -118,6 +156,27 @@ const StudyLogDetailPage = () => {
                       onChange={handleChange}
                       readOnly={!isEditMode}
                     />
+                  </div>
+
+                  {/* 새로운 체크박스 그룹 추가 */}
+                  <div className="col-md-6 d-flex align-items-center gap-3"> {/* 남은 공간을 차지하도록 col-md-9 할당 */}
+                    {['하루', '일주일', '한 달', '세 달'].map((period) => (
+                      <div key={period} className="form-check form-check-inline m-0">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id={`period-checkbox-${period}`}
+                          name="selectedPeriods"
+                          value={period}
+                          checked={formData.selectedPeriods.includes(period)} // 상태에 따라 체크 여부 결정
+                          onChange={handlePeriodChange} // 변경 핸들러 연결
+                          disabled={!isEditMode} // 수정 모드일 때만 활성화
+                        />
+                        <label className="form-check-label" htmlFor={`period-checkbox-${period}`} style={{ fontSize: '0.875rem' }}>
+                          {period}
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -140,7 +199,7 @@ const StudyLogDetailPage = () => {
                     className="form-control"
                     rows="3"
                     value={formData.summary || ''}
-                    readOnly
+                    readOnly // AI 요약은 수정 불가
                   ></textarea>
                 </div>
 
