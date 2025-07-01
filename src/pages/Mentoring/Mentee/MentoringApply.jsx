@@ -25,10 +25,12 @@ const MentoringApply = () => {
   const [showIntroError, setShowIntroError] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { mentor, selectedDate } = location.state || {};
+  const mentor = location.state?.mentor;
+  const selectedDate = location.state?.selectedDate;
   const memberId = localStorage.getItem('memberId');
   const menteeName = localStorage.getItem('memberName');
-    console.log('✅ 현재 로그인된 memberId:', memberId);
+  
+    // console.log('✅ 현재 로그인된 memberId:', memberId);
 
   const handleCheck = (value) => {
     setSelected((prev) =>
@@ -64,23 +66,39 @@ const MentoringApply = () => {
     const finalTopics = selected.includes('other')
       ? [...selected.filter((v) => v !== 'other'), otherText]
       : selected;
+    
+    console.log('🔥 selectedDate 원본:', selectedDate);
+    console.log('🔥 typeof selectedDate:', typeof selectedDate);
+    
+    const selectedDateObj = selectedDate instanceof Date
+      ? selectedDate
+      : new Date(`${selectedDate}T09:00:00`);  // KST 기준 자정으로 고정
+    
+    const year = selectedDateObj.getFullYear();
+    const month = String(selectedDateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDateObj.getDate()).padStart(2, '0');
+    
+    const kstDateStr = `${year}-${month}-${day}`;
+    
+    console.log('✅ 최종 KST 날짜:', kstDateStr);
+
 
     try {
        await applyMentoring({
          mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
          memberId: Number(memberId),
          menteeName: menteeName,
-         date: `${selectedDate}T00:00:00`,
+         date: `${kstDateStr}T00:00:00`,
          introduction: intro,
          subject: finalTopics.join(', '),
-         mentorMemberId: Number(mentor.mentorMemberId),
+        //  mentorMemberId: Number(mentor.mentorMemberId),
        });
 
       // 성공 시 예약 목록으로 이동
       navigate('/mentoring/mentee/register', {
         state: {
           mentor,
-          selectedDate,
+          selectedDate: kstDateStr,
           intro,
           topics: finalTopics,
         },
