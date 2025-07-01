@@ -82,3 +82,13 @@ export const completeMentoring = ({ reservationId, mentorId, menteeId }) => {
     createdAt: new Date().toISOString().split('T')[0],
   });
 };
+
+/** 멘티 - 예약 닫기 */
+export const hideMentoringReservation = (reservationId) => {
+  return axios.patch(`/reservations/mentee/${reservationId}/hide`);
+};
+
+// 멘토 예약 닫기
+export const hideMentoringReservationByMentor = (reservationId) => {
+  return axios.patch(`/reservations/mentor/${reservationId}/hide`);
+};

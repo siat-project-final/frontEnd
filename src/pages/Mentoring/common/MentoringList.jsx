@@ -108,6 +108,8 @@ const MentoringList = () => {
     navigate('/mentoring/detail', {
       state: {
         mentor: {
+          mentorId: mentor.mentorId,
+          mentorMemberId: mentor.mentorMemberId,
           name: mentor.mentorName,
           position: mentor.position,
           company: mentor.company,

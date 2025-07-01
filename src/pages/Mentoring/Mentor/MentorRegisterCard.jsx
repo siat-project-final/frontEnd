@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmOnlyModal from '../../../components/common/ConfirmOnlyModal';
+import { hideMentoringReservationByMentor } from '../../../api/mentoring';
 
 const MentorRegisterCard = ({
   id,
@@ -14,6 +15,7 @@ const MentorRegisterCard = ({
   onComplete = () => {},
 }) => {
   const navigate = useNavigate();
+  const [isClosed, setIsClosed] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
 
@@ -69,7 +71,17 @@ const MentorRegisterCard = ({
       },
     });
   };
+  const handleClose = async () => {
+    try {
+      await hideMentoringReservationByMentor(id); // ✅ 서버에 닫기 요청
+      setIsClosed(true); // UI 제거
+    } catch (err) {
+      console.error('멘토용 닫기 실패:', err);
+      alert('예약을 닫는 데 실패했습니다.');
+    }
+  };
 
+  if (isClosed) return null;
   const handleRejectClick = () => {
     navigate('/mentoring/mentor/reject', {
       state: {
@@ -80,6 +92,7 @@ const MentorRegisterCard = ({
       },
     });
   };
+  const showCloseBtn = ['REJECTED', 'CANCELLED', 'COMPLETED'].includes(status);
 
   return (
     <>
@@ -150,6 +163,18 @@ const MentorRegisterCard = ({
                 멘토링 완료
               </button>
             </>
+          )}
+          {showCloseBtn && (
+            <button
+              onClick={handleClose}
+              style={{
+                ...buttonStyle,
+                backgroundColor: '#94a3b8',
+                color: 'white',
+              }}
+            >
+              닫기
+            </button>
           )}
         </div>
       </div>
