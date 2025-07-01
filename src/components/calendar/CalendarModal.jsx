@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ColorSelector from './ColorSelector';
 
 const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   const [useAllDay, setUseAllDay] = useState(true);
@@ -7,6 +8,8 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [titleError, setTitleError] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#BAFFC9');
+
 
   useEffect(() => {
     if (useAllDay) {
@@ -40,7 +43,6 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
 
     const eventTitle = title;
 
-    // ✅ 종료일 하루 뒤로 보정
     const adjustedEndDate = new Date(endDate);
     if (useAllDay) {
       adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
@@ -51,7 +53,9 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
       title: eventTitle,
       start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
       end: `${adjustedEndStr}T${useAllDay ? '00:00' : endTime}`,
-      backgroundColor: '#AED6F1',
+      backgroundColor: selectedColor,
+      // borderColor: selectedColor, 
+      // backgroundColor: '#AED6F1',
       borderColor: '#AED6F1',
       textColor: '#000',
       allDay: useAllDay,
@@ -163,7 +167,8 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <label>일정명 *</label>
+              <label style={{ marginRight: '5px' }}>일정명 *</label>
+              <ColorSelector selectedColor={selectedColor}  onSelectColor={(color) => setSelectedColor(color)}></ColorSelector>
               {titleError && <span style={{ color: 'red', fontSize: '12px' }}>{titleError}</span>}
             </div>
             <input type="text" name="title" placeholder="일정명을 입력하세요" />

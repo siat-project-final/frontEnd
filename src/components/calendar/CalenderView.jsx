@@ -267,9 +267,12 @@ const CalendarView = () => {
               start: dateOnly(updatedEventData.start),
               end: dateOnly(updatedEventData.end),
               allDay: true,
+              backgroundColor: updatedEventData.backgroundColor,
+              borderColor: updatedEventData.borderColor,
+              textColor: updatedEventData.textColor,
               extendedProps: {
                 ...event.extendedProps,
-                content: updatedEventData.content
+                content: updatedEventData.extendedProps?.content
               }
             }
           : event
@@ -432,7 +435,7 @@ const CalendarView = () => {
             
               if (type === 'USER_ADDED') {
                 const el = info.el;
-                el.style.backgroundColor = '#AED6F1';
+                // el.style.backgroundColor = '#AED6F1';
                 el.style.border = 'none';
                 el.style.borderRadius = '6px';
                 el.style.padding = '2px 6px';

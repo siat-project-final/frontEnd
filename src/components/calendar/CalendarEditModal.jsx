@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ColorSelector from './ColorSelector';
 
 const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => {
   const [useAllDay, setUseAllDay] = useState(true);
@@ -9,6 +10,7 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
   const [titleError, setTitleError] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#BAFFC9');
 
   useEffect(() => {
     if (useAllDay) {
@@ -22,7 +24,7 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
 
   useEffect(() => {
     if (isOpen && eventInfo) {
-      const { title: eventTitle, start, end, extendedProps, allDay } = eventInfo;
+      const { title: eventTitle, start, end, extendedProps, allDay, backgroundColor } = eventInfo;
       const { content: eventContent } = extendedProps;
 
       const displayTitle = eventTitle.split(' ')[0];
@@ -49,6 +51,7 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
       setUseAllDay(allDay);
       setStartDate(startDateStr);
       setEndDate(endDateStr);
+      setSelectedColor(backgroundColor || '#BAFFC9');
 
       if (!allDay) {
         setStartTime(startTimeStr);
@@ -84,7 +87,13 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
       start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
       end: `${actualEndDate}T${useAllDay ? '00:00' : endTime}`,
       allDay: useAllDay,
-      content: content
+      backgroundColor: selectedColor,
+      borderColor: '#AED6F1',
+      textColor: '#000',
+      extendedProps: {
+        content: content,
+        type: 'USER_ADDED',
+      },
     };
 
     onSave(updatedEventData);
@@ -214,6 +223,7 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
               <label>일정명 *</label>
+              <ColorSelector selectedColor={selectedColor} onSelectColor={(color) => setSelectedColor(color)} />
               {titleError && <span style={{ color: 'red', fontSize: '12px' }}>{titleError}</span>}
             </div>
             <input 
