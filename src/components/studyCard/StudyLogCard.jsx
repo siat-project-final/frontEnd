@@ -61,7 +61,7 @@ const StudyLogCard = ({ log, onDelete }) => {
           </div>
 
           {/* 과목 뱃지 및 공개 여부 뱃지 통합 컬럼 */}
-          <div className="col-md-2 d-flex align-items-center gap-2"> {/* 너비 조정 및 gap 추가 */}
+          <div className="col-md-1 d-flex align-items-center gap-2"> {/* 너비 조정 및 gap 추가 */}
             <span className="badge bg-primary">
               {log.subject || '미지정'}
             </span>
@@ -75,7 +75,7 @@ const StudyLogCard = ({ log, onDelete }) => {
           </div>
 
           {/* 체크박스 그룹과 버튼들 */}
-          <div className="col-md-4 d-flex align-items-center gap-2"> {/* 이 부분의 col-md-* 너비를 조정하여 공간을 확보하세요 (예: col-md-4) */}
+          <div className="col-md-5 d-flex align-items-center gap-2"> {/* 이 부분의 col-md-* 너비를 조정하여 공간을 확보하세요 (예: col-md-4) */}
             {/* 체크박스 그룹 */}
             <div className="d-flex align-items-center gap-1"> {/* 체크박스 사이 간격 조정 */}
               {['하루', '일주일', '한 달', '세 달'].map((period) => (
