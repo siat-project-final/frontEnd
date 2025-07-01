@@ -46,7 +46,10 @@ const MenteeRegisterCard = ({
   };
 
   const handleProfileClick = () => {
+    console.log('👤 mentorName:', mentorName);
+    console.log('📅 date:', date);
     navigate('/mentoring/detail', {
+      
       state: {
         mentor: {
           name: mentorName,
@@ -58,6 +61,7 @@ const MenteeRegisterCard = ({
         mode: 'readOnly', // 캘린더 잠금용
       },
     });
+
   };
   const handleCancel = () => {
     onCancel();

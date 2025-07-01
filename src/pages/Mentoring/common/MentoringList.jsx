@@ -105,7 +105,16 @@ const MentoringList = () => {
       alert('멘토는 멘토링 신청 권한이 없습니다.');
       return;
     }
-    navigate('/mentoring/detail', { state: { mentor } });
+    navigate('/mentoring/detail', {
+      state: {
+        mentor: {
+          name: mentor.mentorName,
+          position: mentor.position,
+          company: mentor.company,
+          mentor_image_url: mentor.mentor_image_url,
+        },
+      },
+    });
   };
 
   return (

@@ -94,8 +94,8 @@ const MentoringDetail = () => {
                 <div style={{ color: '#000', fontWeight: 600, fontSize: 18, marginBottom: 4 }}>
                   {mentor.name}
                 </div>
-                <div style={{ color: '#374151', fontWeight: 500, fontSize: 15, marginBottom: 8 }}>
-                  {mentor.position} at {mentor.company}
+                <div style={{ color: '#374151', fontWeight: 500, fontSize: 15, marginBottom: 8, textAlign: 'center', whiteSpace: 'pre-line' }}>
+                  {`${mentor.position}\nat ${mentor.company}`}
                 </div>
                 <div style={{ color: '#6b7280', fontWeight: 500, fontSize: 14, marginBottom: 8 }}>
                   Career
