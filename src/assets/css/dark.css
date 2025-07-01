@@ -169,7 +169,6 @@
   outline: none;
 }
 
-/* ===== 과목, 공개/비공개 뱃지 ===== */
 .dark-mode .badge.bg-primary {
   background-color: #4f46e5;
 }
@@ -529,7 +528,8 @@
 .dark-mode .main {
   background-color: var(--dark-bg) !important; /* 혹은 원하는 색으로 지정 */
 }
-/* 캘린더 전체 박스 */
+
+
 .dark-mode .react-calendar {
   background-color: var(--dark-card);
   color: var(--dark-text);
@@ -538,7 +538,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* 월/연도 내비게이션 */
+
 .dark-mode .react-calendar__navigation button {
   background-color: transparent;
   color: var(--dark-text);
@@ -666,3 +666,89 @@
   border: 1px solid #1e1e1e !important;
   color: #ffffff !important;
 }
+
+.dark-mode pre {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-radius: 10px;
+  padding: 20px;
+  font-size: 15px;
+  white-space: pre-wrap;
+  font-family: inherit;
+  border: 1px solid #222;
+}
+
+
+.dark-mode pre {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-radius: 10px;
+  padding: 20px;
+  font-size: 15px;
+  white-space: pre-wrap;
+  font-family: inherit;
+  border: 1px solid #222;
+}
+
+.dark-mode .CircularProgressbar-text {
+  fill: #ffffff !important;
+}
+
+
+
+.dark-mode .form-check-input[type="radio"]:checked {
+  background-color: #84cc16;
+  border-color: #84cc16;
+  box-shadow: 0 0 0 2px rgba(132, 204, 22, 0.4);
+}
+
+.dark-mode .list-group-item {
+  background-color: #2b2b2b;
+  color: #ffffff;
+  border-color: #444;
+}
+
+
+.dark-mode .list-group-item-success {
+  background-color: #14532d !important;
+  color: #a3e635 !important;
+  border-color: #166534 !important;
+}
+
+.dark-mode .list-group-item-danger {
+  background-color: #7f1d1d !important;
+  color: #f87171 !important;
+  border-color: #991b1b !important;
+}
+
+.dark-mode .card {
+  background-color: #2b2b2b !important;
+  color: #ffffff !important;
+  border: 1px solid #444;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+
+.dark-mode .card.text-center {
+  background-color: #2b2b2b !important;
+}
+
+.dark-mode .bg-white {
+  background-color: #2b2b2b !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .stat-card {
+  background-color: #2b2b2b; 
+  border: 1px solid #444; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); 
+}
+
+.dark-mode .stats-value {
+  color: #ffffff; 
+}
+
+.dark-mode .stats-label {
+  color: #cfcfcf; 
+}
+
