@@ -75,6 +75,7 @@ const Header = ({ menuType }) => (
             </NavLink>
             <ul className="dropdown-menu" style={{ width: '110px', minWidth: '110px', maxWidth: '110px' }}>
               <li style={{ width: '110px', minWidth: '120px' }}><NavLink to="/mypage" className="dropdown-item" style={{ fontSize: '12px', padding: '8px 12px', textDecoration: 'none' }}>마이 프로필</NavLink></li>
+              <li style={{ width: '110px', minWidth: '120px' }}><NavLink to="/mypage/badges" className="dropdown-item" style={{ fontSize: '12px', padding: '8px 12px', textDecoration: 'none' }}>뱃지 목록</NavLink></li>
               <li style={{ width: '110px', minWidth: '120px' }}><NavLink to="/mypage/mentoring-history" className="dropdown-item" style={{ fontSize: '12px', padding: '8px 12px', textDecoration: 'none' }}>멘토링 히스토리</NavLink></li>
               <li style={{ width: '110px', minWidth: '120px' }}><NavLink to="/mypage/statistics" className="dropdown-item" style={{ fontSize: '12px', padding: '8px 12px', textDecoration: 'none' }}>통계</NavLink></li>
               <li style={{ width: '110px', minWidth: '120px' }}><NavLink to="/mypage/challenge-history" className="dropdown-item" style={{ fontSize: '12px', padding: '8px 12px', textDecoration: 'none' }}>챌린지 히스토리</NavLink></li>

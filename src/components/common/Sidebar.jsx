@@ -31,6 +31,7 @@ const menuMap = {
     title: 'MyPage',
     items: [
       { label: '프로필 변경', to: '/mypage' },
+      { label: '뱃지 목록', to: '/mypage/badges' },
       { label: '멘토링 히스토리', to: '/mypage/mentoring-history' },
       { label: '통계', to: '/mypage/statistics' },
       { label: '챌린지 히스토리', to: '/mypage/challenge-history' },

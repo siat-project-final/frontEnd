@@ -26,6 +26,7 @@ import ChallengeHistory from './pages/MyPage/ChallengeHistory';
 import MentoringHistory from './pages/MyPage/MentoringHistory';
 import ReviewHistory from './pages/MyPage/ReviewHistory';
 import Statistics from './pages/MyPage/Statistics';
+import Badges from './pages/MyPage/Badges';
 import MentorAlarm from './pages/Events/MentorAlarm';
 import MenteeAlarm from './pages/Events/MenteeAlarm';
 import StudyLogPage from './pages/study/StudyLogPage';
@@ -99,6 +100,7 @@ function AppLayout({ isDarkMode, toggleTheme }) {
 
           {/* MyPage */}
           <Route path="/mypage" element={<PrivateRoute><MyPageMain /></PrivateRoute>} />
+          <Route path="/mypage/badges" element={<PrivateRoute><Badges /></PrivateRoute>} />
           <Route path="/mypage/challenge-history" element={<PrivateRoute><ChallengeHistory /></PrivateRoute>} />
           <Route path="/mypage/mentoring-history" element={<PrivateRoute><MentoringHistory /></PrivateRoute>} />
           <Route path="/mypage/review-history" element={<PrivateRoute><ReviewHistory /></PrivateRoute>} />
