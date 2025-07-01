@@ -275,6 +275,10 @@ const CalendarView = () => {
 
           <style>
             {`
+
+              .fc .fc-daygrid-body-natural .fc-daygrid-day-frame {
+                min-height: 130px; /* 원하는 높이로 조절 */
+              }
               .fc .fc-toolbar {
                 display: flex !important;
                 justify-content: space-between !important;
@@ -350,6 +354,9 @@ const CalendarView = () => {
                 border-color: #84cc16 !important;
                 color: white !important;
               }
+              .fc-daygrid-body tr:nth-child(6) {
+                display: none;
+              }
             `}
           </style>
 
@@ -357,6 +364,7 @@ const CalendarView = () => {
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
+            fixedWeekCount={true}
             customButtons={{
               myPrev: {
                 text: '',
