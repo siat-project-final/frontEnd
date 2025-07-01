@@ -2,7 +2,7 @@ name: react app to dockerhub
 
 on:
   push:
-    branches: ["test"] 
+    branches: ["main"] 
 
 # gitaction docker hub
 # jobs:
@@ -44,7 +44,7 @@ jobs:
         run: |
           docker build -t react-app-builder .
           docker create --name temp-container react-app-builder
-          docker cp temp-container:/front/build ./build
+          docker cp temp-container:/frontEnd/build ./build
           docker rm temp-container
 
       - name: Upload to S3
