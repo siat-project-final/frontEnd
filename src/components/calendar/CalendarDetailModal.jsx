@@ -1,12 +1,10 @@
 import React from 'react';
 
-const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete }) => {
+const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete, onSwitchToEdit }) => {
   if (!isOpen || !eventInfo) return null;
 
   const { title, start, end, extendedProps, allDay } = eventInfo;
   const { content } = extendedProps;
-
-  // '제목 시간' 형식에서 시간 부분을 제거하고 순수 제목만 추출
   const displayTitle = title.split(' ')[0];
 
   const formatDate = (dateStr) => {
@@ -49,16 +47,23 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete }) =
         }
         .modal-content label {
           font-weight: bold;
+          margin-bottom: 10px;
         }
         .modal-content .detail-content {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 4px;
-            min-height: 50px;
+          background-color: #fff;
+          border: 1px solid #ddd;
+          padding: 10px;
+          border-radius: 4px;
+          min-height: 50px;
+          margin-bottom: 10px;
+        }
+        .modal-content .detail-content:last-of-type {
+          margin-bottom: 0px;
         }
         .modal-content .button-container {
           display: flex;
           justify-content: center;
+          align-items: center;
           gap: 10px;
         }
         .modal-content button {
@@ -72,7 +77,7 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete }) =
           color: white;
         }
         .delete-button {
-          background-color: #84cc16;
+          background-color: #6c757d;
           color: white;
         }
         .close-button {
@@ -126,7 +131,7 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete }) =
           </div>
           
           <div className="button-container">
-            <button onClick={onEdit} className="edit-button">수정</button>
+            <button onClick={onSwitchToEdit} className="edit-button">수정</button>
             <button onClick={onDelete} className="delete-button">삭제</button>
           </div>
         </div>

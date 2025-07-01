@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
+const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => {
   const [useAllDay, setUseAllDay] = useState(true);
   const [startTime, setStartTime] = useState("08:00");
   const [endTime, setEndTime] = useState("18:00");
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [titleError, setTitleError] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     if (useAllDay) {
@@ -19,53 +21,80 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   }, [useAllDay]);
 
   useEffect(() => {
-    if (isOpen && selectionInfo) {
-      setStartDate(selectionInfo.start);
-      setEndDate(selectionInfo.end);
+    if (isOpen && eventInfo) {
+      const { title: eventTitle, start, end, extendedProps, allDay } = eventInfo;
+      const { content: eventContent } = extendedProps;
+
+      const displayTitle = eventTitle.split(' ')[0];
+
+      const startDateObj = new Date(start);
+      const endDateObj = new Date(end);
+
+      // 종일 이벤트의 경우 FullCalendar가 종료일을 다음날로 설정하므로 보정
+      // 예: 9일~10일 종일 이벤트는 start: 2024-01-09T00:00, end: 2024-01-11T00:00로 저장됨
+      let displayEndDate = endDateObj;
+      if (allDay) {
+        displayEndDate = new Date(endDateObj);
+        displayEndDate.setDate(displayEndDate.getDate() - 1);
+      }
+
+      const startDateStr = startDateObj.toLocaleDateString('sv-SE'); // YYYY-MM-DD
+      const endDateStr = displayEndDate.toLocaleDateString('sv-SE');
+
+      const startTimeStr = startDateObj.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', hour12: false });
+      const endTimeStr = endDateObj.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+      setTitle(displayTitle);
+      setContent(eventContent || '');
+      setUseAllDay(allDay);
+      setStartDate(startDateStr);
+      setEndDate(endDateStr);
+
+      if (!allDay) {
+        setStartTime(startTimeStr);
+        setEndTime(endTimeStr);
+      }
+
       setTitleError('');
     }
-  }, [isOpen, selectionInfo]);
+  }, [isOpen, eventInfo]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const title = e.target.title.value;
-    const content = e.target.content.value;
 
     if (!title) {
       setTitleError('입력 필수');
       return;
     }
+
     setTitleError('');
 
-    const eventTitle = title;
+    const eventTitle = useAllDay ? title : `${title} ${startTime}~${endTime}`;
 
-    // ✅ 종료일 하루 뒤로 보정
-    const adjustedEndDate = new Date(endDate);
+    // 종일 이벤트의 경우 FullCalendar 형식에 맞게 종료일을 다음날로 설정
+    let actualEndDate = endDate;
     if (useAllDay) {
-      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+      const endDateObj = new Date(endDate);
+      endDateObj.setDate(endDateObj.getDate() + 1);
+      actualEndDate = endDateObj.toLocaleDateString('sv-SE');
     }
-    const adjustedEndStr = adjustedEndDate.toISOString().split('T')[0];
 
-    const newEvent = {
+    const updatedEventData = {
       title: eventTitle,
       start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
-      end: `${adjustedEndStr}T${useAllDay ? '00:00' : endTime}`,
-      backgroundColor: '#AED6F1',
-      borderColor: '#AED6F1',
-      textColor: '#000',
+      end: `${actualEndDate}T${useAllDay ? '00:00' : endTime}`,
       allDay: useAllDay,
-      extendedProps: {
-        content,
-        type: 'USER_ADDED',
-      },
+      content: content
     };
 
-    onSubmitEvent(newEvent);
-    onClose();
+    onSave(updatedEventData);
   };
 
-  if (!isOpen) return null;
+  const handleCancel = () => {
+    onCancel();
+  };
+
+  if (!isOpen || !eventInfo) return null;
 
   return (
     <>
@@ -129,8 +158,7 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
 
         .modal-content button[type="submit"] {
           background: #84cc16;
-          width: 35%;
-          margin: 0 auto;
+
           color: white;
           padding: 10px;
           border: none;
@@ -157,6 +185,28 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
         .close-button:hover {
           color: #333;
         }
+
+        .button-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+          margin-top: 10px;
+        }
+
+        .cancel-button {
+          background: #6c757d;
+          color: white;
+          padding: 10px 16px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 16px;
+        }
+
+        .cancel-button:hover {
+          background: #5a6268;
+        }
       `}</style>
 
       <div className="modal-overlay">
@@ -166,7 +216,13 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
               <label>일정명 *</label>
               {titleError && <span style={{ color: 'red', fontSize: '12px' }}>{titleError}</span>}
             </div>
-            <input type="text" name="title" placeholder="일정명을 입력하세요" />
+            <input 
+              type="text" 
+              name="title" 
+              placeholder="일정명을 입력하세요" 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
 
             <label>시작일자</label>
             <input type="date" name="startDate" value={startDate} onChange={e => setStartDate(e.target.value)} />
@@ -177,7 +233,12 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
             <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} disabled={useAllDay} />
 
             <label>일정내용</label>
-            <textarea name="content" placeholder="일정 내용을 입력하세요" />
+            <textarea 
+              name="content" 
+              placeholder="일정 내용을 입력하세요" 
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
 
             <div>
               <input
@@ -190,10 +251,13 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
               <label htmlFor="allDay">하루 종일</label>
             </div>
 
-            <button type="submit">일정등록</button>
+            <div className="button-container">
+              <button type="submit">수정완료</button>
+              <button type="button" onClick={handleCancel} className="cancel-button">취소</button>
+            </div>
           </form>
 
-          <button onClick={onClose} className="close-button">
+          <button onClick={handleCancel} className="close-button">
             <img src="/assets/img/mentors/x.png" alt="닫기" />
           </button>
         </div>
@@ -202,4 +266,4 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   );
 };
 
-export default CalendarModal;
+export default CalendarEditModal;

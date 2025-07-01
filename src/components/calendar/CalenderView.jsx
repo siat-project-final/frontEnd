@@ -12,6 +12,7 @@ import Header from '../common/Header';
 import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
 import CalendarDetailModal from './CalendarDetailModal';
+import CalendarEditModal from './CalendarEditModal';
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
@@ -34,6 +35,7 @@ const CalendarView = () => {
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentMonthStr, setCurrentMonthStr] = useState('');
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -230,7 +232,39 @@ const CalendarView = () => {
   };
 
   const handleEditEvent = () => {
-      handleCloseDetailModal();
+    setIsDetailModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSwitchToEdit = () => {
+    setIsDetailModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleSaveEdit = (updatedEventData) => {
+    if (selectedEvent) {
+      setLocalEvents(prev => prev.map(event => 
+        event.id === selectedEvent.id 
+          ? { 
+              ...event, 
+              title: updatedEventData.title, 
+              start: updatedEventData.start,
+              end: updatedEventData.end,
+              allDay: updatedEventData.allDay,
+              extendedProps: {
+                ...event.extendedProps,
+                content: updatedEventData.content
+              }
+            }
+          : event
+      ));
+    }
+    handleCloseEditModal();
   };
 
   return (
@@ -410,6 +444,7 @@ const CalendarView = () => {
             }}
             displayEventTime={false}
             eventTimeFormat={false}
+            eventDisplay="block"
           />
 
           <CalendarModal isOpen={isModalOpen} onClose={handleCloseModal} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent}/>
@@ -419,6 +454,17 @@ const CalendarView = () => {
             eventInfo={selectedEvent}
             onEdit={handleEditEvent}
             onDelete={handleDeleteEvent}
+            onSwitchToEdit={handleSwitchToEdit}
+          />
+          <CalendarEditModal
+            isOpen={isEditModalOpen}
+            onClose={handleCloseEditModal}
+            eventInfo={selectedEvent}
+            onSave={handleSaveEdit}
+            onCancel={() => {
+              setIsEditModalOpen(false);
+              setIsDetailModalOpen(true);
+            }}
           />
         </div>
 
