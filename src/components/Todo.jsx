@@ -4,13 +4,13 @@ import instance from '../../api/axios'; // Axios 인스턴스 가져오기
 const Todo = ({ selectedDate, onTodoChange }) => {
   const [input, setInput] = useState('');
   const [todos, setTodos] = useState([]);
-  // [ys] 250628: 수정 모드를 위한 상태 추가: 어떤 투두가 수정 중인지, 어떤 값을 가지는지
+  // [kth] 250628: 수정 모드를 위한 상태 추가: 어떤 투두가 수정 중인지, 어떤 값을 가지는지
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState('');
 
   const memberId = localStorage.getItem('memberId');
 
-  // 🗓 selectedDate가 없을 경우 기본값을 오늘로 설정
+  // 🗓 selectedDate가 없을 경우 기본값을 오늘로
   const getEffectiveDate = () => {
     if (selectedDate) return selectedDate;
 
@@ -21,7 +21,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  const dateToUse = getEffectiveDate(); // ✅ 여기서 날짜를 안전하게 처리
+  const dateToUse = getEffectiveDate(); // ✅ 여기서 안전하게 처리
 
   // [kth] 250622 : 투두 리스트 조회 API 요청 함수
   const fetchTodoList = async () => {
@@ -42,10 +42,9 @@ const Todo = ({ selectedDate, onTodoChange }) => {
   };
 
   // [kth] 250622 : 의존성 배열에 selectedDate를 넣어서 날짜 변경시마다 todo 재조회
-  // memberId도 의존성에 추가하는 것이 안전합니다.
   useEffect(() => {
     fetchTodoList();
-  }, [selectedDate, memberId, dateToUse]); // dateToUse도 의존성에 추가
+  }, [selectedDate, memberId]); // memberId도 의존성에 추가하는 것이 안전합니다.
 
   // [kth] 250622 : 투두 추가 함수(추가 성공 후 조회)
   const handleAdd = async () => {
@@ -67,7 +66,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [ys] 250628: 투두 체크박스 토글 함수
+  // [kth] 250628: 투두 체크박스 토글 함수
   const toggleTodo = async (id, currentStatus) => {
     try {
       // API 호출로 투두 상태 업데이트
@@ -87,7 +86,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [ys] 250628: 투두 삭제 함수
+  // [kth] 250628: 투두 삭제 함수
   const deleteTodo = async (id) => {
     try {
       // API 호출로 투두 삭제
@@ -101,23 +100,22 @@ const Todo = ({ selectedDate, onTodoChange }) => {
     }
   };
 
-  // [ys] 250628: 수정 모드 시작 핸들러
+  // [kth] 250628: 수정 모드 시작 핸들러
   const handleDoubleClick = (todo) => {
     setEditingId(todo.id);
     setEditingText(todo.item);
   };
 
-  // [ys] 250628: 수정 완료 핸들러
+  // [kth] 250628: 수정 완료 핸들러
   const handleEditComplete = async (id) => {
-    // 수정 내용이 비어있으면 저장하지 않고 모드 종료 (취소로 간주)
-    if (!editingText.trim()) {
+    if (!editingText.trim()) { // 수정 내용이 비어있으면 저장하지 않고 모드 종료
       setEditingId(null);
       setEditingText('');
       return;
     }
 
     try {
-      await instance.put(`/todos/${id}`, {
+      await instance.patch(`/todos/${id}`, {
         contents: editingText.trim()
       });
 
@@ -127,31 +125,28 @@ const Todo = ({ selectedDate, onTodoChange }) => {
           todo.id === id ? { ...todo, item: editingText.trim() } : todo
         )
       );
-    } catch (err) {
-      console.error('할 일 수정 실패:', err);
-    } finally {
-      // API 호출 시도 후에는 항상 수정 모드를 종료하고 수정 텍스트를 초기화합니다.
       setEditingId(null); // 수정 모드 종료
       setEditingText(''); // 수정 텍스트 초기화
       onTodoChange?.();
+    } catch (err) {
+      console.error('할 일 수정 실패:', err);
     }
   };
 
-  // [ys] 250628: 수정 중 Enter 키 입력 처리
+  // [kth] 250628: 수정 중 Enter 키 입력 처리
   const handleEditKeyDown = (e, id) => {
     if (e.key === 'Enter') {
       handleEditComplete(id);
     }
   };
 
-  // 일반 입력 필드에서 Enter 키 입력 처리
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') handleAdd();
   };
 
   return (
     <div style={{ padding: '20px', fontSize: '14px' }}>
-      <h3 style={{ fontSize: '16px' }}>To-do List ({dateToUse})</h3>
+      <h3 style={{ fontSize: '16px' }}>ToDo List ({dateToUse})</h3>
       <div style={{ display: 'flex', marginBottom: '10px' }}>
         <input
           type="text"
@@ -159,22 +154,16 @@ const Todo = ({ selectedDate, onTodoChange }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          style={{ flex: 1, padding: '8px', outline: 'none',
-            border: '1px solid #e5e7eb',fontSize: '13px', borderRadius: '0.375rem', marginTop: '10px' }}
+          style={{ flex: 1, padding: '8px', fontSize: '13px' }}
         />
         <button
           onClick={handleAdd}
           style={{
             marginLeft: '8px',
-            marginTop: '10px',
             backgroundColor: '#7ED321',
             color: 'white',
             padding: '8px 12px',
             fontSize: '13px',
-            outline: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            borderRadius: '0.375rem'
           }}
         >
           추가
@@ -183,7 +172,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
       {todos.length === 0 ? (
         <p style={{ fontSize: '13px' }}>할 일이 없습니다.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        <ul>
           {todos.map(todo => (
             <li
               key={todo.id}
@@ -192,16 +181,15 @@ const Todo = ({ selectedDate, onTodoChange }) => {
                 display: 'flex',
                 alignItems: 'center',
                 fontSize: '13px',
-                gap: '8px', // 체크박스, 텍스트, 삭제 버튼 간의 간격
               }}
             >
               <input
                 type="checkbox"
                 checked={todo.status}
                 onChange={() => toggleTodo(todo.id, todo.status)} // 현재 상태 전달
-                style={{ marginRight: '8px', transform: 'scale(1.1)'}}
+                style={{ marginRight: '8px' }}
               />
-              {/* [ys] 250628: 수정 모드일 때와 아닐 때 렌더링 분기 */}
+              {/* [kth] 250628: 수정 모드일 때와 아닐 때 렌더링 분기 */}
               {editingId === todo.id ? (
                 <input
                   type="text"
@@ -213,10 +201,8 @@ const Todo = ({ selectedDate, onTodoChange }) => {
                   style={{
                     flex: 1,
                     padding: '4px',
-                    fontSize: '12px', // 할 일 텍스트와 같은 폰트 크기
+                    fontSize: '13px',
                     border: '1px solid #ccc',
-                    borderRadius: '0.375rem',
-                    outline: 'none'
                   }}
                 />
               ) : (
@@ -225,7 +211,6 @@ const Todo = ({ selectedDate, onTodoChange }) => {
                   style={{
                     textDecoration: todo.status ? 'line-through' : 'none',
                     flex: 1,
-                    fontSize: '12px',
                     cursor: 'pointer', // 더블클릭 가능함을 시각적으로 알림
                   }}
                 >
@@ -234,19 +219,9 @@ const Todo = ({ selectedDate, onTodoChange }) => {
               )}
               <button
                 onClick={() => deleteTodo(todo.id)}
-                style={{
-                  marginLeft: '4px',
-                  color: 'black',
-                  fontSize: '12px',
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  marginRight: '10px',
-                  cursor: 'pointer',
-                  outline: 'none',
-                }}
+                style={{ marginLeft: '8px', color: 'red', fontSize: '12px' }}
               >
-                <img src="/assets/img/trash-2.png" alt="삭제" style={{ width: '14px', height: '14px' }} />
+                삭제
               </button>
             </li>
           ))}

@@ -98,4 +98,15 @@
   box-shadow: none;
 }
 
+/* calendar 일정 추가/수정/삭제 */
+.fc-event {
+  display: block !important;
+  border-radius: 6px !important;
+  padding: 2px 4px !important;
+  font-size: 13px;
+  font-weight: 500;
+}
 
+.fc-daygrid-event-dot {
+  display: none !important; /* ● 제거 */
+}

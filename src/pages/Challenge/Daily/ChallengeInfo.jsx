@@ -85,7 +85,7 @@ const ChallengeInfo = () => {
           </section>
         </main>
       </div>
-      <Footer />
+    
     </>
   );
 };
