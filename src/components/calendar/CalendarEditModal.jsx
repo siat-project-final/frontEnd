@@ -27,8 +27,6 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
       const { title: eventTitle, start, end, extendedProps, allDay, backgroundColor } = eventInfo;
       const { content: eventContent } = extendedProps;
 
-      const displayTitle = eventTitle.split(' ')[0];
-
       const startDateObj = new Date(start);
       const endDateObj = new Date(end);
 
@@ -46,7 +44,7 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
       const startTimeStr = startDateObj.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', hour12: false });
       const endTimeStr = endDateObj.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-      setTitle(displayTitle);
+      setTitle(eventTitle);
       setContent(eventContent || '');
       setUseAllDay(allDay);
       setStartDate(startDateStr);
@@ -72,9 +70,6 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
 
     setTitleError('');
 
-    const eventTitle = title;
-
-    // 종일 이벤트의 경우 FullCalendar 형식에 맞게 종료일을 다음날로 설정
     let actualEndDate = endDate;
     if (useAllDay) {
       const endDateObj = new Date(endDate);
@@ -83,16 +78,17 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
     }
 
     const updatedEventData = {
-      title: eventTitle,
+      title: title,
       start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
       end: `${actualEndDate}T${useAllDay ? '00:00' : endTime}`,
       allDay: useAllDay,
       backgroundColor: selectedColor,
-      borderColor: '#AED6F1',
+      borderColor: selectedColor,
       textColor: '#000',
       extendedProps: {
         content: content,
-        type: 'USER_ADDED',
+        type: 'SCHEDULE',
+        scheduleId: eventInfo.extendedProps.scheduleId
       },
     };
 
@@ -277,3 +273,4 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
 };
 
 export default CalendarEditModal;
+
