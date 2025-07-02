@@ -752,3 +752,141 @@
   color: #cfcfcf; 
 }
 
+.dark-mode .login-container {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+}
+
+
+
+.dark-mode .login-title {
+    color: var(--dark-text);
+}
+.dark-mode .form-group label {
+    color: var(--dark-text);
+}
+
+.dark-mode input[type="password"] {
+    background-color: #3a3a3c;
+    color: var(--dark-text);
+    border: 1px solid var(--dark-outline);
+}
+
+.dark-mode input[type="password"]::placeholder {
+    color: var(--dark-subtext);
+}
+.dark-mode .login-button.primary {
+    background-color: #d9f99d; /* 더 밝은 연두색 */
+    color: #000000;
+    border: none;
+}
+.dark-mode .login-button.primary:hover {
+    background-color: #bef264; /* hover 시에도 밝게 유지 */
+}
+
+/* 회원가입 버튼 (secondary) */
+.dark-mode .login-button.secondary {
+    background-color: #4b5563; /* 어두운 회색 */
+    color: #ffffff;
+    border: none;
+}
+.dark-mode .login-button.secondary:hover {
+    background-color: #6b7280;
+}
+/* === 비활성화된 textarea (disabled)도 다크모드로 === */
+.dark-mode textarea.form-control[disabled],
+.dark-mode textarea[disabled] {
+    background-color: #2e2e2e !important;
+    color: var(--dark-subtext) !important;
+    border: 1px solid rgba(241, 237, 237, 0.568) !important; /* 흰색 테두리로 수정 */
+    opacity: 1 !important; /* 흐려지는 효과 제거 */
+    cursor: not-allowed;
+}
+
+/* === 비활성화된 input 요소도 다크모드로 === */
+.dark-mode input.form-control[disabled],
+.dark-mode input[disabled] {
+    background-color: #2e2e2e !important;
+    color: var(--dark-subtext) !important;
+    border: 1px solid rgba(241, 237, 237, 0.699) !important;  /* 흰색 테두리로 수정 */
+    opacity: 1 !important;  /* 흐려짐 방지 */
+    cursor: not-allowed;
+}
+
+.dark-mode .card {
+    background-color: #706c6c;
+    border: 1px solid rgba(241, 237, 237, 0.329);  /* 살짝 흰색 테두리 */
+}
+
+/* 회원가입 */
+
+:root {
+    --dark-bg: #1e1e1e;
+    --dark-box-bg: #2e2e2e;
+    --dark-border: rgb(241, 237, 237);
+    --dark-subtext: #ccc;
+}
+
+/* === 다크모드 입력 요소 통일 적용 === */
+.dark-mode input[type="text"],
+.dark-mode input[type="email"],
+.dark-mode input[type="tel"],
+.dark-mode input[type="password"],
+.dark-mode input[type="number"],
+.dark-mode textarea,
+.dark-mode .form-input,
+.dark-mode .form-control {
+    background-color: var(--dark-box-bg);
+    color: var(--dark-subtext);
+    border: 1px solid var(--dark-border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: border 0.2s ease;
+}
+
+/* === 포커스 시 강조 (선택) === */
+.dark-mode input:focus,
+.dark-mode textarea:focus {
+    outline: none;
+    border: 1px solid white;
+}
+
+/* === 라벨 === */
+.dark-mode label,
+.dark-mode .form-label {
+    color: var(--dark-subtext);
+    font-weight: 500;
+}
+/* === 다크모드: 제목 === */
+.dark-mode .signup-title {
+    color: var(--dark-subtext);
+    font-weight: 600;
+}
+.dark-mode .signup-box {
+    background-color: var(--dark-box-bg);        /* 짙은 회색 배경 */
+    color: var(--dark-subtext);                  /* 텍스트 색상 */
+    border: 1px solid var(--dark-border);        /* 연한 흰색 테두리 */
+    padding: 24px;                                /* 여백 */
+    border-radius: 8px;                           /* 둥근 테두리 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);     /* 약한 그림자 (선택사항) */
+}
+
+.dark-mode .signup-container {
+    background-color: var(--dark-bg);             /* 가장 바깥 배경 */
+    color: var(--dark-subtext);                   /* 기본 텍스트 색상 */
+    border: 1px solid var(--dark-border);         /* 옅은 테두리 */
+    padding: 32px;                                 /* 전체 여백 */
+    border-radius: 12px;                           /* 더 넓은 곡률 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);    /* 깊이감 (선택) */
+}
+.dark-mode .form-input {
+    background-color: var(--dark-box-bg) !important;
+    color: var(--dark-subtext) !important;
+    border: 1px solid var(--dark-border) !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+}
