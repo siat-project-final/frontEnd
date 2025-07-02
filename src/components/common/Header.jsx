@@ -91,7 +91,20 @@ const Header = ({ menuType }) => (
             </li>
 
             <li className="dropdown">
-              <NavLink to="/mypage" className={({ isActive }) => (isActive ? 'active' : '')} style={({ isActive }) => ({
+              <NavLink to="/shop" className={({ isActive }) => (isActive || menuType === 'shop' ? 'active' : '')} style={({ isActive }) => ({
+                fontSize: '1.2rem',
+                fontWeight: isActive ? 700 : 500
+              })}>
+                Shop
+              </NavLink>
+              <ul className="dropdown-menu" style={{ marginTop: '28px', left: '-30px', top: '50%', minWidth: '170px', padding: 0 }}>
+                <li><NavLink to="/shop" className="dropdown-item" style={menuItemStyle}>스티커 상점</NavLink></li>
+                <li><NavLink to="/inventory" className="dropdown-item" style={menuItemStyle}>내 인벤토리</NavLink></li>
+              </ul>
+            </li>
+
+            <li className="dropdown">
+              <NavLink to="/mypage" className={({ isActive }) => (isActive || menuType === 'mypage' ? 'active' : '')} style={({ isActive }) => ({
                 fontSize: '1.2rem',
                 fontWeight: isActive ? 700 : 500
               })}>

@@ -13,19 +13,12 @@ import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
 import CalendarDetailModal from './CalendarDetailModal';
 import CalendarEditModal from './CalendarEditModal';
+import FooterBag from './FooterBag'; // 🟩 feature/shop에서 추가된 부분
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const getTodayString = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  };
 
   const [serverEvents, setServerEvents] = useState([]);
   const [localEvents, setLocalEvents] = useState(() => {
@@ -55,17 +48,15 @@ const CalendarView = () => {
     기타: '#D7DBDD',
   };
 
+  function getTodayString() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+
   const fetchWrittenLogs = async () => {
     try {
       const res = await getMyStudyLogs(memberId);
-      const dates = new Set(
-        res.data
-          .map((log) => {
-            if (!log.studyDate) return null;
-            return log.studyDate.split('T')[0];
-          })
-          .filter(Boolean)
-      );
+      const dates = new Set(res.data.map(log => log.studyDate?.split('T')[0]).filter(Boolean));
       setWrittenDates(dates);
     } catch (err) {
       console.error('작성된 학습일지 불러오기 실패:', err);
@@ -74,11 +65,25 @@ const CalendarView = () => {
 
   const convertJsonToCalendarEvents = (jsonData, writtenDatesSet) => {
     const events = [];
+    const stickerDateSet = new Set();
 
-    Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList }]) => {
+    Object.entries(jsonData).forEach(([date, { subjectList, studyDiaryList, mentoringList, mentoringReservationList, sticker }]) => {
       const normalizedDate = date.split('T')[0];
 
-      subjectList?.forEach((subject) => {
+      if (sticker && !stickerDateSet.has(normalizedDate)) {
+        events.push({
+          title: '',
+          start: date,
+          end: date,
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          textColor: 'transparent',
+          extendedProps: { type: 'STICKER', image: sticker }
+        });
+        stickerDateSet.add(normalizedDate);
+      }
+
+      subjectList?.forEach(subject => {
         const color = SUBJECT_COLORS[subject] || SUBJECT_COLORS['기타'];
         events.push({
           title: `${subject}`,
@@ -92,7 +97,7 @@ const CalendarView = () => {
       });
 
       if (studyDiaryList?.length > 0) {
-        studyDiaryList.forEach((diary) => {
+        studyDiaryList.forEach(diary => {
           events.push({
             title: `[일지] ${diary.title || '학습일지'}`,
             start: date,
@@ -115,27 +120,27 @@ const CalendarView = () => {
         });
       }
 
-      mentoringList?.forEach((mentoring) => {
+      mentoringList?.forEach(m => {
         events.push({
-          title: `[멘토링] ${mentoring.mentorName}`,
+          title: `[멘토링] ${m.mentorName}`,
           start: date,
           end: date,
           backgroundColor: '#F1C40F',
           borderColor: '#F1C40F',
           textColor: '#000',
-          extendedProps: { type: 'MENTORING', ...mentoring }
+          extendedProps: { type: 'MENTORING', ...m }
         });
       });
 
-      mentoringReservationList?.forEach((reservation) => {
+      mentoringReservationList?.forEach(r => {
         events.push({
-          title: `[멘토링 예약] ${reservation.mentorName}`,
+          title: `[멘토링 예약] ${r.mentorName}`,
           start: date,
           end: date,
           backgroundColor: '#F9E79F',
           borderColor: '#F9E79F',
           textColor: '#000',
-          extendedProps: { type: 'MENTORING', ...reservation }
+          extendedProps: { type: 'MENTORING', ...r }
         });
       });
     });
@@ -182,37 +187,23 @@ const CalendarView = () => {
   const handleSelect = (selectInfo) => {
     const { startStr, endStr, allDay } = selectInfo;
     const endDate = new Date(endStr);
-    if (allDay) {
-      endDate.setDate(endDate.getDate() - 1);
-    }
+    if (allDay) endDate.setDate(endDate.getDate() - 1);
     const inclusiveEndStr = endDate.toISOString().split('T')[0];
-    
     setSelectionInfo({ start: startStr, end: inclusiveEndStr });
     setIsModalOpen(true);
-
     selectInfo.view.calendar.unselect();
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectionInfo(null);
   };
 
   const handleAddEvent = (eventData) => {
     const dateOnly = (dateStr) => dateStr.split('T')[0];
-    setLocalEvents((prevEvents) => {
-      const newId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      return [
-        ...prevEvents,
-        {
-          ...eventData,
-          id: newId,
-          start: dateOnly(eventData.start),
-          end: dateOnly(eventData.end),
-          allDay: true,
-        }
-      ];
-    });
+    const newId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    setLocalEvents(prev => [...prev, {
+      ...eventData,
+      id: newId,
+      start: dateOnly(eventData.start),
+      end: dateOnly(eventData.end),
+      allDay: true
+    }]);
   };
 
   const handleEventClick = (clickInfo) => {
@@ -229,6 +220,34 @@ const CalendarView = () => {
     }
   };
 
+  const handleEventReceive = (info) => {
+    const calendarApi = calendarRef.current.getApi();
+    const droppedDate = info.event.startStr;
+    const { stickerId, image } = info.event.extendedProps;
+    const eventId = `sticker-${stickerId}-${droppedDate}`;
+    if (calendarApi.getEventById(eventId)) {
+      console.log('중복 스티커: 추가하지 않음');
+      info.revert();
+      return;
+    }
+    calendarApi.addEvent({
+      id: eventId,
+      title: '',
+      start: droppedDate,
+      allDay: true,
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+      textColor: 'transparent',
+      extendedProps: { type: 'STICKER', stickerId, image }
+    });
+    info.event.remove(); // 드래그 원본 제거
+  };
+
+  const handleEditEvent = () => {
+    setIsDetailModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
     setSelectedEvent(null);
@@ -239,16 +258,6 @@ const CalendarView = () => {
       setLocalEvents(prev => prev.filter(event => event.id !== selectedEvent.id));
       handleCloseDetailModal();
     }
-  };
-
-  const handleEditEvent = () => {
-    setIsDetailModalOpen(false);
-    setIsEditModalOpen(true);
-  };
-
-  const handleSwitchToEdit = () => {
-    setIsDetailModalOpen(false);
-    setIsEditModalOpen(true);
   };
 
   const handleCloseEditModal = () => {
@@ -281,7 +290,6 @@ const CalendarView = () => {
     handleCloseEditModal();
   };
 
-  // 우선순위 함수 추가
   const eventPriority = (event) => {
     const type = event.extendedProps?.type;
     if (type === 'SUBJECT') return 1;
@@ -296,174 +304,39 @@ const CalendarView = () => {
       <Header />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-
-          <style>
-            {`
-
-              .fc .fc-daygrid-body-natural .fc-daygrid-day-frame {
-                min-height: 130px; /* 원하는 높이로 조절 */
-              }
-              .fc .fc-toolbar {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                margin-bottom: 16px !important;
-                position: relative !important;
-                height: 60px !important;
-              }
-
-              .fc .fc-toolbar-title {
-                font-size: 24px !important;
-                font-weight: bold !important;
-                position: absolute !important;
-                left: 50% !important;
-                top: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                max-width: none !important;
-                padding: 0 16px !important;
-                white-space: nowrap !important;
-                overflow: visible !important;
-                text-overflow: unset !important;
-                text-align: center !important;
-
-              }
-
-              .fc-myPrev-button,
-              .fc-myNext-button {
-                background: none !important;
-                border: none !important;
-                width: 24px !important;
-                height: 32px !important;
-                cursor: pointer !important;
-                position: absolute !important;
-                top: 52% !important;
-                transform: translateY(-50%) !important;
-                z-index: 1 !important;
-                outline: none !important;
-                box-shadow: none !important;
-              }
-
-              .fc-myPrev-button {
-                left: calc(50% - 250px) !important;
-              }
-
-              .fc-myNext-button {
-                right: calc(50% - 250px) !important;
-              }
-
-              .fc-myPrev-button::before,
-              .fc-myNext-button::before {
-                content: '' !important;
-                position: absolute !important;
-                top: 52% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                width: 24px !important;
-                height: 24px !important;
-                background-size: contain !important;
-                background-repeat: no-repeat !important;
-              }
-
-              .fc-myPrev-button::before {
-                background-image: url('/assets/img/mentors/chevron-left.png') !important;
-              }
-
-              .fc-myNext-button::before {
-                background-image: url('/assets/img/mentors/chevron-right.png') !important;
-              }
-
-              .fc-today-button {
-                margin-right: 10px !important;
-                background-color: #84cc16 !important;
-                border-color: #84cc16 !important;
-                color: white !important;
-              }
-              .fc-daygrid-body tr:nth-child(6) {
-                display: none;
-              }
-            `}
-          </style>
-
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
-            fixedWeekCount={true}
-            customButtons={{
-              myPrev: {
-                text: '',
-                click: () => {
-                  const calendarApi = calendarRef.current?.getApi();
-                  console.log('[이전 달 버튼 클릭됨]');
-                  if (!calendarApi) {
-                    console.error('[myPrev] calendarApi is undefined');
-                    return;
-                  }
-                  calendarApi.prev();
-                  console.log('[myPrev] calendar 이동 완료');
-                }
-              },
-              myNext: {
-                text: '',
-                click: () => {
-                  const calendarApi = calendarRef.current?.getApi();
-                  console.log('[다음 달 버튼 클릭됨]');
-                  if (!calendarApi) {
-                    console.error('[myNext] calendarApi is undefined');
-                    return;
-                  }
-                  calendarApi.next();
-                  console.log('[myNext] calendar 이동 완료');
-                }
-              },
-              myToday: {
-                text: '오늘',
-                click: () => {
-                  const calendarApi = calendarRef.current?.getApi();
-                  console.log('[오늘 버튼 클릭됨]');
-                  if (!calendarApi) {
-                    console.error('[myToday] calendarApi is undefined');
-                    return;
-                  }
-                  calendarApi.today();
-                  console.log('[myToday] 오늘로 이동 완료');
-                }
-              }
-            }}
-            eventDidMount={(info) => {
-              const { type } = info.event.extendedProps;
-            
-              if (type === 'USER_ADDED') {
-                const el = info.el;
-                // el.style.backgroundColor = '#AED6F1';
-                el.style.border = 'none';
-                el.style.borderRadius = '6px';
-                el.style.padding = '2px 6px';
-                el.style.display = 'inline-block';
-                el.style.maxWidth = '100%';
-                el.style.whiteSpace = 'nowrap';
-                el.style.overflow = 'hidden';
-                el.style.textOverflow = 'ellipsis';
-                el.style.color = '#000';
-              }
-            }}
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
-              right: 'myNext today',
+              right: 'myNext today'
             }}
-            dayCellClassNames={(arg) => {
-              const day = arg.date.getDay();
-              if (day === 0) return ['fc-sunday'];
-              if (day === 6) return ['fc-saturday'];
-              return [];
+            customButtons={{
+              myPrev: { text: '', click: () => calendarRef.current?.getApi().prev() },
+              myNext: { text: '', click: () => calendarRef.current?.getApi().next() },
+              today: { text: '오늘', click: () => calendarRef.current?.getApi().today() }
             }}
             events={[...serverEvents, ...localEvents].sort((a, b) => eventPriority(b) - eventPriority(a))}
-            selectable={true}
-            select={handleSelect}
+            eventContent={(arg) => {
+              const { type, image } = arg.event.extendedProps;
+              if (type === 'STICKER' && image) {
+                const img = document.createElement('img');
+                img.src = image;
+                img.style.width = '40px';
+                img.style.height = '40px';
+                img.style.objectFit = 'contain';
+                return { domNodes: [img] };
+              }
+              return { html: `<div>${arg.event.title}</div>` };
+            }}
             eventClick={handleEventClick}
-            ref={calendarRef}
-            height="auto"
+            select={handleSelect}
+            selectable={true}
+            editable={true}
+            droppable={true}
+            eventReceive={handleEventReceive}
             datesSet={(arg) => {
               const currentDate = arg.view.currentStart;
               const yyyy = currentDate.getFullYear();
@@ -474,39 +347,20 @@ const CalendarView = () => {
                 setCurrentMonthStr(monthStr);
               }
             }}
+            ref={calendarRef}
             displayEventTime={false}
-            eventTimeFormat={false}
-            eventDisplay="block"
           />
-
-          <CalendarModal isOpen={isModalOpen} onClose={handleCloseModal} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent}/>
-          <CalendarDetailModal
-            isOpen={isDetailModalOpen}
-            onClose={handleCloseDetailModal}
-            eventInfo={selectedEvent}
-            onEdit={handleEditEvent}
-            onDelete={handleDeleteEvent}
-            onSwitchToEdit={handleSwitchToEdit}
-          />
-          <CalendarEditModal
-            isOpen={isEditModalOpen}
-            onClose={handleCloseEditModal}
-            eventInfo={selectedEvent}
-            onSave={handleSaveEdit}
-            onCancel={() => {
-              setIsEditModalOpen(false);
-              setIsDetailModalOpen(true);
-            }}
-          />
+          <CalendarModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent} />
+          <CalendarDetailModal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} eventInfo={selectedEvent} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
+          <CalendarEditModal isOpen={isEditModalOpen} onClose={handleCloseEditModal} eventInfo={selectedEvent} onSave={handleSaveEdit} />
         </div>
-
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo selectedDate={selectedDate} onTodoChange={() => setLocalTodoTrigger(Date.now())} />
         </div>
       </div>
+      <FooterBag />
     </div>
   );
 };
 
 export default CalendarView;
-
