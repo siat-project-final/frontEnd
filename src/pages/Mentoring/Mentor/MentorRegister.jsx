@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
-import Footer from '../../../components/common/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MentorRegisterCard from './MentorRegisterCard';
 import { getMentorReservations, acceptMentoring, completeMentoring } from '../../../api/mentoring';
@@ -14,27 +13,27 @@ const MentorRegister = () => {
     const memberId = localStorage.getItem('memberId');
     const mentorId = localStorage.getItem('mentorId'); 
 
-    console.log('🏁 MentorRegister 컴포넌트 마운트');
-    console.log('🆔 memberId (로그인된 사용자):', memberId);
-    console.log('📍 location.state:', location.state);
+    console.log(' MentorRegister 컴포넌트 마운트');
+    console.log(' memberId (로그인된 사용자):', memberId);
+    console.log(' location.state:', location.state);
 
     useEffect(() => {
         if (!memberId) return;
 
         const fetchReservations = async () => {
             try {
-                console.log('🔍 예약 목록 조회 시작, mentorId:', memberId);
+                console.log(' 예약 목록 조회 시작, mentorId:', memberId);
                 const response = await getMentorReservations(mentorId);
-                console.log('📡 API 응답 전체:', response.data);
+                console.log(' API 응답 전체:', response.data);
                 if (response.data.length === 0) {
-                    console.warn('⚠️ 해당 mentorId로 조회된 예약이 없습니다.');
+                    console.warn(' 해당 mentorId로 조회된 예약이 없습니다.');
                 }
                 response.data.forEach((res, idx) => {
-                    console.log(`📦 예약 ${idx + 1}:`, res);
+                    console.log(`예약 ${idx + 1}:`, res);
                 });
                 setReservations(response.data);
             } catch (error) {
-                console.error('❌ 멘토 예약 조회 실패:', error);
+                console.error(' 멘토 예약 조회 실패:', error);
             }
         };
 
@@ -54,11 +53,11 @@ const MentorRegister = () => {
     }, [location.state, navigate, location.pathname]);
 
     const handleCancel = (reservationId) => {
-        console.log('✅ 예약 취소 로직 생략됨, reservationId:', reservationId);
+        console.log(' 예약 취소 로직 생략됨, reservationId:', reservationId);
     };
 
     const handleReject = (reservationId) => {
-        console.log('✅ 예약 거절 로직 생략됨, reservationId:', reservationId);
+        console.log(' 예약 거절 로직 생략됨, reservationId:', reservationId);
     };
 
     const handleAccept = async (reservationId) => {
@@ -83,7 +82,7 @@ const MentorRegister = () => {
             const mentorId = localStorage.getItem('memberId');
             const menteeId = reservation.menteeId;
 
-            console.log('✅ 멘토링 완료 요청 정보:', { reservationId, mentorId, menteeId });
+            console.log(' 멘토링 완료 요청 정보:', { reservationId, mentorId, menteeId });
 
             if (!mentorId || !menteeId) {
                 alert('멘토링 완료를 위한 필수 정보가 누락되었습니다.');
@@ -138,7 +137,6 @@ const MentorRegister = () => {
                     {/* 사이드 컴포넌트 영역 */}
                 </div>
             </div>
-            <Footer />
         </>
     );
 };
