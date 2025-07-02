@@ -29,6 +29,40 @@ h6 {
   font-family: var(--heading-font);
 }
 
+/* Container Flex Layout
+------------------------------*/
+.container-flex {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.container-flex .main {
+  flex: 1;
+  padding: 0;
+  margin-left: 0;
+}
+
+/* Prewrite Main Layout
+------------------------------*/
+.prewrite-main {
+  flex: 1;
+  padding: 40px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.prewrite-main h1 {
+  margin-bottom: 16px;
+  color: var(--heading-color);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.prewrite-main p {
+  line-height: 1.6;
+}
+
 /* PHP Email Form Messages
 ------------------------------*/
 .php-email-form {
