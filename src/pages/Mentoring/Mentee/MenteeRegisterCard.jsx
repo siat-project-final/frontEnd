@@ -1,23 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { hideMentoringReservation } from '../../../api/mentoring'; // ✅ 서버 연동 API 불러오기
 
 const MenteeRegisterCard = ({
-                              reservationId,
-                              date,
-                              mentorName,
-                              status,
-                              mentorImageUrl,
-                              subject,
-                              onCancel,
-                            }) => {
+  reservationId,
+  date,
+  mentorName,
+  status,
+  mentorImageUrl,
+  subject,
+  onCancel,
+}) => {
   const navigate = useNavigate();
+  const [isClosed, setIsClosed] = useState(false); // ✅ UI 제거용 상태
 
-  // ✅ 상태 영어 → 한글 변환
+  const handleClose = async () => {
+    try {
+      await hideMentoringReservation(reservationId); // ✅ 서버에 닫기 요청
+      setIsClosed(true); // UI에서 제거
+    } catch (err) {
+      console.error('닫기 실패:', err);
+      alert('예약을 닫는 데 실패했습니다.');
+    }
+  };
+
+  if (isClosed) return null; // 닫힌 경우 렌더링 안 함
+
   const statusToKorean = {
     PENDING: '예약 대기',
     ACCEPTED: '예약 확정',
     CANCELLED: '예약 취소',
     REJECTED: '예약 거절',
+    COMPLETED: '멘토링 완료',
   };
 
   const isConfirmed = status === 'PENDING';
@@ -29,9 +43,7 @@ const MenteeRegisterCard = ({
   ];
 
   const getMentorImage = () => {
-    if (mentorImageUrl && mentorImageUrl !== '') {
-      return mentorImageUrl;
-    }
+    if (mentorImageUrl && mentorImageUrl !== '') return mentorImageUrl;
     const nameHash = mentorName ? mentorName.charCodeAt(0) % 3 : 0;
     return defaultMentorImages[nameHash];
   };
@@ -51,14 +63,15 @@ const MenteeRegisterCard = ({
         mentor: {
           name: mentorName,
           mentor_image_url: mentorImageUrl,
-          position: '직함', // ❗ position과 company는 예약 목록에서 내려줘야 함
+          position: '직함',
           company: '회사명',
         },
-        selectedDate: date.split(' ')[0], // 예약한 날짜만 전달
-        mode: 'readOnly', // 캘린더 잠금용
+        selectedDate: date.split(' ')[0],
+        mode: 'readOnly',
       },
     });
   };
+
   const handleCancel = () => {
     onCancel();
     navigate('/register/cancel', {
@@ -68,7 +81,10 @@ const MenteeRegisterCard = ({
       },
     });
   };
-  
+
+  const showCancelBtn = status === 'PENDING' || status === 'ACCEPTED';
+  const showCloseBtn = status === 'REJECTED' || status === 'CANCELLED' || status === 'COMPLETED';
+
   return (
     <div
       style={{
@@ -119,49 +135,67 @@ const MenteeRegisterCard = ({
           <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
           {status === 'ACCEPTED' && (
-            <a
-              href={handleProfileClick}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleProfileClick}
               title="프로필 보기"
               style={{
                 fontSize: '14px',
                 color: '#0ea5e9',
-                textDecoration: 'none',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textDecoration: 'underline',
               }}
             >
               🔗
-            </a>
+            </button>
           )}
         </div>
 
-        {/* 대화 주제 표시 */}
         <div style={{ marginTop: '8px', fontSize: '14px', color: '#475569' }}>
           🗣 <strong>{subject}</strong>
         </div>
       </div>
 
-      
-      <button
-        onClick={handleCancel}
-        disabled={!(status === 'PENDING' || status === 'ACCEPTED')}
-        style={{
-          backgroundColor: '#84cc16',
-          color: 'white',
-          fontWeight: 600,
-          border: 'none',
-          borderRadius: '24px',
-          padding: '10px 20px',
-          fontSize: '14px',
-          cursor: (status === 'PENDING' || status === 'ACCEPTED') ? 'pointer' : 'not-allowed',
-          opacity: (status === 'PENDING' || status === 'ACCEPTED') ? 1 : 0.4,
-          whiteSpace: 'nowrap',
-          boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
-        }}
-      >
-        예약 취소
-      </button>
+      {showCancelBtn && (
+        <button
+          onClick={handleCancel}
+          style={{
+            backgroundColor: '#84cc16',
+            color: 'white',
+            fontWeight: 600,
+            border: 'none',
+            borderRadius: '24px',
+            padding: '10px 20px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(95,207,128,0.08)',
+          }}
+        >
+          예약 취소
+        </button>
+      )}
 
+      {showCloseBtn && (
+        <button
+          onClick={handleClose}
+          style={{
+            backgroundColor: '#94a3b8',
+            color: 'white',
+            fontWeight: 600,
+            border: 'none',
+            borderRadius: '24px',
+            padding: '10px 20px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(100,116,139,0.1)',
+          }}
+        >
+          닫기
+        </button>
+      )}
     </div>
   );
 };

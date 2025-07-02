@@ -1,4 +1,5 @@
-import React, { useLayoutEffect } from 'react';
+/* src/App.js */
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,34 +11,29 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import './assets/css/main.css';
+import './assets/css/main.css';      
+import './assets/css/dark.css';       
 
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import PrivateRoute from './components/PrivateRoute';
 import { isAuthenticated } from './utils/auth';
 
+/* (생략) — import 들은 기존 그대로 — */
 import CalenderView from './components/calendar/CalenderView';
 import MyPageMain from './pages/MyPage/MyPageMain';
 import ChallengeHistory from './pages/MyPage/ChallengeHistory';
 import MentoringHistory from './pages/MyPage/MentoringHistory';
 import ReviewHistory from './pages/MyPage/ReviewHistory';
 import Statistics from './pages/MyPage/Statistics';
-
-// import Pricing from './pages/Pricing/Pricing';
-// import Starter from './pages/Starter/Starter';
-// import Contact from './pages/Contact/Contact';
-
-// import Todo from './components/common/Todo';
+import Badges from './pages/MyPage/Badges';
 import MentorAlarm from './pages/Events/MentorAlarm';
 import MenteeAlarm from './pages/Events/MenteeAlarm';
-
 import StudyLogPage from './pages/study/StudyLogPage';
 import WriteStudyLogPage from './pages/study/WriteStudyLogPage';
 import StudyLogDetailPage from './pages/study/StudyLogDetailPage';
 import StudyLogPublic from './pages/study/StudyLogPublic';
 import StudyLogPublicDetail from './pages/study/StudyLogPublicDetail';
-
 import MentoringList from './pages/Mentoring/common/MentoringList';
 import OtherMentoringDetail from './pages/Mentoring/Mentor/OtherMentoringDetail';
 import MentoringApply from './pages/Mentoring/Mentee/MentoringApply';
@@ -48,7 +44,6 @@ import MentorRegisterCard from './pages/Mentoring/Mentor/MentorRegisterCard';
 import MentoringDetail from './pages/Mentoring/Mentee/MentoringDetail';
 import MenteeRegister from './pages/Mentoring/Mentee/MenteeRegister';
 import MenteeRegisterCard from './pages/Mentoring/Mentee/MenteeRegisterCard';
-
 import ChallengeInfo from './pages/Challenge/Daily/ChallengeInfo';
 import ChallengeSolve from './pages/Challenge/Daily/ChallengeSolve';
 import ChallengeResult from './pages/Challenge/Daily/ChallengeResult';
@@ -57,34 +52,60 @@ import ReviewMain from './pages/Challenge/Review/ReviewMain';
 import ReviewSolve from './pages/Challenge/Review/ReviewSolve';
 import ChallengeMain from './pages/Challenge/ChallengeMain';
 import MyProgress from './pages/Challenge/Daily/MyProgress';
+import ShopPage from './pages/Shop/ShopPage';
+import InventoryPage from './pages/Shop/InventoryPage'; 
 // import DayChallengeList from './pages/Challenge/DayChallengeList';
 // import CourseDetail from './pages/Challenge/CourseDetail';
 
-function AppLayout() {
-  const { pathname } = useLocation();
-  // const hideTodo = pathname === '/login' || pathname === '/signup';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
+function AppLayout({ isDarkMode, toggleTheme }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', minHeight: '100vh' }}>
-      {/* 메인 컨텐츠 영역 */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div className={isDarkMode ? 'dark-mode' : ''} style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* 전역 다크모드 토글 버튼 — 원하는 위치로 옮겨도 상관없음 */}
+      <button
+        onClick={toggleTheme}
+        style={{
+          position: 'fixed',
+          right: '20px',
+          bottom: '20px',
+          zIndex: 2000,
+          backgroundColor: 'rgba(100, 100, 100, 0.6)', // 연한 회색 + 투명도
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '8px',
+          padding: '8px 16px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          backdropFilter: 'blur(4px)', // 배경 흐림 효과
+        }}
+        className="btn btn-success"
+      >
+        {isDarkMode ? '☀️' : '🌙'}
+      </button>
+
+      {/* 메인 컨텐츠 */}
+      <div style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={isAuthenticated() ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
-          {/* Home 및 기타 공통 페이지 */}
+          {/* Home */}
           <Route path="/home" element={<PrivateRoute><CalenderView /></PrivateRoute>} />
-          {/* <Route path="/pricing" element={<PrivateRoute><Pricing /></PrivateRoute>} />
-          <Route path="/starter" element={<PrivateRoute><Starter /></PrivateRoute>} />
-          <Route path="/contact" element={<PrivateRoute><Contact /></PrivateRoute>} /> */}
 
-          {/* 알람 */}
+          {/* Alarm */}
           <Route path="/mentor-alarm" element={<PrivateRoute><MentorAlarm /></PrivateRoute>} />
           <Route path="/mentee-alarm" element={<PrivateRoute><MenteeAlarm /></PrivateRoute>} />
 
-          {/* 마이페이지 */}
+          {/* MyPage */}
           <Route path="/mypage" element={<PrivateRoute><MyPageMain /></PrivateRoute>} />
+          <Route path="/mypage/badges" element={<PrivateRoute><Badges /></PrivateRoute>} />
           <Route path="/mypage/challenge-history" element={<PrivateRoute><ChallengeHistory /></PrivateRoute>} />
           <Route path="/mypage/mentoring-history" element={<PrivateRoute><MentoringHistory /></PrivateRoute>} />
           <Route path="/mypage/review-history" element={<PrivateRoute><ReviewHistory /></PrivateRoute>} />
@@ -105,8 +126,6 @@ function AppLayout() {
           <Route path="/challenge/ranking" element={<PrivateRoute><ChallengeRanking /></PrivateRoute>} />
           <Route path="/challenge/review" element={<PrivateRoute><ReviewMain /></PrivateRoute>} />
           <Route path="/challenge/review/solve" element={<PrivateRoute><ReviewSolve /></PrivateRoute>} />
-          {/* <Route path="/challenge/list" element={<PrivateRoute><DayChallengeList /></PrivateRoute>} />
-          <Route path="/challenge/detail" element={<PrivateRoute><CourseDetail /></PrivateRoute>} /> */}
           <Route path="/challenge/daily/progress" element={<PrivateRoute><MyProgress /></PrivateRoute>} />
 
           {/* Mentoring */}
@@ -122,38 +141,42 @@ function AppLayout() {
           <Route path="/mentoring/mentee/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
           <Route path="/mentoring/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
           <Route path="/mentoring/mentee/register/card" element={<PrivateRoute><MenteeRegisterCard /></PrivateRoute>} />
+          <Route path="/shop" element={<PrivateRoute><ShopPage /></PrivateRoute>} />
+  <Route path="/inventory" element={<PrivateRoute><InventoryPage /></PrivateRoute>} />
         </Routes>
       </div>
-
-      {/* 우측 Todo 사이드바
-      {!hideTodo && isAuthenticated() && (
-        <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
-          <Todo />
-        </div>
-      )} */}
     </div>
   );
 }
-
 function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   useLayoutEffect(() => {
     AOS.init();
     const preloader = document.getElementById('preloader');
     if (preloader) preloader.style.display = 'none';
-     // ✅ 테스트용 memberId 강제 주입
-    sessionStorage.setItem('memberId', '1');  // 또는 실제 테스트 ID
-    // 🔍 확인용 로그
-  console.log('✅ sessionStorage 설정 완료:', sessionStorage.getItem('memberId'));
+    sessionStorage.setItem('memberId', '1');
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    console.log('🌑 isDarkMode:', isDarkMode);
+    console.log('🎨 body에 dark-mode 클래스 있음?', document.body.classList.contains('dark-mode'));
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    console.log('🟢 버튼 클릭됨');
+    setIsDarkMode((prev) => !prev);
+  };
 
   return (
     <Router>
-      <AppLayout />
-      <a
-        href="#"
-        id="scroll-top"
-        className="scroll-top d-flex align-items-center justify-content-center"
-      >
+      <ScrollToTop />
+
+
+      <AppLayout isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+
+      <a href="#" id="scroll-top" className="scroll-top d-flex align-items-center justify-content-center">
         <i className="bi bi-arrow-up-short"></i>
       </a>
       <div id="preloader"></div>
@@ -161,6 +184,5 @@ function App() {
   );
 }
 
-
-
 export default App;
+

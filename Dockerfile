@@ -1,41 +1,7 @@
-# # 베이스 이미지 pull
-# FROM node:20
-
-# # jar 위치 지정
-# WORKDIR /front
-
-# # 카피
-# COPY package*.json ./
-# RUN npm install
-
-# COPY . .
-# RUN npm run build
-
-# EXPOSE 3000
-# # 컨테이너 실행 환경에서 앱 실행
-# CMD ["npm", "start"]
-
-# # git-action dockerfile
-# FROM node:20
-# WORKDIR /front
-# COPY package*.json ./
-# RUN npm install
-# COPY . .
-# RUN npm run build
-
-# #서빙을 위한 node serve 설치
-# RUN npm install -g serve
-# EXPOSE 3000
-
-# # 컨테이너 실행 환경에서 앱 실행
-# CMD ["serve", "-s", "build", "-l", "3000"]
-
-# aws dockerfile
 FROM node:18
 WORKDIR /frontEnd
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-
 

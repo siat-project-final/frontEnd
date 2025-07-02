@@ -170,7 +170,6 @@ const WriteStudyLogPage = () => {
           <Todo />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

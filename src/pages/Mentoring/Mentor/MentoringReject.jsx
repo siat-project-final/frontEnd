@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
-import Footer from '../../../components/common/Footer';
 import ConfirmCancelModal from '../../../components/common/ConfirmCancelModal';
 import Todo from '../../../components/common/Todo'; 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -190,7 +189,6 @@ const MentoringReject = () => {
           <Todo />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
