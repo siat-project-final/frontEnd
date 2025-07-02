@@ -1,53 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
-import './MyPageMain.css';
 import Todo from '../../components/common/Todo';
+import './MyPageMain.css';
 
 import { getUserInfo, updateUserInfo } from '../../api/user';
 
-
-// ✅ axios 함수 import (주석 처리)
-// import { getUserInfo } from '../../api/user';
+// 학습일지 보상 상수
+const DIARY_XP    = 10;
+const DIARY_POINT = 10;
 
 const MyPageMain = () => {
   const [user, setUser] = useState(null);
   const memberId = localStorage.getItem('memberId');
 
   const fetchData = async () => {
-      getUserInfo(memberId)
-      .then(res => setUser(res.data))
-      .catch(err => console.error('회원 정보 불러오기 실패:', err));
-
-  }
+    try {
+      const res = await getUserInfo(memberId);
+      const u = res.data;
+      // 챌린지/학습 보상 합산
+      u.exp          = (u.exp || 0) + DIARY_XP;
+      u.usablePoints = (u.usablePoints || 0) + DIARY_POINT;
+      setUser(u);
+    } catch (err) {
+      console.error('회원 정보 불러오기 실패:', err);
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, [memberId]);
 
-  const handleSubmit = async (e) => {
-    console.log('e.target', e.target);
-    
-    e.preventDefault(); // 기본 제출 방지
-
+  const handleSubmit = async e => {
+    e.preventDefault();
     const updatedUser = {
       id: e.target.id.value,
       password: e.target.password.value,
       memberName: e.target.name.value,
       nickname: e.target.nickname.value,
       phoneNumber: e.target.phone.value,
-      email: e.target.email.value
-      // role/status는 수정 불가이므로 제외
+      email: e.target.email.value,
     };
-    
-    await updateUserInfo(memberId, updatedUser)
-        .then(res => {
-          alert('회원 정보가 수정되었습니다.');
-          fetchData();
-        })
-        .catch(err => console.error('회원 정보 수정 실패:', err));
+    try {
+      await updateUserInfo(memberId, updatedUser);
+      alert('회원 정보가 수정되었습니다.');
+      fetchData();
+    } catch (err) {
+      console.error('회원 정보 수정 실패:', err);
+    }
   };
 
   if (!user) return <div>로딩 중...</div>;
@@ -58,7 +59,6 @@ const MyPageMain = () => {
       <div className="container-flex">
         <Sidebar menuType="mypage" />
         <main className="main">
-          {/* 사용자 정보 영역 */}
           <section className="profile-section" data-aos="fade-up">
             <div className="profile-content">
               <div className="profile-left">
@@ -69,7 +69,9 @@ const MyPageMain = () => {
                 <div className="profile-stats">
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
-                    <p className="stat-value">{user?.usablePoints?.toLocaleString()}</p>
+                    <p className="stat-value">
+                      {user.usablePoints.toLocaleString()}
+                    </p>
                   </div>
                   <div className="stat-item">
                     <div className="level-info">
@@ -78,8 +80,10 @@ const MyPageMain = () => {
                       <div className="progress-bar">
                         <div
                           className="progress-fill"
-                          style={{ width: `${(user.totalXp / user.totalXp) * 100}%` }}
-                        ></div>
+                          style={{
+                            width: `${(user.exp / user.point) * 100}%`,
+                          }}
+                        />
                       </div>
                       <p className="xp-value">
                         {user.exp} / {user.point}
@@ -98,23 +102,41 @@ const MyPageMain = () => {
               <form className="profile-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="id">ID</label>
-                  <input id="id" type="text" defaultValue={user.id} readOnly/>
+                  <input id="id" type="text" defaultValue={user.id} readOnly />
                 </div>
                 <div className="form-group">
                   <label htmlFor="password">PASSWORD</label>
-                  <input id="password" type="password" defaultValue={user.password} />
+                  <input
+                    id="password"
+                    type="password"
+                    defaultValue={user.password}
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="name">NAME</label>
-                  <input id="name" type="text" defaultValue={user.memberName} readOnly />
+                  <input
+                    id="name"
+                    type="text"
+                    defaultValue={user.memberName}
+                    readOnly
+                  />
                 </div>
-                <div className="form-group">  
+                <div className="form-group">
                   <label htmlFor="nickname">NICKNAME</label>
-                  <input id="nickname" type="text" defaultValue={user.nickname} />
+                  <input
+                    id="nickname"
+                    type="text"
+                    defaultValue={user.nickname}
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="phone">PHONE</label>
-                  <input id="phone" type="text" defaultValue={user.phoneNumber} readOnly />
+                  <input
+                    id="phone"
+                    type="text"
+                    defaultValue={user.phoneNumber}
+                    readOnly
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="email">EMAIL</label>
@@ -122,7 +144,12 @@ const MyPageMain = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="status">STATUS (수정불가)</label>
-                  <input id="status" type="text" defaultValue={user.role} readOnly />
+                  <input
+                    id="status"
+                    type="text"
+                    defaultValue={user.role}
+                    readOnly
+                  />
                 </div>
                 <button className="submit-btn" type="submit">
                   수정하기
@@ -131,7 +158,6 @@ const MyPageMain = () => {
             </div>
           </section>
         </main>
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>

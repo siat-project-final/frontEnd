@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -7,7 +7,10 @@ import '../../../App.css';
 
 const ChallengeResult = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // 추가
+  const location = useLocation();
+  // POST submit 에서 navigate(..., { state }) 로 넘긴 xp, point
+  const { xp = 0, point = 0 } = location.state || {};
+
   const query = new URLSearchParams(location.search);
   const dateParam = query.get('date');
 
@@ -20,13 +23,14 @@ const ChallengeResult = () => {
       const today = new Date().toISOString().split('T')[0];
       const date = dateParam || today;
 
-      getSubmissionResult(memberId, date) // ✅ 날짜 전달
+      getSubmissionResult(memberId, date)
         .then(res => {
           const processed = (res.data || []).map(item => {
-            // 옵션 파싱 로직 그대로 유지
             let parsedOptions = [];
             try {
-              const once = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
+              const once = typeof item.options === 'string'
+                ? JSON.parse(item.options)
+                : item.options;
               parsedOptions = Array.isArray(once)
                 ? once
                 : typeof once === 'string'
@@ -98,7 +102,7 @@ const ChallengeResult = () => {
                   {item.type === 'multiple' && item.options && (
                     <ul className="list-group mb-2">
                       {item.options.map((opt, idx) => {
-                        const optionNumber = opt.split('.')[0].trim(); // 🔧 숫자만 추출: "2. String" → "2"
+                        const optionNumber = opt.split('.')[0].trim();
 
                         return (
                           <li
@@ -118,7 +122,7 @@ const ChallengeResult = () => {
                             {optionNumber === item.submitAnswer &&
                               optionNumber !== item.correctAnswer && (
                                 <span className="badge bg-danger">내 답안</span>
-                            )}
+                              )}
                           </li>
                         );
                       })}
@@ -138,12 +142,20 @@ const ChallengeResult = () => {
                 </div>
               ))}
 
-              <div className="text-end mt-4" style={{ fontWeight: 'bold', fontSize: '18px' }}>
-                총점: {totalScore}점
+              <div
+                className="text-end mt-4"
+                style={{ fontWeight: 'bold', fontSize: '18px' }}
+              >
+                총점: {totalScore}점&nbsp;&nbsp;&nbsp;
+                획득 XP: {xp}XP&nbsp;&nbsp;&nbsp;
+                획득 Point: {point}점
               </div>
 
               <div className="text-center mt-4">
-                <button className="btn btn-dark" onClick={() => navigate('/challenge/review')}>
+                <button
+                  className="btn btn-dark"
+                  onClick={() => navigate('/challenge/review')}
+                >
                   종합 챌린지로 이동
                 </button>
               </div>
