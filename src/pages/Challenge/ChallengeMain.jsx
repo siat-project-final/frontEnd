@@ -52,16 +52,17 @@ const ChallengeMain = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="container" style={{ paddingTop: '20px', paddingBottom: '0px' }}>
-            <div className="d-flex align-items-center" style={{ marginBottom: '0px' }}>
+        <div className="container py-5">
+            <div className="d-flex justify-content-between align-items-center mb-4">
               <h1
                 className="h3 fw-bold mb-0"
-                style={{ marginLeft: '16px', color: '#84cc16' }}
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
               >
                 챌린지
               </h1>
             </div>
           </div>
+
 
           <section className="section">
             <div className="container" style={{ paddingTop: '10px', paddingBottom: '40px' }}>
@@ -130,6 +131,8 @@ const ChallengeMain = () => {
                   </div>
                 </div>
               </div>
+              
+
 
               {/* 랭킹 */}
               <div className="row mt-5 justify-content-center">

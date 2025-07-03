@@ -46,6 +46,8 @@ const CalendarView = () => {
     기타: '#D7DBDD',
   };
 
+  const clickTimer = useRef(null);
+
   function getTodayString() {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -241,14 +243,19 @@ const CalendarView = () => {
     }
   };
 
-  const handleSelect = (selectInfo) => {
-    const { startStr, endStr, allDay } = selectInfo;
-    const endDate = new Date(endStr);
-    if (allDay) endDate.setDate(endDate.getDate() - 1);
-    const inclusiveEndStr = endDate.toISOString().split('T')[0];
-    setSelectionInfo({ start: startStr, end: inclusiveEndStr });
-    setIsModalOpen(true);
-    selectInfo.view.calendar.unselect();
+  const handleDateClick = (arg) => {
+    const dateStr = arg.dateStr;
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = null;
+      setSelectionInfo({ start: dateStr, end: dateStr });
+      setIsModalOpen(true);
+    } else {
+      clickTimer.current = setTimeout(() => {
+        setSelectedDate(dateStr);
+        clickTimer.current = null;
+      }, 250);
+    }
   };
 
   const handleEventReceive = (info) => {
@@ -482,8 +489,7 @@ const CalendarView = () => {
               }
               return { html: `<div>${arg.event.title}</div>` };
             }}
-            selectable
-            select={handleSelect}
+            dateClick={handleDateClick}
             editable
             droppable
             eventReceive={handleEventReceive}
