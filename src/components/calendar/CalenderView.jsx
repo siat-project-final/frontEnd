@@ -9,11 +9,10 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import instance from '../../api/axios';
 import { getMyStudyLogs } from '../../api/studyLog';
 import { 
-  getSchedulesLocal, 
-  addScheduleLocal, 
-  updateScheduleLocal, 
-  deleteScheduleLocal,
-  getLocalSchedules,
+  getSchedules,
+  addSchedule,
+  updateSchedule,
+  deleteSchedule
 } from '../../api/schedule';
 import Header from '../common/Header';
 import Todo from '../common/Todo';
@@ -162,14 +161,13 @@ const CalendarView = () => {
     try {
       if (!memberId) return;
       
-      // 월의 시작일과 종료일 계산
       const [year, month] = monthStr.split('-');
       const startDate = `${monthStr}-01`;
       const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate();
       const endDate = `${monthStr}-${lastDay}`;
       
-      const res = await getSchedulesLocal(memberId, startDate, endDate);
-      
+      const res = await getSchedules(memberId, startDate, endDate);
+      console.log('일정 응답 데이터:', res.data);
       const scheduleEvents = res.data.map(schedule => ({
         id: schedule.scheduleId,
         title: schedule.title,
@@ -185,7 +183,7 @@ const CalendarView = () => {
           scheduleId: schedule.scheduleId
         }
       }));
-      
+      console.log('변환된 일정', scheduleEvents);
       setScheduleEvents(scheduleEvents);
     } catch (error) {
       console.error('일정 데이터 조회 실패:', error);
@@ -233,6 +231,7 @@ const CalendarView = () => {
     setSelectionInfo(null);
   };
 
+
   const handleAddEvent = async (eventData) => {
     try {
       const scheduleData = {
@@ -244,32 +243,24 @@ const CalendarView = () => {
         isAllDay: eventData.allDay,
         colorCode: eventData.backgroundColor
       };
-
-      const res = await addScheduleLocal(scheduleData);
-      
-      // 새로 추가된 일정을 이벤트로 변환
-      const newEvent = {
-        id: res.data.scheduleId,
-        title: res.data.title,
-        start: res.data.startDatetime,
-        end: res.data.endDatetime,
-        allDay: res.data.isAllDay,
-        backgroundColor: res.data.colorCode,
-        borderColor: res.data.colorCode,
-        textColor: '#000',
-        extendedProps: { 
-          type: 'SCHEDULE',
-          content: res.data.content,
-          scheduleId: res.data.scheduleId
-        }
-      };
-
-      setScheduleEvents(prev => [...prev, newEvent]);
+  
+      const res = await addSchedule(scheduleData);
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
+  
+      await fetchScheduleData(monthStr);
+  
+      setIsModalOpen(false);
+  
     } catch (error) {
       console.error('일정 추가 실패:', error);
       alert('일정 추가에 실패했습니다.');
     }
   };
+  
 
   const handleEventClick = (clickInfo) => {
     const { type } = clickInfo.event.extendedProps;
@@ -285,6 +276,9 @@ const CalendarView = () => {
     }
   };
 
+
+
+
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
     setSelectedEvent(null);
@@ -294,17 +288,25 @@ const CalendarView = () => {
     if (selectedEvent) {
       try {
         const scheduleId = selectedEvent.extendedProps.scheduleId;
-        await deleteScheduleLocal(scheduleId);
-        
-        setScheduleEvents(prev => prev.filter(event => event.id !== selectedEvent.id));
+        await deleteSchedule(scheduleId);
+  
+        const calendarApi = calendarRef.current?.getApi();
+        const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+        const yyyy = currentDate.getFullYear();
+        const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const monthStr = `${yyyy}-${mm}`;
+  
+        await fetchScheduleData(monthStr);
+  
         handleCloseDetailModal();
+        
       } catch (error) {
         console.error('일정 삭제 실패:', error);
         alert('일정 삭제에 실패했습니다.');
       }
     }
   };
-
+  
   const handleEditEvent = () => {
     setIsDetailModalOpen(false);
     setIsEditModalOpen(true);
@@ -338,48 +340,25 @@ const CalendarView = () => {
         colorCode: updatedEventData.backgroundColor
       };
   
-      // 🔍 디버깅 로그
-      console.log('수정할 일정 ID:', scheduleId);
-      console.log('전달할 updateData:', updateData);
-      console.log('현재 localSchedules:', getLocalSchedules());
+      await updateSchedule(scheduleId, updateData);
   
-      const res = await updateScheduleLocal(scheduleId, updateData);
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
   
-      const updatedEvent = {
-        id: selectedEvent.id, // 반드시 유지
-        title: res.data.title,
-        start: res.data.startDatetime,
-        end: res.data.endDatetime,
-        allDay: res.data.isAllDay,
-        backgroundColor: res.data.colorCode,
-        borderColor: res.data.colorCode,
-        textColor: '#000',
-        extendedProps: {
-          type: 'SCHEDULE',
-          content: res.data.content,
-          scheduleId: res.data.scheduleId
-        }
-      };
-  
-      console.log('업데이트 완료된 일정:', updatedEvent);
-      console.log('업데이트 전 전체 일정:', scheduleEvents);
-      console.log('비교 기준 selectedEvent.id:', selectedEvent.id);
-  
-      // 업데이트 반영
-      setScheduleEvents(prev =>
-        prev.map(event => (event.id === selectedEvent.id ? updatedEvent : event))
-      );
+      await fetchScheduleData(monthStr);
   
       handleCloseEditModal();
+      
     } catch (error) {
       console.error('일정 수정 실패:', error);
       alert('일정 수정에 실패했습니다.');
     }
   };
   
-  
 
-  // 우선순위 함수 추가
   const eventPriority = (event) => {
     const type = event.extendedProps?.type;
     if (type === 'SUBJECT') return 1;
