@@ -71,7 +71,7 @@ const Todo = ({ selectedDate, onTodoChange }) => {
   const toggleTodo = async (id, currentStatus) => {
     try {
       // API 호출로 투두 상태 업데이트
-      await instance.patch(`/todos/${id}`, {
+      await instance.put(`/todos/${id}`, {
         checked: !currentStatus // 현재 상태의 반대로 보냄
       });
 
