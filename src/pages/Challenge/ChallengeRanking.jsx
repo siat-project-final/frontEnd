@@ -27,19 +27,27 @@ const ChallengeRanking = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="page-title" data-aos="fade">
-            <div className="heading text-center">
-              <h2>일일 챌린지 랭킹</h2>
-              <p className="text-muted" style={{ fontSize: '14px' }}>
-                오늘 날짜 기준의 랭킹입니다.
-              </p>
+          <div className="container py-5">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+              >
+                일일 챌린지 랭킹
+              </h1>
+              
             </div>
+            <p className="text-muted" style={{ fontSize: '20px', marginLeft: '16px', marginTop: '10px' }}>
+             오늘 날짜 기준의 랭킹입니다.
+            </p>
           </div>
+
 
           <section className="section">
             <div className="container" style={{ padding: '40px 20px' }}>
               <table className="table table-bordered text-center">
-                <thead className="table-dark">
+                {/* <thead className="table-dark"> */}
+                <thead style={{ backgroundColor: '#BAFFC9', color: '#000' }}>
                   <tr>
                     <th>순위</th>
                     <th>이름</th>

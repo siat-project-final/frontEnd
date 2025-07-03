@@ -92,11 +92,17 @@ const ChallengeSolve = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="page-title" data-aos="fade">
-            <div className="heading text-center">
-              <h2>일일 챌린지</h2>
+        <div className="container py-5">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h1
+                className="h3 fw-bold mb-0"
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+              >
+                일일챌린지
+              </h1>
             </div>
           </div>
+
 
           <section className="section">
             <div
