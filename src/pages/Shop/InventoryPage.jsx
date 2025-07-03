@@ -86,7 +86,7 @@ export default function InventoryPage() {
 
   const renderInventory = () => (
     <div className="mb-5">
-      <h4 className="fw-bold mb-3">🧸 내가 구매한 스티커</h4>
+      <h4 className="fw-bold mb-3">⭐ 내가 구매한 스티커</h4>
       <div className="row g-4">
         {inventory.map((sticker) => {
           const active = selectedId === sticker.id;
@@ -128,9 +128,11 @@ export default function InventoryPage() {
   return (
     <div>
       <Header />
-      <div style={{ display: 'flex' }}>
-        <Sidebar menuType="inventory" />
-        <main style={{ flex: 1 }}>
+      <div className="page-layout">
+        {/* 🔥 강제로 shop 메뉴를 표시하도록 지정 */}
+        <Sidebar menuType="shop" />
+
+        <main className="content">
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div className="d-flex align-items-center gap-2">
@@ -183,6 +185,15 @@ export default function InventoryPage() {
       </div>
 
       <style>{`
+        .page-layout {
+          display: flex;
+          min-height: 100vh;
+        }
+        .content {
+          flex: 1;
+          padding: 24px;
+          background-color: #fff;
+        }
         .sticker-card { overflow: visible; }
         .hover-overlay {
           position: absolute; top: 0; left: 0; width: 100%; height: 100%;

@@ -65,3 +65,12 @@ export const removeFromBag = (memberId, slotIndex) =>
     params: { memberId },
     withCredentials: true,
   });
+
+  // 8. 가방 전체 저장
+export const saveBagItemsToServer = (memberId, bagItems) =>
+  axios.post(`${baseURL}/shop/bag`, {
+    memberId,
+    bagItems, // 배열: [{ id, name, image }, ...]
+  }, {
+    withCredentials: true,
+  });
