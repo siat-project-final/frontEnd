@@ -457,6 +457,10 @@ const CalendarView = () => {
             .fc-daygrid-body tr:nth-child(6) {
               display: none;
             }
+              .selected-cell {
+              background-color: #e9ecef !important;
+              transition: background-color 0.3s ease;
+            }
           `}
           </style>
 
@@ -507,6 +511,14 @@ const CalendarView = () => {
             }}
             ref={calendarRef}
             displayEventTime={false}
+            dayCellClassNames={(arg) => {
+              const cellDate = arg.date;
+              const yyyy = cellDate.getFullYear();
+              const mm = String(cellDate.getMonth() + 1).padStart(2, '0');
+              const dd = String(cellDate.getDate()).padStart(2, '0');
+              const formattedDate = `${yyyy}-${mm}-${dd}`;
+              return formattedDate === selectedDate ? ['selected-cell'] : [];
+            }}
           />
           <CalendarModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent} />
           <CalendarDetailModal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} eventInfo={selectedEvent} onEdit={handleEditEvent} onDelete={handleDeleteEvent} onSwitchToEdit={handleEditEvent} />
