@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Draggable } from '@fullcalendar/interaction';
 
 const MAX_SLOTS = 10;
+
 let draggableInstance = null; // 중복 생성을 막기 위한 전역 변수
 
 export default function FooterBag() {
   const [isOpen, setIsOpen] = useState(false);
   const [bagItems, setBagItems] = useState([]);
 
-  // ─────────────────────────────────────────────────────
-  //  localStorage에서 가방 아이템 로드
   const syncBag = () => {
     try {
       const stored = JSON.parse(localStorage.getItem('calendarBag') || '[]');
@@ -32,19 +31,15 @@ export default function FooterBag() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  // ─────────────────────────────────────────────────────
-  // 🧲 FullCalendar 드래그 소스 등록 (중복 생성 방지 포함)
   useEffect(() => {
     const container = document.getElementById('my-footer-bag-slot');
     if (!container) return;
 
-    // 기존 Draggable 인스턴스 제거
     if (draggableInstance) {
       draggableInstance.destroy();
       draggableInstance = null;
     }
 
-    // 새 Draggable 인스턴스 등록
     draggableInstance = new Draggable(container, {
       itemSelector: '.bag-slot',
       eventData: (el) => {
@@ -59,7 +54,7 @@ export default function FooterBag() {
           backgroundColor: 'transparent',
           borderColor: 'transparent',
           textColor: 'transparent',
-          id: `sticker-${id}-${Date.now()}`, // FullCalendar 내부 중복 방지용
+          id: `sticker-${id}-${Date.now()}`,
           extendedProps: {
             type: 'STICKER',
             stickerId: id,
@@ -70,7 +65,6 @@ export default function FooterBag() {
       },
     });
 
-    // 언마운트 시 제거
     return () => {
       if (draggableInstance) {
         draggableInstance.destroy();
@@ -79,7 +73,6 @@ export default function FooterBag() {
     };
   }, [bagItems, isOpen]);
 
-  // ─────────────────────────────────────────────────────
   return (
     <div style={{ position: 'fixed', bottom: 20, left: 20, zIndex: 9999 }}>
       <button
@@ -136,14 +129,15 @@ export default function FooterBag() {
                 style={{
                   width: 44,
                   height: 44,
-                  border: '1px solid #ccc',
-                  borderRadius: 6,
-                  background: '#f8f9fa',
+                  borderRadius: 8,
+                  background: 'linear-gradient(#ffffff, #f1f1f1)',
+                  boxShadow: 'inset 0 0 0 1px #ddd, 0 1px 3px rgba(0,0,0,0.08)',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                   overflow: 'hidden',
                   cursor: item ? 'grab' : 'default',
+                  transition: 'box-shadow 0.2s',
                 }}
                 title={item ? item.name : ''}
               >

@@ -1,61 +1,73 @@
-// src/pages/Shop/ShopPage.jsx
 import React, { useEffect, useState } from 'react';
-import Header   from '../../components/common/Header';
-import Sidebar  from '../../components/common/Sidebar';
-import Todo     from '../../components/common/Todo';
+import Header from '../../components/common/Header';
+import Sidebar from '../../components/common/Sidebar';
+import Todo from '../../components/common/Todo';
 import StickerCard from '../../components/shop/StickerCard';
 
-// ──────────────────────────── 짭심이 시리즈
-import kangsim from '../../assets/img/stickers/강심이.png';
-import gosim   from '../../assets/img/stickers/고심이.png';
-import sasim   from '../../assets/img/stickers/사심이.png';
-import tosim   from '../../assets/img/stickers/토심이.png';
-
-// ──────────────────────────── 기본 스티커
-import basicDrawing  from '../../assets/img/stickers/basic_그림.png';
-import basicPharmacy from '../../assets/img/stickers/basic_약국.png';
-import basicBicycle  from '../../assets/img/stickers/basic_자전거.png';
-import basicCamera   from '../../assets/img/stickers/basic_카메라.png';
-import basicAI       from '../../assets/img/stickers/basic_AI.png';
-
-// ──────────────────────────── 스티커 정의
-const jabSimSeries = [
-  { id: 1,  name: '강심이',         image: kangsim,       cost: 30 },
-  { id: 2,  name: '고심이',         image: gosim,         cost: 40 },
-  { id: 3,  name: '사심이',         image: sasim,         cost: 50 },
-  { id: 4,  name: '토심이',         image: tosim,         cost: 35 },
-];
-
-const basicSeries = [
-  { id: 11, name: 'basic_그림',     image: basicDrawing,  cost: 10 },
-  { id: 12, name: 'basic_약국',     image: basicPharmacy, cost: 10 },
-  { id: 13, name: 'basic_자전거',   image: basicBicycle,  cost: 10 },
-  { id: 14, name: 'basic_카메라',   image: basicCamera,   cost: 10 },
-  { id: 15, name: 'basic_AI',      image: basicAI,       cost: 10 },
-];
-
-// 시리즈를 하나로 합쳐 관리(구매·포인트 계산용)
-const ALL_STICKERS = [...jabSimSeries, ...basicSeries];
+import { getUserPoint, getAllStickers, purchaseSticker } from '../../api/shop';
 
 const ShopPage = () => {
-  const [myPoint,    setMyPoint]   = useState(100);
-  const [purchased, setPurchased] = useState([]);
+  const [myPoint, setMyPoint] = useState(0);
+  const [stickers, setStickers] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const handlePurchase = (sticker) => {
+  const rawMemberId = sessionStorage.getItem('memberId');
+  const memberId = Number(rawMemberId);
+
+  const fetchData = async () => {
+    if (!memberId || isNaN(memberId)) {
+      console.warn('⚠ 유효하지 않은 memberId입니다. sessionStorage 값을 확인하세요:', rawMemberId);
+      alert('⚠️ 로그인 정보가 올바르지 않습니다. 다시 로그인해주세요.');
+      return;
+    }
+
+    try {
+      const [pointRes, stickerRes] = await Promise.all([
+        getUserPoint(memberId),
+        getAllStickers(memberId),
+      ]);
+      setMyPoint(pointRes);
+
+      const enriched = stickerRes.map((s) => ({
+        ...s,
+        image: s.imageUrl, // public 경로에서 바로 사용
+      }));
+      setStickers(enriched);
+
+      setIsLoaded(true);
+    } catch (err) {
+      console.error('❌ 데이터 불러오기 실패:', err);
+      alert('⚠️ 상점 데이터를 불러오지 못했습니다.');
+    }
+  };
+
+  const handlePurchase = async (sticker) => {
     if (myPoint < sticker.cost) {
       alert('💸 포인트가 부족해요!');
       return;
     }
-    if (purchased.includes(sticker.id)) {
+    if (sticker.purchased) {
       alert('이미 구매한 스티커입니다.');
       return;
     }
-    setMyPoint((prev) => prev - sticker.cost);
-    setPurchased((prev) => [...prev, sticker.id]);
-    alert(`🎉 '${sticker.name}' 스티커를 구매했어요!`);
+
+    try {
+      await purchaseSticker(memberId, sticker.id);
+      alert(`🎉 '${sticker.name}' 스티커를 구매했어요!`);
+      fetchData(); 
+    } catch (err) {
+      console.error('❌ 스티커 구매 실패:', err);
+      alert('⚠️ 구매에 실패했습니다.');
+    }
   };
 
-  // ───────────────────────── view
+  useEffect(() => {
+    fetchData();
+  }, [memberId]);
+
+  const jabSimSeries = stickers.filter(s => s.id >= 1 && s.id <= 4);
+  const basicSeries = stickers.filter(s => s.id >= 11 && s.id <= 15);
+
   return (
     <div>
       <Header />
@@ -70,35 +82,39 @@ const ShopPage = () => {
               🪙 내 포인트: {myPoint}P
             </div>
 
-            {/* ───── 짭심이 시리즈 ───── */}
-            <h4 className="fw-bold mb-3">🐰 짭심이 시리즈</h4>
-            <div className="row mb-5">
-              {jabSimSeries.map((sticker) => (
-                <div key={sticker.id} className="col-6 col-md-3 mb-4">
-                  <StickerCard
-                    sticker={sticker}
-                    onPurchase={handlePurchase}
-                    purchased={purchased.includes(sticker.id)}
-                    disabled={myPoint < sticker.cost}
-                  />
+            {isLoaded ? (
+              <>
+                <h4 className="fw-bold mb-3">🐰 짭심이 시리즈</h4>
+                <div className="row mb-5">
+                  {jabSimSeries.map((sticker) => (
+                    <div key={sticker.id} className="col-6 col-md-3 mb-4">
+                      <StickerCard
+                        sticker={sticker}
+                        onPurchase={handlePurchase}
+                        purchased={sticker.purchased}
+                        disabled={myPoint < sticker.cost}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* ───── 기본 스티커 ───── */}
-            <h4 className="fw-bold mb-3">⭐ 기본 스티커</h4>
-            <div className="row">
-              {basicSeries.map((sticker) => (
-                <div key={sticker.id} className="col-6 col-md-3 mb-4">
-                  <StickerCard
-                    sticker={sticker}
-                    onPurchase={handlePurchase}
-                    purchased={purchased.includes(sticker.id)}
-                    disabled={myPoint < sticker.cost}
-                  />
+                <h4 className="fw-bold mb-3">⭐ 기본 스티커</h4>
+                <div className="row">
+                  {basicSeries.map((sticker) => (
+                    <div key={sticker.id} className="col-6 col-md-3 mb-4">
+                      <StickerCard
+                        sticker={sticker}
+                        onPurchase={handlePurchase}
+                        purchased={sticker.purchased}
+                        disabled={myPoint < sticker.cost}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <div className="text-muted">⏳ 데이터를 불러오는 중입니다...</div>
+            )}
           </div>
         </main>
 
