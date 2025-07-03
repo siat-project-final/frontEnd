@@ -36,14 +36,15 @@ const ReviewMain = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-          <div className="container" style={{ paddingTop: '20px', paddingBottom: '0px' }}>
-            <div className="d-flex align-items-center" style={{ marginBottom: '0px' }}>
+          <div className="container py-5">
+            <div className="d-flex justify-content-between align-items-center mb-4">
               <h1
                 className="h3 fw-bold mb-0"
-                style={{ marginLeft: '16px', color: '#84cc16' }}
+                style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
               >
-                종합 챌린지
-              </h1>  
+                종합챌린지
+              </h1>
+              
             </div>
             <p className="text-muted" style={{ fontSize: '20px', marginLeft: '16px', marginTop: '10px' }}>
                   100% 학습한 과목만 복습에 참여할 수 있어요.
