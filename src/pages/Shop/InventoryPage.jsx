@@ -1,68 +1,61 @@
-// src/pages/Inventory/InventoryPage.jsx
 import React, { useState, useEffect } from 'react';
-import Header  from '../../components/common/Header';
+import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
-import Todo    from '../../components/common/Todo';
-
-/* ───── 짭심이 시리즈 이미지 */
-import kangsim from '../../assets/img/stickers/강심이.png';
-import gosim   from '../../assets/img/stickers/고심이.png';
-import sasim   from '../../assets/img/stickers/사심이.png';
-import tosim   from '../../assets/img/stickers/토심이.png';
-
-/* ───── 기본 스티커 이미지 */
-import basicDrawing  from '../../assets/img/stickers/basic_그림.png';
-import basicPharmacy from '../../assets/img/stickers/basic_약국.png';
-import basicBicycle  from '../../assets/img/stickers/basic_자전거.png';
-import basicCamera   from '../../assets/img/stickers/basic_카메라.png';
-import basicAI       from '../../assets/img/stickers/basic_AI.png';
-
-/* ───── 시리즈 정의 */
-const jabSimSeries = [
-  { id: 1,  name: '강심이',         image: kangsim },
-  { id: 2,  name: '고심이',         image: gosim   },
-  { id: 3,  name: '사심이',         image: sasim   },
-  { id: 4,  name: '토심이',         image: tosim   },
-];
-
-const basicSeries = [
-  { id: 11, name: 'basic_그림',     image: basicDrawing  },
-  { id: 12, name: 'basic_약국',     image: basicPharmacy },
-  { id: 13, name: 'basic_자전거',   image: basicBicycle  },
-  { id: 14, name: 'basic_카메라',   image: basicCamera   },
-  { id: 15, name: 'basic_AI',      image: basicAI       },
-];
-
-// 인벤토리 전체
-const myInventory = [...jabSimSeries, ...basicSeries];
+import Todo from '../../components/common/Todo';
+import { getInventory } from '../../api/shop';
 
 export default function InventoryPage() {
+  const memberId = localStorage.getItem('memberId');
   const [selectedId, setSelectedId] = useState(null);
-  const [bagItems,   setBagItems]   = useState([]); // 퀵슬롯 10칸
+  const [bagItems, setBagItems] = useState([]);
+  const [inventory, setInventory] = useState([]);
 
-  /* ───────── 가방 동기화 */
   const syncBag = () => {
     try {
       const stored = JSON.parse(localStorage.getItem('calendarBag') || '[]');
       setBagItems(Array.isArray(stored) ? stored.slice(0, 10) : []);
-    } catch { setBagItems([]); }
+    } catch {
+      setBagItems([]);
+    }
   };
 
   useEffect(() => {
     syncBag();
-    const onStorage = (e) => { if (e.key === 'calendarBag') syncBag(); };
+    const onStorage = (e) => {
+      if (e.key === 'calendarBag') syncBag();
+    };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  /* ───────── 선택 */
-  const handleSelect = (id) =>
-    setSelectedId((prev) => (prev === id ? null : id));
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const result = await getInventory(memberId);
+        console.log('[1] getInventory 결과:', result);
 
-  /* ───────── 가방 담기 */
+        const enriched = (result?.stickers || []).map((sticker) => ({
+          ...sticker,
+          image: sticker.imageUrl,
+        }));
+
+        console.log('[2] 정리된 인벤토리 배열:', enriched);
+        setInventory(enriched);
+      } catch (err) {
+        console.error('[3] 인벤토리 조회 실패:', err);
+      }
+    };
+
+    fetchInventory();
+  }, [memberId]);
+
+  const handleSelect = (id) => {
+    setSelectedId((prev) => (prev === id ? null : id));
+  };
+
   const addToBag = () => {
     if (!selectedId) return;
-    const sticker = myInventory.find((s) => s.id === selectedId);
+    const sticker = inventory.find((s) => s.id === selectedId);
     if (!sticker) return;
 
     try {
@@ -80,7 +73,6 @@ export default function InventoryPage() {
     }
   };
 
-  /* ───────── 가방 제거 */
   const removeFromBag = (idx) => {
     try {
       const current = JSON.parse(localStorage.getItem('calendarBag') || '[]');
@@ -92,17 +84,18 @@ export default function InventoryPage() {
     }
   };
 
-  /* ───────── 카드 렌더 함수 */
-  const renderSeries = (title, list) => (
+  const renderInventory = () => (
     <div className="mb-5">
-      <h4 className="fw-bold mb-3">{title}</h4>
+      <h4 className="fw-bold mb-3">🧸 내가 구매한 스티커</h4>
       <div className="row g-4">
-        {list.map((sticker) => {
+        {inventory.map((sticker) => {
           const active = selectedId === sticker.id;
           return (
             <div key={sticker.id} className="col-6 col-md-3">
               <div
-                className={`sticker-card position-relative p-3 rounded-4 shadow-sm h-100 bg-white cursor-pointer ${active ? 'border-primary border-3' : 'border border-secondary-subtle'}`}
+                className={`sticker-card position-relative p-3 rounded-4 shadow-sm h-100 bg-white cursor-pointer ${
+                  active ? 'border-primary border-3' : 'border border-secondary-subtle'
+                }`}
                 style={{ transition: 'transform .25s', transform: active ? 'translateY(-6px)' : 'none' }}
                 onClick={() => handleSelect(sticker.id)}
               >
@@ -113,7 +106,6 @@ export default function InventoryPage() {
                   style={{ height: 110, objectFit: 'contain' }}
                 />
                 <h5 className="fw-semibold mb-0">{sticker.name}</h5>
-
                 {active && (
                   <span
                     className="position-absolute top-0 end-0 badge rounded-pill bg-primary shadow"
@@ -122,7 +114,6 @@ export default function InventoryPage() {
                     ✓
                   </span>
                 )}
-
                 <div className="hover-overlay d-flex align-items-center justify-content-center">
                   <i className="bi bi-bag-plus-fill text-white fs-2" />
                 </div>
@@ -134,17 +125,13 @@ export default function InventoryPage() {
     </div>
   );
 
-  /* ────────── 화면 */
   return (
     <div>
       <Header />
       <div style={{ display: 'flex' }}>
         <Sidebar menuType="inventory" />
-
-        {/* 메인 */}
         <main style={{ flex: 1 }}>
           <div className="container py-5">
-            {/* 헤더 & 버튼 */}
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div className="d-flex align-items-center gap-2">
                 <i className="bi bi-backpack-fill text-warning fs-2" />
@@ -153,7 +140,6 @@ export default function InventoryPage() {
                   <p className="text-muted mb-0">스티커를 가방(퀵슬롯)에 관리하세요!</p>
                 </div>
               </div>
-
               <button
                 className="btn btn-success d-flex align-items-center gap-2 px-3 shadow"
                 disabled={!selectedId}
@@ -186,19 +172,16 @@ export default function InventoryPage() {
               })}
             </div>
 
-            {/* 스티커 카드 – 시리즈별 */}
-            {renderSeries('🐰 짭심이 시리즈', jabSimSeries)}
-            {renderSeries('⭐ 기본 스티커', basicSeries)}
+            {/* 인벤토리 목록 */}
+            {renderInventory()}
           </div>
         </main>
 
-        {/* Todo */}
         <div style={{ width: 300, borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>
       </div>
 
-      {/* 추가 스타일 */}
       <style>{`
         .sticker-card { overflow: visible; }
         .hover-overlay {

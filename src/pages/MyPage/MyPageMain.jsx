@@ -126,7 +126,7 @@ const MyPageMain = () => {
                   </div>
                   <div className="stat-item">
                     <div className="badge-info">
-                      {badgeImage && <img src={badgeImage} alt="최근 뱃지" style={{ width: '24px', height: '24px' }} />}
+                      {badgeImage && <img src={badgeImage} alt="최근 뱃지" style={{ width: '48px', height: '48px' }} />}
                       <p className="badge-label">Badges</p>
                     </div>
                   </div>

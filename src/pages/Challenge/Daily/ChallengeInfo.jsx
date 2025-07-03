@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { checkParticipation } from '../../../api/challenge'; // ✅ 실제 axios 호출 사용
