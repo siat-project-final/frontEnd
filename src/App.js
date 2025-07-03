@@ -52,6 +52,11 @@ import ReviewMain from './pages/Challenge/Review/ReviewMain';
 import ReviewSolve from './pages/Challenge/Review/ReviewSolve';
 import ChallengeMain from './pages/Challenge/ChallengeMain';
 import MyProgress from './pages/Challenge/Daily/MyProgress';
+import ShopPage from './pages/Shop/ShopPage';
+import InventoryPage from './pages/Shop/InventoryPage'; 
+// import DayChallengeList from './pages/Challenge/DayChallengeList';
+// import CourseDetail from './pages/Challenge/CourseDetail';
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -136,6 +141,8 @@ function AppLayout({ isDarkMode, toggleTheme }) {
           <Route path="/mentoring/mentee/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
           <Route path="/mentoring/register" element={<PrivateRoute><MenteeRegister /></PrivateRoute>} />
           <Route path="/mentoring/mentee/register/card" element={<PrivateRoute><MenteeRegisterCard /></PrivateRoute>} />
+          <Route path="/shop" element={<PrivateRoute><ShopPage /></PrivateRoute>} />
+  <Route path="/inventory" element={<PrivateRoute><InventoryPage /></PrivateRoute>} />
         </Routes>
       </div>
     </div>
@@ -176,4 +183,6 @@ function App() {
     </Router>
   );
 }
+
 export default App;
+

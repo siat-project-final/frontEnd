@@ -45,7 +45,10 @@ const Header = ({ menuType }) => (
         <nav id="navmenu" className="navmenu">
           <ul style={{ gap: window.innerWidth >= 1200 ? '3rem' : undefined }}>
             <li className="dropdown">
-              <NavLink to="/home" className={({ isActive }) => (isActive ? 'active' : '')}>Home</NavLink>
+              <NavLink to="/home" className={({ isActive }) => (isActive ? 'active' : '') } style={({ isActive }) => ({
+                fontSize: '1.2rem',
+                fontWeight: isActive ? 700 : 500
+              })}>Home</NavLink>
             </li>
 
             <li className="dropdown">
@@ -84,21 +87,34 @@ const Header = ({ menuType }) => (
                 Studylog
               </NavLink>
               <ul className="dropdown-menu" style={{ marginTop: '28px', left: '-35px', top: '50%', minWidth: '170px', padding: 0 }}>
-                <li><NavLink to="/study" className="dropdown-item" style={menuItemStyle}>학습 일지 목록</NavLink></li>
+                <li><NavLink to="/study" end className="dropdown-item" style={menuItemStyle}>학습 일지 목록</NavLink></li>
                 <li><NavLink to="/study/write" className="dropdown-item" style={menuItemStyle}>학습 일지 작성</NavLink></li>
                 <li><NavLink to="/study/public" className="dropdown-item" style={menuItemStyle}>공유 학습 일지</NavLink></li>
               </ul>
             </li>
 
             <li className="dropdown">
-              <NavLink to="/mypage" className={({ isActive }) => (isActive ? 'active' : '')} style={({ isActive }) => ({
+              <NavLink to="/shop" className={({ isActive }) => (isActive || menuType === 'shop' ? 'active' : '')} style={({ isActive }) => ({
+                fontSize: '1.2rem',
+                fontWeight: isActive ? 700 : 500
+              })}>
+                Shop
+              </NavLink>
+              <ul className="dropdown-menu" style={{ marginTop: '28px', left: '-30px', top: '50%', minWidth: '170px', padding: 0 }}>
+                <li><NavLink to="/shop" className="dropdown-item" style={menuItemStyle}>스티커 상점</NavLink></li>
+                <li><NavLink to="/inventory" className="dropdown-item" style={menuItemStyle}>내 인벤토리</NavLink></li>
+              </ul>
+            </li>
+
+            <li className="dropdown">
+              <NavLink to="/mypage" className={({ isActive }) => (isActive || menuType === 'mypage' ? 'active' : '')} style={({ isActive }) => ({
                 fontSize: '1.2rem',
                 fontWeight: isActive ? 700 : 500
               })}>
                 MyPage
               </NavLink>
               <ul className="dropdown-menu" style={{ marginTop: '28px', left: '-38px', top: '50%', minWidth: '170px', padding: 0 }}>
-                <li><NavLink to="/mypage" className="dropdown-item" style={menuItemStyle}>마이 프로필</NavLink></li>
+                <li><NavLink to="/mypage" end className="dropdown-item" style={menuItemStyle}>마이 프로필</NavLink></li>
                 <li><NavLink to="/mypage/badges" className="dropdown-item" style={menuItemStyle}>뱃지 목록</NavLink></li>
                 <li><NavLink to="/mypage/mentoring-history" className="dropdown-item" style={menuItemStyle}>멘토링 히스토리</NavLink></li>
                 <li><NavLink to="/mypage/statistics" className="dropdown-item" style={menuItemStyle}>통계</NavLink></li>
