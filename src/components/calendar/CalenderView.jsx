@@ -352,10 +352,113 @@ const CalendarView = () => {
       <Header />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
+        <style>
+          {`
+            
+            .fc .fc-daygrid-day {
+              height: 130px !important;
+              
+              padding: 0 !important;
+            }
+            .fc .fc-daygrid-day-frame {
+              height: 100% !important;
+              padding: 4px !important;
+            }
+            .fc .fc-scrollgrid-sync-table {
+              height: auto !important;
+            }
+
+            /* 툴바 */
+            .fc .fc-toolbar {
+              display: flex !important;
+              justify-content: space-between !important;
+              align-items: center !important;
+              margin-bottom: 16px !important;
+              position: relative !important;
+              height: 60px !important;
+            }
+
+            .fc .fc-toolbar-title {
+              font-size: 24px !important;
+              font-weight: bold !important;
+              position: absolute !important;
+              left: 50% !important;
+              top: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              max-width: none !important;
+              padding: 0 16px !important;
+              white-space: nowrap !important;
+              overflow: visible !important;
+              text-overflow: unset !important;
+              text-align: center !important;
+            }
+
+            /* 커스텀 내비게이션 버튼 */
+            .fc-myPrev-button,
+            .fc-myNext-button {
+              background: none !important;
+              border: none !important;
+              width: 24px !important;
+              height: 32px !important;
+              cursor: pointer !important;
+              position: absolute !important;
+              top: 52% !important;
+              transform: translateY(-50%) !important;
+              z-index: 1 !important;
+              outline: none !important;
+              box-shadow: none !important;
+            }
+
+            .fc-myPrev-button {
+              left: calc(50% - 250px) !important;
+            }
+
+            .fc-myNext-button {
+              right: calc(50% - 250px) !important;
+            }
+
+            .fc-myPrev-button::before,
+            .fc-myNext-button::before {
+              content: '' !important;
+              position: absolute !important;
+              top: 52% !important;
+              left: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              width: 24px !important;
+              height: 24px !important;
+              background-size: contain !important;
+              background-repeat: no-repeat !important;
+            }
+
+            .fc-myPrev-button::before {
+              background-image: url('/assets/img/mentors/chevron-left.png') !important;
+            }
+
+            .fc-myNext-button::before {
+              background-image: url('/assets/img/mentors/chevron-right.png') !important;
+            }
+
+            /*  오늘 버튼 스타일 */
+            .fc-today-button {
+              margin-right: 10px !important;
+              background-color: #84cc16 !important;
+              border-color: #84cc16 !important;
+              color: white !important;
+            }
+
+            /* 6번째 줄 강제 제거 */
+            .fc-daygrid-body tr:nth-child(6) {
+              display: none;
+            }
+          `}
+          </style>
+
+
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
+            height="auto"
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
