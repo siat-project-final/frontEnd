@@ -107,31 +107,29 @@ const StudyLogDetailPage = () => {
         <Sidebar menuType="studylog" />
         <main className="main">
           <div className="container py-5">
-          <div className="d-flex justify-content-start align-items-center mb-4" style={{ marginTop: '16px', marginLeft: '16px', marginRight: '16px' }}>
-              <h1 className="h3 fw-bold mb-0" style={{ color: '#84cc16' }}>
-                학습일지 상세
-              </h1>
-                {/* 여기에 가장 오른쪽으로 보낼 요소를 추가합니다 */}
-                  {/* 새로운 체크박스 그룹 추가 */}
-                  <div className="col-md-7 d-flex align-items-center justify-content-end gap-3"> {/* 남은 공간을 차지하도록 col-md-9 할당 */}
-                    {['하루', '일주일', '한 달', '세 달'].map((period) => (
-                      <div key={period} className="form-check form-check-inline m-0">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id={`period-checkbox-${period}`}
-                          name="selectedPeriods"
-                          value={period}
-                          checked={formData.selectedPeriods.includes(period)} // 상태에 따라 체크 여부 결정
-                          onChange={handlePeriodChange} // 변경 핸들러 연결
-                          disabled={!isEditMode} // 수정 모드일 때만 활성화
-                        />
-                        <label className="form-check-label" htmlFor={`period-checkbox-${period}`} style={{ fontSize: '0.875rem' }}>
-                          {period}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
+          <div className="d-flex align-items-center justify-content-between flex-nowrap mb-4">
+            <h3 className="fw-bold mb-0" style={{ color: '#84cc16', whiteSpace: 'nowrap', minWidth: 'auto' }}>
+              학습일지 상세
+            </h3>
+
+            <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
+              {['하루', '일주일', '한 달', '세 달'].map(period => (
+                <div key={period} className="form-check form-check-inline m-0">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`header-checkbox-${period}`}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor={`header-checkbox-${period}`}
+                    style={{ fontSize: '0.9rem' }}
+                  >
+                    {period}
+                  </label>
+                </div>
+              ))}
+            </div>
             </div>
             {/* 원래 h1 태그에 있던 margin-top과 margin-left를 div로 옮겼습니다.
                 margin-right를 추가하여 페이지 오른쪽 끝에 너무 붙지 않도록 합니다. */}
