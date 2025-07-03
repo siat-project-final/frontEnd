@@ -184,6 +184,35 @@ const CalendarView = () => {
     }
   };
 
+  const handleAddEvent = async (eventData) => {
+    try {
+      const scheduleData = {
+        memberId: parseInt(memberId),
+        title: eventData.title,
+        content: eventData.extendedProps?.content || '',
+        startDatetime: eventData.start,
+        endDatetime: eventData.end,
+        isAllDay: eventData.allDay,
+        colorCode: eventData.backgroundColor
+      };
+  
+      const res = await addSchedule(scheduleData);
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
+  
+      await fetchScheduleData(monthStr);
+  
+      setIsModalOpen(false);
+  
+    } catch (error) {
+      console.error('일정 추가 실패:', error);
+      alert('일정 추가에 실패했습니다.');
+    }
+  };
+  
   useEffect(() => { fetchWrittenLogs(); }, [memberId]);
 
   useEffect(() => {
@@ -324,9 +353,9 @@ const CalendarView = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <FullCalendar
-            schedulerLicenseKey=\"CC-Attribution-NonCommercial-NoDerivatives\"
+            schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
-            initialView=\"dayGridMonth\"
+            initialView="dayGridMonth"
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
