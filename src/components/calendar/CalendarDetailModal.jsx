@@ -5,8 +5,6 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete, onS
 
   const { title, start, end, extendedProps, allDay } = eventInfo;
   const { content, type } = extendedProps;
-  
-  // SCHEDULE 타입인 경우에만 수정/삭제 버튼 표시
   const isScheduleType = type === 'SCHEDULE';
 
   const formatDate = (dateStr) => {

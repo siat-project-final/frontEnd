@@ -400,7 +400,7 @@ const CalendarView = () => {
             displayEventTime={false}
           />
           <CalendarModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent} />
-          <CalendarDetailModal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} eventInfo={selectedEvent} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
+          <CalendarDetailModal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} eventInfo={selectedEvent} onEdit={handleEditEvent} onDelete={handleDeleteEvent} onSwitchToEdit={handleEditEvent} />
           <CalendarEditModal isOpen={isEditModalOpen} onClose={handleCloseEditModal} eventInfo={selectedEvent} onSave={handleSaveEdit} />
         </div>
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
