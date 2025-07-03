@@ -8,8 +8,9 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [titleError, setTitleError] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [selectedColor, setSelectedColor] = useState('#BAFFC9');
-
 
   useEffect(() => {
     if (useAllDay) {
@@ -25,6 +26,8 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
     if (isOpen && selectionInfo) {
       setStartDate(selectionInfo.start);
       setEndDate(selectionInfo.end);
+      setTitle('');
+      setContent('');
       setTitleError('');
     }
   }, [isOpen, selectionInfo]);
@@ -32,16 +35,11 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const title = e.target.title.value;
-    const content = e.target.content.value;
-
     if (!title) {
       setTitleError('입력 필수');
       return;
     }
     setTitleError('');
-
-    const eventTitle = title;
 
     const adjustedEndDate = new Date(endDate);
     if (useAllDay) {
@@ -50,18 +48,16 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
     const adjustedEndStr = adjustedEndDate.toISOString().split('T')[0];
 
     const newEvent = {
-      title: eventTitle,
+      title: title,
       start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
       end: `${adjustedEndStr}T${useAllDay ? '00:00' : endTime}`,
       backgroundColor: selectedColor,
-      // borderColor: selectedColor, 
-      // backgroundColor: '#AED6F1',
-      borderColor: '#AED6F1',
+      borderColor: selectedColor,
       textColor: '#000',
       allDay: useAllDay,
       extendedProps: {
         content,
-        type: 'USER_ADDED',
+        type: 'SCHEDULE',
       },
     };
 
@@ -171,7 +167,13 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
               <ColorSelector selectedColor={selectedColor}  onSelectColor={(color) => setSelectedColor(color)}></ColorSelector>
               {titleError && <span style={{ color: 'red', fontSize: '12px' }}>{titleError}</span>}
             </div>
-            <input type="text" name="title" placeholder="일정명을 입력하세요" />
+            <input 
+              type="text" 
+              name="title" 
+              placeholder="일정명을 입력하세요" 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
 
             <label>시작일자</label>
             <input type="date" name="startDate" value={startDate} onChange={e => setStartDate(e.target.value)} />
@@ -182,7 +184,12 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
             <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} disabled={useAllDay} />
 
             <label>일정내용</label>
-            <textarea name="content" placeholder="일정 내용을 입력하세요" />
+            <textarea 
+              name="content" 
+              placeholder="일정 내용을 입력하세요" 
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
 
             <div>
               <input
@@ -208,3 +215,4 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
 };
 
 export default CalendarModal;
+

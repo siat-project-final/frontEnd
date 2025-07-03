@@ -8,12 +8,13 @@ import interactionPlugin from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import instance from '../../api/axios';
 import { getMyStudyLogs } from '../../api/studyLog';
+import { getSchedules, addSchedule, updateSchedule, deleteSchedule } from '../../api/schedule';
 import Header from '../common/Header';
 import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
 import CalendarDetailModal from './CalendarDetailModal';
 import CalendarEditModal from './CalendarEditModal';
-import FooterBag from './FooterBag'; // 🟩 feature/shop에서 추가된 부분
+import FooterBag from './FooterBag';
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
@@ -21,10 +22,7 @@ const CalendarView = () => {
   const location = useLocation();
 
   const [serverEvents, setServerEvents] = useState([]);
-  const [localEvents, setLocalEvents] = useState(() => {
-    const savedEvents = localStorage.getItem('localCalendarEvents');
-    return savedEvents ? JSON.parse(savedEvents) : [];
-  });
+  const [scheduleEvents, setScheduleEvents] = useState([]);
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -52,7 +50,6 @@ const CalendarView = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
   }
-
   const fetchWrittenLogs = async () => {
     try {
       const res = await getMyStudyLogs(memberId);
@@ -147,7 +144,6 @@ const CalendarView = () => {
 
     return events;
   };
-
   const fetchCalendarData = async (monthStr, writtenDatesSet) => {
     try {
       if (!memberId) return;
@@ -159,9 +155,36 @@ const CalendarView = () => {
     }
   };
 
-  useEffect(() => {
-    fetchWrittenLogs();
-  }, [memberId]);
+  const fetchScheduleData = async (monthStr) => {
+    try {
+      if (!memberId) return;
+      const [year, month] = monthStr.split('-');
+      const startDate = `${monthStr}-01`;
+      const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate();
+      const endDate = `${monthStr}-${lastDay}`;
+      const res = await getSchedules(memberId, startDate, endDate);
+      const scheduleEvents = res.data.map(schedule => ({
+        id: schedule.scheduleId,
+        title: schedule.title,
+        start: schedule.startDatetime,
+        end: schedule.endDatetime,
+        allDay: schedule.isAllDay,
+        backgroundColor: schedule.colorCode || '#BAFFC9',
+        borderColor: schedule.colorCode || '#BAFFC9',
+        textColor: '#000',
+        extendedProps: {
+          type: 'SCHEDULE',
+          content: schedule.content,
+          scheduleId: schedule.scheduleId
+        }
+      }));
+      setScheduleEvents(scheduleEvents);
+    } catch (error) {
+      console.error('일정 데이터 조회 실패:', error);
+    }
+  };
+
+  useEffect(() => { fetchWrittenLogs(); }, [memberId]);
 
   useEffect(() => {
     if (writtenDates !== null) {
@@ -171,44 +194,13 @@ const CalendarView = () => {
       const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
       const monthStr = `${yyyy}-${mm}`;
       fetchCalendarData(monthStr, writtenDates);
+      fetchScheduleData(monthStr);
     }
   }, [writtenDates]);
 
-  useEffect(() => {
-    if (location.state?.reload) {
-      fetchWrittenLogs();
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    localStorage.setItem('localCalendarEvents', JSON.stringify(localEvents));
-  }, [localEvents]);
-
-  const handleSelect = (selectInfo) => {
-    const { startStr, endStr, allDay } = selectInfo;
-    const endDate = new Date(endStr);
-    if (allDay) endDate.setDate(endDate.getDate() - 1);
-    const inclusiveEndStr = endDate.toISOString().split('T')[0];
-    setSelectionInfo({ start: startStr, end: inclusiveEndStr });
-    setIsModalOpen(true);
-    selectInfo.view.calendar.unselect();
-  };
-
-  const handleAddEvent = (eventData) => {
-    const dateOnly = (dateStr) => dateStr.split('T')[0];
-    const newId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    setLocalEvents(prev => [...prev, {
-      ...eventData,
-      id: newId,
-      start: dateOnly(eventData.start),
-      end: dateOnly(eventData.end),
-      allDay: true
-    }]);
-  };
-
   const handleEventClick = (clickInfo) => {
     const { type } = clickInfo.event.extendedProps;
-    if (type === 'USER_ADDED') {
+    if (type === 'SCHEDULE') {
       setSelectedEvent(clickInfo.event);
       setIsDetailModalOpen(true);
     } else if (type === 'DIARY') {
@@ -220,13 +212,22 @@ const CalendarView = () => {
     }
   };
 
+  const handleSelect = (selectInfo) => {
+    const { startStr, endStr, allDay } = selectInfo;
+    const endDate = new Date(endStr);
+    if (allDay) endDate.setDate(endDate.getDate() - 1);
+    const inclusiveEndStr = endDate.toISOString().split('T')[0];
+    setSelectionInfo({ start: startStr, end: inclusiveEndStr });
+    setIsModalOpen(true);
+    selectInfo.view.calendar.unselect();
+  };
+
   const handleEventReceive = (info) => {
     const calendarApi = calendarRef.current.getApi();
     const droppedDate = info.event.startStr;
     const { stickerId, image } = info.event.extendedProps;
     const eventId = `sticker-${stickerId}-${droppedDate}`;
     if (calendarApi.getEventById(eventId)) {
-      console.log('중복 스티커: 추가하지 않음');
       info.revert();
       return;
     }
@@ -240,54 +241,57 @@ const CalendarView = () => {
       textColor: 'transparent',
       extendedProps: { type: 'STICKER', stickerId, image }
     });
-    info.event.remove(); // 드래그 원본 제거
+    info.event.remove();
   };
 
-  const handleEditEvent = () => {
-    setIsDetailModalOpen(false);
-    setIsEditModalOpen(true);
-  };
-
-  const handleCloseDetailModal = () => {
-    setIsDetailModalOpen(false);
-    setSelectedEvent(null);
-  };
-
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent = async () => {
     if (selectedEvent) {
-      setLocalEvents(prev => prev.filter(event => event.id !== selectedEvent.id));
-      handleCloseDetailModal();
+      try {
+        const scheduleId = selectedEvent.extendedProps.scheduleId;
+        await deleteSchedule(scheduleId);
+        const calendarApi = calendarRef.current?.getApi();
+        const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+        const yyyy = currentDate.getFullYear();
+        const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const monthStr = `${yyyy}-${mm}`;
+        await fetchScheduleData(monthStr);
+        handleCloseDetailModal();
+      } catch (error) {
+        console.error('일정 삭제 실패:', error);
+        alert('일정 삭제에 실패했습니다.');
+      }
     }
   };
 
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedEvent(null);
-  };
+  const handleSaveEdit = async (updatedEventData) => {
+    try {
+      const scheduleId = Number(selectedEvent.extendedProps.scheduleId);
+      if (!scheduleId) {
+        alert('일정 ID가 없습니다.');
+        return;
+      }
 
-  const handleSaveEdit = (updatedEventData) => {
-    const dateOnly = (dateStr) => dateStr.split('T')[0];
-    if (selectedEvent) {
-      setLocalEvents(prev => prev.map(event => 
-        event.id === selectedEvent.id 
-          ? { 
-              ...event, 
-              title: updatedEventData.title, 
-              start: dateOnly(updatedEventData.start),
-              end: dateOnly(updatedEventData.end),
-              allDay: true,
-              backgroundColor: updatedEventData.backgroundColor,
-              borderColor: updatedEventData.borderColor,
-              textColor: updatedEventData.textColor,
-              extendedProps: {
-                ...event.extendedProps,
-                content: updatedEventData.extendedProps?.content
-              }
-            }
-          : event
-      ));
+      const updateData = {
+        title: updatedEventData.title,
+        content: updatedEventData.extendedProps?.content || '',
+        startDatetime: updatedEventData.start,
+        endDatetime: updatedEventData.end,
+        isAllDay: updatedEventData.allDay,
+        colorCode: updatedEventData.backgroundColor
+      };
+
+      await updateSchedule(scheduleId, updateData);
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
+      await fetchScheduleData(monthStr);
+      handleCloseEditModal();
+    } catch (error) {
+      console.error('일정 수정 실패:', error);
+      alert('일정 수정에 실패했습니다.');
     }
-    handleCloseEditModal();
   };
 
   const eventPriority = (event) => {
@@ -295,8 +299,23 @@ const CalendarView = () => {
     if (type === 'SUBJECT') return 1;
     if (type === 'MENTORING') return 2;
     if (type === 'UNWRITTEN_DIARY') return 3;
-    if (type === 'USER_ADDED') return 4;
+    if (type === 'SCHEDULE') return 4;
     return 99;
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleEditEvent = () => {
+    setIsDetailModalOpen(false);
+    setIsEditModalOpen(true);
   };
 
   return (
@@ -305,9 +324,9 @@ const CalendarView = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
           <FullCalendar
-            schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+            schedulerLicenseKey=\"CC-Attribution-NonCommercial-NoDerivatives\"
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
-            initialView="dayGridMonth"
+            initialView=\"dayGridMonth\"
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
@@ -318,7 +337,7 @@ const CalendarView = () => {
               myNext: { text: '', click: () => calendarRef.current?.getApi().next() },
               today: { text: '오늘', click: () => calendarRef.current?.getApi().today() }
             }}
-            events={[...serverEvents, ...localEvents].sort((a, b) => eventPriority(b) - eventPriority(a))}
+            events={[...serverEvents, ...scheduleEvents].sort((a, b) => eventPriority(b) - eventPriority(a))}
             eventContent={(arg) => {
               const { type, image } = arg.event.extendedProps;
               if (type === 'STICKER' && image) {
@@ -331,12 +350,12 @@ const CalendarView = () => {
               }
               return { html: `<div>${arg.event.title}</div>` };
             }}
-            eventClick={handleEventClick}
+            selectable
             select={handleSelect}
-            selectable={true}
-            editable={true}
-            droppable={true}
+            editable
+            droppable
             eventReceive={handleEventReceive}
+            eventClick={handleEventClick}
             datesSet={(arg) => {
               const currentDate = arg.view.currentStart;
               const yyyy = currentDate.getFullYear();
@@ -344,6 +363,7 @@ const CalendarView = () => {
               const monthStr = `${yyyy}-${mm}`;
               if (monthStr !== currentMonthStr && writtenDates !== null) {
                 fetchCalendarData(monthStr, writtenDates);
+                fetchScheduleData(monthStr);
                 setCurrentMonthStr(monthStr);
               }
             }}
