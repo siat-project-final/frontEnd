@@ -4,8 +4,8 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete, onS
   if (!isOpen || !eventInfo) return null;
 
   const { title, start, end, extendedProps, allDay } = eventInfo;
-  const { content } = extendedProps;
-  const displayTitle = title.split(' ')[0];
+  const { content, type } = extendedProps;
+  const isScheduleType = type === 'SCHEDULE';
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -102,7 +102,7 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete, onS
           
           <div>
             <label>일정명</label>
-            <div className="detail-content">{displayTitle}</div>
+            <div className="detail-content">{title}</div>
           </div>
 
           {!allDay && (
@@ -130,10 +130,12 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete, onS
             <div className="detail-content">{content || '내용 없음'}</div>
           </div>
           
-          <div className="button-container">
-            <button onClick={onSwitchToEdit} className="edit-button">수정</button>
-            <button onClick={onDelete} className="delete-button">삭제</button>
-          </div>
+          {isScheduleType && (
+            <div className="button-container">
+              <button onClick={onSwitchToEdit} className="edit-button">수정</button>
+              <button onClick={onDelete} className="delete-button">삭제</button>
+            </div>
+          )}
         </div>
       </div>
     </>

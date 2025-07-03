@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Draggable } from '@fullcalendar/interaction';
 
 const MAX_SLOTS = 10;
-let draggableInstance = null;
+
+let draggableInstance = null; // 중복 생성을 막기 위한 전역 변수
 
 export default function FooterBag() {
   const [isOpen, setIsOpen] = useState(false);

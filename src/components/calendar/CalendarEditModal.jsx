@@ -27,26 +27,22 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
       const { title: eventTitle, start, end, extendedProps, allDay, backgroundColor } = eventInfo;
       const { content: eventContent } = extendedProps;
 
-      const displayTitle = eventTitle.split(' ')[0];
-
       const startDateObj = new Date(start);
       const endDateObj = new Date(end);
 
-      // 종일 이벤트의 경우 FullCalendar가 종료일을 다음날로 설정하므로 보정
-      // 예: 9일~10일 종일 이벤트는 start: 2024-01-09T00:00, end: 2024-01-11T00:00로 저장됨
       let displayEndDate = endDateObj;
       if (allDay) {
         displayEndDate = new Date(endDateObj);
         displayEndDate.setDate(displayEndDate.getDate() - 1);
       }
 
-      const startDateStr = startDateObj.toLocaleDateString('sv-SE'); // YYYY-MM-DD
+      const startDateStr = startDateObj.toLocaleDateString('sv-SE');
       const endDateStr = displayEndDate.toLocaleDateString('sv-SE');
 
       const startTimeStr = startDateObj.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', hour12: false });
       const endTimeStr = endDateObj.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-      setTitle(displayTitle);
+      setTitle(eventTitle);
       setContent(eventContent || '');
       setUseAllDay(allDay);
       setStartDate(startDateStr);
@@ -72,27 +68,29 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
 
     setTitleError('');
 
-    const eventTitle = title;
+    const startDateTime = `${startDate}T${useAllDay ? '00:00' : startTime}`;
+    let endDateTime;
 
-    // 종일 이벤트의 경우 FullCalendar 형식에 맞게 종료일을 다음날로 설정
-    let actualEndDate = endDate;
     if (useAllDay) {
       const endDateObj = new Date(endDate);
       endDateObj.setDate(endDateObj.getDate() + 1);
-      actualEndDate = endDateObj.toLocaleDateString('sv-SE');
+      endDateTime = `${endDateObj.toISOString().split('T')[0]}T00:00`;
+    } else {
+      endDateTime = `${endDate}T${endTime}`;
     }
 
     const updatedEventData = {
-      title: eventTitle,
-      start: `${startDate}T${useAllDay ? '00:00' : startTime}`,
-      end: `${actualEndDate}T${useAllDay ? '00:00' : endTime}`,
+      title,
+      start: startDateTime,
+      end: endDateTime,
       allDay: useAllDay,
       backgroundColor: selectedColor,
-      borderColor: '#AED6F1',
+      borderColor: selectedColor,
       textColor: '#000',
       extendedProps: {
-        content: content,
-        type: 'USER_ADDED',
+        content,
+        type: 'SCHEDULE',
+        scheduleId: eventInfo.extendedProps.scheduleId
       },
     };
 
@@ -167,7 +165,6 @@ const CalendarEditModal = ({ isOpen, onClose, eventInfo, onSave, onCancel }) => 
 
         .modal-content button[type="submit"] {
           background: #84cc16;
-
           color: white;
           padding: 10px;
           border: none;

@@ -8,12 +8,13 @@ import interactionPlugin from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import instance from '../../api/axios';
 import { getMyStudyLogs } from '../../api/studyLog';
+import { getSchedules, addSchedule, updateSchedule, deleteSchedule } from '../../api/schedule';
 import Header from '../common/Header';
 import Todo from '../common/Todo';
 import CalendarModal from './CalendarModal';
 import CalendarDetailModal from './CalendarDetailModal';
 import CalendarEditModal from './CalendarEditModal';
-import FooterBag from './FooterBag'; // 🟩 feature/shop에서 추가된 부분
+import FooterBag from './FooterBag';
 
 const CalendarView = () => {
   const calendarRef = useRef(null);
@@ -21,10 +22,7 @@ const CalendarView = () => {
   const location = useLocation();
 
   const [serverEvents, setServerEvents] = useState([]);
-  const [localEvents, setLocalEvents] = useState(() => {
-    const savedEvents = localStorage.getItem('localCalendarEvents');
-    return savedEvents ? JSON.parse(savedEvents) : [];
-  });
+  const [scheduleEvents, setScheduleEvents] = useState([]);
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -48,11 +46,12 @@ const CalendarView = () => {
     기타: '#D7DBDD',
   };
 
+  const clickTimer = useRef(null);
+
   function getTodayString() {
     const today = new Date();
     return today.toISOString().split('T')[0];
   }
-
   const fetchWrittenLogs = async () => {
     try {
       const res = await getMyStudyLogs(memberId);
@@ -147,7 +146,6 @@ const CalendarView = () => {
 
     return events;
   };
-
   const fetchCalendarData = async (monthStr, writtenDatesSet) => {
     try {
       if (!memberId) return;
@@ -159,9 +157,65 @@ const CalendarView = () => {
     }
   };
 
-  useEffect(() => {
-    fetchWrittenLogs();
-  }, [memberId]);
+  const fetchScheduleData = async (monthStr) => {
+    try {
+      if (!memberId) return;
+      const [year, month] = monthStr.split('-');
+      const startDate = `${monthStr}-01`;
+      const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate();
+      const endDate = `${monthStr}-${lastDay}`;
+      const res = await getSchedules(memberId, startDate, endDate);
+      const scheduleEvents = res.data.map(schedule => ({
+        id: schedule.scheduleId,
+        title: schedule.title,
+        start: schedule.startDatetime,
+        end: schedule.endDatetime,
+        allDay: schedule.isAllDay,
+        backgroundColor: schedule.colorCode || '#BAFFC9',
+        borderColor: schedule.colorCode || '#BAFFC9',
+        textColor: '#000',
+        extendedProps: {
+          type: 'SCHEDULE',
+          content: schedule.content,
+          scheduleId: schedule.scheduleId
+        }
+      }));
+      setScheduleEvents(scheduleEvents);
+    } catch (error) {
+      console.error('일정 데이터 조회 실패:', error);
+    }
+  };
+
+  const handleAddEvent = async (eventData) => {
+    try {
+      const scheduleData = {
+        memberId: parseInt(memberId),
+        title: eventData.title,
+        content: eventData.extendedProps?.content || '',
+        startDatetime: eventData.start,
+        endDatetime: eventData.end,
+        isAllDay: eventData.allDay,
+        colorCode: eventData.backgroundColor
+      };
+  
+      const res = await addSchedule(scheduleData);
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
+  
+      await fetchScheduleData(monthStr);
+  
+      setIsModalOpen(false);
+  
+    } catch (error) {
+      console.error('일정 추가 실패:', error);
+      alert('일정 추가에 실패했습니다.');
+    }
+  };
+  
+  useEffect(() => { fetchWrittenLogs(); }, [memberId]);
 
   useEffect(() => {
     if (writtenDates !== null) {
@@ -171,44 +225,13 @@ const CalendarView = () => {
       const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
       const monthStr = `${yyyy}-${mm}`;
       fetchCalendarData(monthStr, writtenDates);
+      fetchScheduleData(monthStr);
     }
   }, [writtenDates]);
 
-  useEffect(() => {
-    if (location.state?.reload) {
-      fetchWrittenLogs();
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    localStorage.setItem('localCalendarEvents', JSON.stringify(localEvents));
-  }, [localEvents]);
-
-  const handleSelect = (selectInfo) => {
-    const { startStr, endStr, allDay } = selectInfo;
-    const endDate = new Date(endStr);
-    if (allDay) endDate.setDate(endDate.getDate() - 1);
-    const inclusiveEndStr = endDate.toISOString().split('T')[0];
-    setSelectionInfo({ start: startStr, end: inclusiveEndStr });
-    setIsModalOpen(true);
-    selectInfo.view.calendar.unselect();
-  };
-
-  const handleAddEvent = (eventData) => {
-    const dateOnly = (dateStr) => dateStr.split('T')[0];
-    const newId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    setLocalEvents(prev => [...prev, {
-      ...eventData,
-      id: newId,
-      start: dateOnly(eventData.start),
-      end: dateOnly(eventData.end),
-      allDay: true
-    }]);
-  };
-
   const handleEventClick = (clickInfo) => {
     const { type } = clickInfo.event.extendedProps;
-    if (type === 'USER_ADDED') {
+    if (type === 'SCHEDULE') {
       setSelectedEvent(clickInfo.event);
       setIsDetailModalOpen(true);
     } else if (type === 'DIARY') {
@@ -220,13 +243,27 @@ const CalendarView = () => {
     }
   };
 
+  const handleDateClick = (arg) => {
+    const dateStr = arg.dateStr;
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = null;
+      setSelectionInfo({ start: dateStr, end: dateStr });
+      setIsModalOpen(true);
+    } else {
+      clickTimer.current = setTimeout(() => {
+        setSelectedDate(dateStr);
+        clickTimer.current = null;
+      }, 250);
+    }
+  };
+
   const handleEventReceive = (info) => {
     const calendarApi = calendarRef.current.getApi();
     const droppedDate = info.event.startStr;
     const { stickerId, image } = info.event.extendedProps;
     const eventId = `sticker-${stickerId}-${droppedDate}`;
     if (calendarApi.getEventById(eventId)) {
-      console.log('중복 스티커: 추가하지 않음');
       info.revert();
       return;
     }
@@ -240,54 +277,57 @@ const CalendarView = () => {
       textColor: 'transparent',
       extendedProps: { type: 'STICKER', stickerId, image }
     });
-    info.event.remove(); // 드래그 원본 제거
+    info.event.remove();
   };
 
-  const handleEditEvent = () => {
-    setIsDetailModalOpen(false);
-    setIsEditModalOpen(true);
-  };
-
-  const handleCloseDetailModal = () => {
-    setIsDetailModalOpen(false);
-    setSelectedEvent(null);
-  };
-
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent = async () => {
     if (selectedEvent) {
-      setLocalEvents(prev => prev.filter(event => event.id !== selectedEvent.id));
-      handleCloseDetailModal();
+      try {
+        const scheduleId = selectedEvent.extendedProps.scheduleId;
+        await deleteSchedule(scheduleId);
+        const calendarApi = calendarRef.current?.getApi();
+        const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+        const yyyy = currentDate.getFullYear();
+        const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const monthStr = `${yyyy}-${mm}`;
+        await fetchScheduleData(monthStr);
+        handleCloseDetailModal();
+      } catch (error) {
+        console.error('일정 삭제 실패:', error);
+        alert('일정 삭제에 실패했습니다.');
+      }
     }
   };
 
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedEvent(null);
-  };
+  const handleSaveEdit = async (updatedEventData) => {
+    try {
+      const scheduleId = Number(selectedEvent.extendedProps.scheduleId);
+      if (!scheduleId) {
+        alert('일정 ID가 없습니다.');
+        return;
+      }
 
-  const handleSaveEdit = (updatedEventData) => {
-    const dateOnly = (dateStr) => dateStr.split('T')[0];
-    if (selectedEvent) {
-      setLocalEvents(prev => prev.map(event => 
-        event.id === selectedEvent.id 
-          ? { 
-              ...event, 
-              title: updatedEventData.title, 
-              start: dateOnly(updatedEventData.start),
-              end: dateOnly(updatedEventData.end),
-              allDay: true,
-              backgroundColor: updatedEventData.backgroundColor,
-              borderColor: updatedEventData.borderColor,
-              textColor: updatedEventData.textColor,
-              extendedProps: {
-                ...event.extendedProps,
-                content: updatedEventData.extendedProps?.content
-              }
-            }
-          : event
-      ));
+      const updateData = {
+        title: updatedEventData.title,
+        content: updatedEventData.extendedProps?.content || '',
+        startDatetime: updatedEventData.start,
+        endDatetime: updatedEventData.end,
+        isAllDay: updatedEventData.allDay,
+        colorCode: updatedEventData.backgroundColor
+      };
+
+      await updateSchedule(scheduleId, updateData);
+      const calendarApi = calendarRef.current?.getApi();
+      const currentDate = calendarApi ? calendarApi.getDate() : new Date();
+      const yyyy = currentDate.getFullYear();
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const monthStr = `${yyyy}-${mm}`;
+      await fetchScheduleData(monthStr);
+      handleCloseEditModal();
+    } catch (error) {
+      console.error('일정 수정 실패:', error);
+      alert('일정 수정에 실패했습니다.');
     }
-    handleCloseEditModal();
   };
 
   const eventPriority = (event) => {
@@ -295,8 +335,23 @@ const CalendarView = () => {
     if (type === 'SUBJECT') return 1;
     if (type === 'MENTORING') return 2;
     if (type === 'UNWRITTEN_DIARY') return 3;
-    if (type === 'USER_ADDED') return 4;
+    if (type === 'SCHEDULE') return 4;
     return 99;
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleEditEvent = () => {
+    setIsDetailModalOpen(false);
+    setIsEditModalOpen(true);
   };
 
   return (
@@ -304,10 +359,117 @@ const CalendarView = () => {
       <Header />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
+        <style>
+          {`
+            
+            .fc .fc-daygrid-day {
+              height: 130px !important;
+              
+              padding: 0 !important;
+            }
+            .fc .fc-daygrid-day-frame {
+              height: 100% !important;
+              padding: 4px !important;
+            }
+            .fc .fc-scrollgrid-sync-table {
+              height: auto !important;
+            }
+
+            /* 툴바 */
+            .fc .fc-toolbar {
+              display: flex !important;
+              justify-content: space-between !important;
+              align-items: center !important;
+              margin-bottom: 16px !important;
+              position: relative !important;
+              height: 60px !important;
+            }
+
+            .fc .fc-toolbar-title {
+              font-size: 24px !important;
+              font-weight: bold !important;
+              position: absolute !important;
+              left: 50% !important;
+              top: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              max-width: none !important;
+              padding: 0 16px !important;
+              white-space: nowrap !important;
+              overflow: visible !important;
+              text-overflow: unset !important;
+              text-align: center !important;
+            }
+
+            /* 커스텀 내비게이션 버튼 */
+            .fc-myPrev-button,
+            .fc-myNext-button {
+              background: none !important;
+              border: none !important;
+              width: 24px !important;
+              height: 32px !important;
+              cursor: pointer !important;
+              position: absolute !important;
+              top: 52% !important;
+              transform: translateY(-50%) !important;
+              z-index: 1 !important;
+              outline: none !important;
+              box-shadow: none !important;
+            }
+
+            .fc-myPrev-button {
+              left: calc(50% - 250px) !important;
+            }
+
+            .fc-myNext-button {
+              right: calc(50% - 250px) !important;
+            }
+
+            .fc-myPrev-button::before,
+            .fc-myNext-button::before {
+              content: '' !important;
+              position: absolute !important;
+              top: 52% !important;
+              left: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              width: 24px !important;
+              height: 24px !important;
+              background-size: contain !important;
+              background-repeat: no-repeat !important;
+            }
+
+            .fc-myPrev-button::before {
+              background-image: url('/assets/img/mentors/chevron-left.png') !important;
+            }
+
+            .fc-myNext-button::before {
+              background-image: url('/assets/img/mentors/chevron-right.png') !important;
+            }
+
+            /*  오늘 버튼 스타일 */
+            .fc-today-button {
+              margin-right: 10px !important;
+              background-color: #84cc16 !important;
+              border-color: #84cc16 !important;
+              color: white !important;
+            }
+
+            /* 6번째 줄 강제 제거 */
+            .fc-daygrid-body tr:nth-child(6) {
+              display: none;
+            }
+              .selected-cell {
+              background-color: #e9ecef !important;
+              transition: background-color 0.3s ease;
+            }
+          `}
+          </style>
+
+
           <FullCalendar
             schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, resourceTimelinePlugin]}
             initialView="dayGridMonth"
+            height="auto"
             headerToolbar={{
               left: 'myPrev',
               center: 'title',
@@ -318,7 +480,7 @@ const CalendarView = () => {
               myNext: { text: '', click: () => calendarRef.current?.getApi().next() },
               today: { text: '오늘', click: () => calendarRef.current?.getApi().today() }
             }}
-            events={[...serverEvents, ...localEvents].sort((a, b) => eventPriority(b) - eventPriority(a))}
+            events={[...serverEvents, ...scheduleEvents].sort((a, b) => eventPriority(b) - eventPriority(a))}
             eventContent={(arg) => {
               const { type, image } = arg.event.extendedProps;
               if (type === 'STICKER' && image) {
@@ -331,12 +493,11 @@ const CalendarView = () => {
               }
               return { html: `<div>${arg.event.title}</div>` };
             }}
-            eventClick={handleEventClick}
-            select={handleSelect}
-            selectable={true}
-            editable={true}
-            droppable={true}
+            dateClick={handleDateClick}
+            editable
+            droppable
             eventReceive={handleEventReceive}
+            eventClick={handleEventClick}
             datesSet={(arg) => {
               const currentDate = arg.view.currentStart;
               const yyyy = currentDate.getFullYear();
@@ -344,14 +505,23 @@ const CalendarView = () => {
               const monthStr = `${yyyy}-${mm}`;
               if (monthStr !== currentMonthStr && writtenDates !== null) {
                 fetchCalendarData(monthStr, writtenDates);
+                fetchScheduleData(monthStr);
                 setCurrentMonthStr(monthStr);
               }
             }}
             ref={calendarRef}
             displayEventTime={false}
+            dayCellClassNames={(arg) => {
+              const cellDate = arg.date;
+              const yyyy = cellDate.getFullYear();
+              const mm = String(cellDate.getMonth() + 1).padStart(2, '0');
+              const dd = String(cellDate.getDate()).padStart(2, '0');
+              const formattedDate = `${yyyy}-${mm}-${dd}`;
+              return formattedDate === selectedDate ? ['selected-cell'] : [];
+            }}
           />
           <CalendarModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent} />
-          <CalendarDetailModal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} eventInfo={selectedEvent} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
+          <CalendarDetailModal isOpen={isDetailModalOpen} onClose={handleCloseDetailModal} eventInfo={selectedEvent} onEdit={handleEditEvent} onDelete={handleDeleteEvent} onSwitchToEdit={handleEditEvent} />
           <CalendarEditModal isOpen={isEditModalOpen} onClose={handleCloseEditModal} eventInfo={selectedEvent} onSave={handleSaveEdit} />
         </div>
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
