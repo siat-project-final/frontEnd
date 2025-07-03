@@ -108,7 +108,12 @@ const StudyLogDetailPage = () => {
         <main className="main">
           <div className="container py-5">
           <div className="d-flex align-items-center justify-content-between flex-nowrap mb-4">
-            <h3 className="fw-bold mb-0" style={{ color: '#84cc16', whiteSpace: 'nowrap', minWidth: 'auto' }}>
+            <h3 className="fw-bold mb-0" style={{ 
+              color: '#84cc16',
+              whiteSpace: 'nowrap', 
+              minWidth: 'auto', marginTop: '16px', marginLeft: '16px'  }}>
+              
+              
               학습일지 상세
             </h3>
 
@@ -119,6 +124,10 @@ const StudyLogDetailPage = () => {
                     className="form-check-input"
                     type="checkbox"
                     id={`header-checkbox-${period}`}
+                    value={period}
+                    checked={formData.selectedPeriods.includes(period)}
+                    onChange={handlePeriodChange}
+                    disabled={!isEditMode}
                   />
                   <label
                     className="form-check-label"
