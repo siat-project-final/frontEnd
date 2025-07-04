@@ -11,13 +11,13 @@ const ShopPage = () => {
   const [stickers, setStickers] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const rawMemberId = sessionStorage.getItem('memberId');
+  const rawMemberId = localStorage.getItem('memberId');
   const memberId = Number(rawMemberId);
 
   const fetchData = async () => {
     if (!memberId || isNaN(memberId)) {
-      console.warn('⚠ 유효하지 않은 memberId입니다. sessionStorage 값을 확인하세요:', rawMemberId);
-      alert('⚠️ 로그인 정보가 올바르지 않습니다. 다시 로그인해주세요.');
+      console.warn(' 유효하지 않은 memberId입니다. sessionStorage 값을 확인하세요:', rawMemberId);
+      alert(' 로그인 정보가 올바르지 않습니다. 다시 로그인해주세요.');
       return;
     }
 
