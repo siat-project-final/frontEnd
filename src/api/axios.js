@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://13.125.170.63:8087/v1',
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://siathub.com/v1',
   withCredentials: true,
 });
 
