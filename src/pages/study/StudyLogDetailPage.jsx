@@ -158,6 +158,22 @@ const StudyLogDetailPage = () => {
                       readOnly={!isEditMode}
                     />
                   </div>
+                  
+                </div>
+
+                <div className="row mb-3 align-items-end"> {/* align-items-end 추가 */}
+                  {/* 과목 필드 너비 조정: col-md-3으로 줄임 */}
+                  <div className="col-md-6">
+                    <label className="form-label">과목</label>
+                    <input
+                      name="subject"
+                      type="text"
+                      className="form-control"
+                      value={formData.subject || ''}
+                      onChange={handleChange}
+                      readOnly={!isEditMode}
+                    />
+                  </div>
                   <div className="col-md-3">
                     <label className="form-label">공개 여부</label>
                     <select className="form-select" disabled>
@@ -176,22 +192,6 @@ const StudyLogDetailPage = () => {
                       readOnly={!isEditMode}
                     />
                   </div>
-                </div>
-
-                <div className="row mb-3 align-items-end"> {/* align-items-end 추가 */}
-                  {/* 과목 필드 너비 조정: col-md-3으로 줄임 */}
-                  <div className="col-md-6">
-                    <label className="form-label">과목</label>
-                    <input
-                      name="subject"
-                      type="text"
-                      className="form-control"
-                      value={formData.subject || ''}
-                      onChange={handleChange}
-                      readOnly={!isEditMode}
-                    />
-                  </div>
-
                 </div>
 
                 <div className="mb-3">
