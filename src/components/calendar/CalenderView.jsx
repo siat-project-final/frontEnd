@@ -449,7 +449,7 @@ const CalendarView = () => {
 
             /*  오늘 버튼 스타일 */
             .fc-today-button {
-              margin-right: 10px !important;
+              margin-right: 400px !important;
               background-color: #84cc16 !important;
               border-color: #84cc16 !important;
               color: white !important;
