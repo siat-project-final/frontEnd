@@ -22,10 +22,10 @@ const ConfirmOnlyModal = ({ visible, message, onClose }) => {
         style={{
           background: '#fff',
           borderRadius: 12,
-          padding: '32px 24px',
+          padding: '32px 40px',
           boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
           textAlign: 'center',
-          minWidth: 320,
+          width: 400,
         }}
       >
         <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 16 }}>{message}</div>
