@@ -11,7 +11,7 @@ const ShopPage = () => {
   const [stickers, setStickers] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const rawMemberId = sessionStorage.getItem('memberId');
+  const rawMemberId = localStorage.getItem('memberId');
   const memberId = Number(rawMemberId);
 
   const fetchData = async () => {
