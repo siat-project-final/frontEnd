@@ -16,8 +16,8 @@ const OtherMentoringDetail = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    const role = sessionStorage.getItem('userRole');
-    if (role !== 'MENTOR') {
+    const role = localStorage.getItem('role');
+    if (role?.toUpperCase() !== 'MENTOR') {
       alert('멘토만 접근 가능한 페이지입니다.');
       navigate('/');
     }
@@ -42,16 +42,23 @@ const OtherMentoringDetail = () => {
     ],
   };
 
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-  };
-
   const handleApplyClick = () => {
-    setIsModalVisible(true);
+    const role = localStorage.getItem('role');
+    if (role?.toUpperCase() === 'MENTOR') {
+      setIsModalVisible(true); // 이동 없이 모달만 띄움
+      return; // 아래 navigate 막기
+    }
+  
+    // 멘티일 때만 이동
+    navigate('/mentoring/apply', {
+      state: { mentor: mentorData, selectedDate },
+    });
   };
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
+    // 페이지 리렌더링 유도 (selectedDate를 동일 값으로 재설정)
+    setSelectedDate(new Date(selectedDate.getTime()));
   };
 
   return (
@@ -125,6 +132,7 @@ const OtherMentoringDetail = () => {
                   ))}
                 </ul>
               </div>
+
               {/* 캘린더 & 버튼 */}
               <div
                 style={{
@@ -147,9 +155,9 @@ const OtherMentoringDetail = () => {
                     onChange={setSelectedDate}
                     value={selectedDate}
                     formatDay={(locale, date) => date.getDate()}
-                    tileClassName={({ date }) => {
-                      return date.getTime() === selectedDate.getTime() ? 'selected-date' : null;
-                    }}
+                    tileClassName={({ date }) =>
+                      date.getTime() === selectedDate.getTime() ? 'selected-date' : null
+                    }
                   />
                   <style>
                     {`
@@ -158,7 +166,6 @@ const OtherMentoringDetail = () => {
                         border-radius: 4px !important;
                         background: #84cc16 !important;
                       }
-
                       .react-calendar__tile--hasActive {
                         background: #84cc16 !important;
                         color: white !important;
@@ -186,6 +193,7 @@ const OtherMentoringDetail = () => {
                     `}
                   </style>
                 </div>
+
                 <button
                   onClick={handleApplyClick}
                   style={{
@@ -213,7 +221,6 @@ const OtherMentoringDetail = () => {
           </div>
         </main>
 
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>

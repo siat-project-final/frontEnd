@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import Sidebar from '../../../components/common/Sidebar';
@@ -23,14 +23,21 @@ const MentoringApply = () => {
   const [showModal, setShowModal] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showIntroError, setShowIntroError] = useState(false);
+  const [showMentorBlockModal, setShowMentorBlockModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const mentor = location.state?.mentor;
   const selectedDate = location.state?.selectedDate;
   const memberId = localStorage.getItem('memberId');
   const menteeName = localStorage.getItem('memberName');
-  
-    // console.log('✅ 현재 로그인된 memberId:', memberId);
+
+  // 멘토 접근 차단
+  useEffect(() => {
+    const role = localStorage.getItem('role');
+    if (role?.toUpperCase() === 'MENTOR') {
+      setShowMentorBlockModal(true);
+    }
+  }, [navigate]);
 
   const handleCheck = (value) => {
     setSelected((prev) =>
@@ -66,34 +73,27 @@ const MentoringApply = () => {
     const finalTopics = selected.includes('other')
       ? [...selected.filter((v) => v !== 'other'), otherText]
       : selected;
-    
-    console.log('🔥 selectedDate 원본:', selectedDate);
-    console.log('🔥 typeof selectedDate:', typeof selectedDate);
-    
+      console.log('selectedDate 원본:', selectedDate);
+      console.log('typeof selectedDate:', typeof selectedDate);
     const selectedDateObj = selectedDate instanceof Date
       ? selectedDate
-      : new Date(`${selectedDate}T09:00:00`);  // KST 기준 자정으로 고정
-    
+      : new Date(`${selectedDate}T09:00:00`);
+
     const year = selectedDateObj.getFullYear();
     const month = String(selectedDateObj.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDateObj.getDate()).padStart(2, '0');
-    
     const kstDateStr = `${year}-${month}-${day}`;
-    
-    console.log('✅ 최종 KST 날짜:', kstDateStr);
-
+    console.log('최종 KST 날짜:', kstDateStr);
 
     try {
-       await applyMentoring({
-         mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
-         memberId: Number(memberId),
-         menteeName: menteeName,
-         date: `${kstDateStr}T00:00:00`,
-         introduction: intro,
-         subject: finalTopics.join(', '),
-        //  mentorMemberId: Number(mentor.mentorMemberId),
-       });
-
+      await applyMentoring({
+        mentorId: mentor.mentorId, // mentor.mentorId 사용 가능
+        memberId: Number(memberId),
+        menteeName: menteeName,
+        date: `${kstDateStr}T00:00:00`,
+        introduction: intro,
+        subject: finalTopics.join(', '),
+      });
       // 성공 시 예약 목록으로 이동
       navigate('/mentoring/mentee/register', {
         state: {
@@ -248,6 +248,18 @@ const MentoringApply = () => {
               </>
             }
             onClose={handleCloseModal}
+          />
+          <ConfirmOnlyModal
+            visible={showMentorBlockModal}
+            message={
+              <>
+                멘토는 멘토링 신청이 불가능합니다.
+              </>
+            }
+            onClose={() => {
+              setShowMentorBlockModal(false);
+              navigate('/mentoring/mentor/detail');
+            }}
           />
         </main>
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
