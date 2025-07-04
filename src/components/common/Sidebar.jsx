@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import '../../assets/scss/layouts/_sidebar.scss'; // 여기 경로는 유지해도 됨
+import '../../assets/scss/layouts/_sidebar.scss';
 
 const menuMap = {
   mentoring: {
@@ -31,7 +31,7 @@ const menuMap = {
     title: 'MyPage',
     items: [
       { label: '프로필 변경', to: '/mypage' },
-      { label: '뱃지 목록', to: '/mypage/badges' },
+      { label: '뱃지목록', to: '/mypage/badges' },
       { label: '멘토링 히스토리', to: '/mypage/mentoring-history' },
       { label: '통계', to: '/mypage/statistics' },
       { label: '챌린지 히스토리', to: '/mypage/challenge-history' },
@@ -41,20 +41,38 @@ const menuMap = {
     title: 'Alarm',
     items: [{ label: '알림 내역', to: '/mentee-alarm' }],
   },
+  shop: {
+    title: 'Shop',
+    items: [
+      { label: '상점', to: '/shop' },
+      { label: '인벤토리', to: '/inventory' },
+    ],
+  },
 };
 
 const Sidebar = ({ menuType }) => {
   const location = useLocation();
   const hideSidebarPaths = ['/login', '/signup', '/starter'];
 
+  // 🔍 디버깅용 로그
+  console.log('✅ [Sidebar] 현재 URL:', location.pathname);
+  console.log('✅ [Sidebar] 전달받은 menuType:', menuType);
+  console.log('✅ [Sidebar] menuMap[menuType]:', menuMap[menuType]);
+
   if (hideSidebarPaths.some((path) => location.pathname.startsWith(path))) {
+    console.log('⛔ [Sidebar] 숨김 경로에 해당하여 사이드바를 렌더링하지 않습니다.');
     return null;
   }
 
   const menu = menuMap[menuType];
-  if (!menu) return null;
 
-  // 멘토 계정이면 예약 내역 링크를 mentor용으로 변경
+  if (!menu) {
+    console.warn('❌ [Sidebar] menuType에 해당하는 메뉴가 없습니다:', menuType);
+    console.log('[Sidebar] 호출된 위치:', new Error().stack);
+
+    return <div style={{ color: 'red', padding: '1rem' }}>❌ Sidebar 메뉴 없음: {menuType}</div>;
+  }
+
   const role = localStorage.getItem('role');
   const items = menu.items.map((item) => {
     if (menuType === 'mentoring' && item.label === '예약 내역' && role === 'MENTOR') {
