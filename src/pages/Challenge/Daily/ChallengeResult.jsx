@@ -98,30 +98,31 @@ const ChallengeResult = () => {
                   {item.type === 'multiple' && item.options && (
                     <ul className="list-group mb-2">
                       {item.options.map((opt, idx) => {
-                        const optionNumber = opt.split('.')[0].trim(); // 🔧 숫자만 추출: "2. String" → "2"
+                        const optionNumber = opt.split('.')[0].trim();
+
+                        const isCorrect = optionNumber === String(item.correctAnswer);
+                        const isSubmitted = optionNumber === String(item.submitAnswer);
 
                         return (
                           <li
                             key={idx}
                             className={`list-group-item d-flex justify-content-between ${
-                              optionNumber === item.correctAnswer
+                              isCorrect
                                 ? 'list-group-item-success'
-                                : optionNumber === item.submitAnswer
+                                : isSubmitted
                                 ? 'list-group-item-danger'
                                 : ''
                             }`}
                           >
                             <span>{opt}</span>
-                            {optionNumber === item.correctAnswer && (
-                              <span className="badge bg-success">정답</span>
-                            )}
-                            {optionNumber === item.submitAnswer &&
-                              optionNumber !== item.correctAnswer && (
-                                <span className="badge bg-danger">내 답안</span>
+                            {isCorrect && <span className="badge bg-success">정답</span>}
+                            {isSubmitted && !isCorrect && (
+                              <span className="badge bg-danger">내 답안</span>
                             )}
                           </li>
                         );
                       })}
+
                     </ul>
                   )}
 
