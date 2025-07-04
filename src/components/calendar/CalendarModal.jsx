@@ -25,7 +25,9 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
   useEffect(() => {
     if (isOpen && selectionInfo) {
       setStartDate(selectionInfo.start);
-      setEndDate(selectionInfo.end);
+      const adjustedEnd = new Date(selectionInfo.end);
+      adjustedEnd.setDate(adjustedEnd.getDate() - 1); // 드래그 시 +1 되는 end 보정
+      setEndDate(adjustedEnd.toISOString().split('T')[0]);
       setTitle('');
       setContent('');
       setTitleError('');

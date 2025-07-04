@@ -3,7 +3,7 @@ import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import Todo from '../../../components/common/Todo';
-import { getMentors } from '../../../api/mentoring'; // ✅ 실제 API 사용
+import { getMentors } from '../../../api/mentoring'; // 실제 API 사용
 import '../../../App.css';
 
 const MentoringList = () => {
@@ -89,8 +89,8 @@ const MentoringList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getMentors(); // ✅ 실제 백엔드 API 호출
-        setMentors(res.data);          // ✅ 응답 데이터 state에 저장
+        const res = await getMentors(); // 실제 백엔드 API 호출
+        setMentors(res.data);          // 응답 데이터 state에 저장
       } catch (err) {
         console.error('멘토 목록 불러오기 실패:', err);
       }
@@ -102,9 +102,22 @@ const MentoringList = () => {
   const handleMentorClick = (mentor) => {
     const role = localStorage.getItem('role');
     if (role === 'MENTOR') {
-      alert('멘토는 멘토링 신청 권한이 없습니다.');
+      // 멘토는 OtherMentoringDetail.jsx로 이동
+      navigate('/mentoring/other-detail', {
+        state: {
+          mentor: {
+            mentorId: mentor.mentorId,
+            mentorMemberId: mentor.mentorMemberId,
+            name: mentor.mentorName,
+            position: mentor.position,
+            company: mentor.company,
+            mentor_image_url: mentor.mentor_image_url,
+          },
+        },
+      });
       return;
     }
+    // 멘티 등은 기존 detail 페이지로 이동
     navigate('/mentoring/detail', {
       state: {
         mentor: {

@@ -230,6 +230,8 @@ const CalendarView = () => {
   }, [writtenDates]);
 
   const handleEventClick = (clickInfo) => {
+
+
     const { type } = clickInfo.event.extendedProps;
     if (type === 'SCHEDULE') {
       setSelectedEvent(clickInfo.event);
@@ -518,6 +520,14 @@ const CalendarView = () => {
               const dd = String(cellDate.getDate()).padStart(2, '0');
               const formattedDate = `${yyyy}-${mm}-${dd}`;
               return formattedDate === selectedDate ? ['selected-cell'] : [];
+            }}
+            selectable={true} // 드래그 활성화
+            select={(info) => {
+              setSelectionInfo({
+                start: info.startStr.split('T')[0],
+                end: info.endStr.split('T')[0],
+              });
+              setIsModalOpen(true);
             }}
           />
           <CalendarModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectionInfo={selectionInfo} onSubmitEvent={handleAddEvent} />
