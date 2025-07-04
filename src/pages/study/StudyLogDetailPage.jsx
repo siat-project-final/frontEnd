@@ -107,9 +107,43 @@ const StudyLogDetailPage = () => {
         <Sidebar menuType="studylog" />
         <main className="main">
           <div className="container py-5">
-            <h1 className="h3 fw-bold mb-0" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
+          <div className="d-flex align-items-center justify-content-between flex-nowrap mb-4">
+            <h3 className="fw-bold mb-0" style={{ 
+              color: '#84cc16',
+              whiteSpace: 'nowrap', 
+              minWidth: 'auto', marginTop: '16px', marginLeft: '16px'  }}>
+              
+              
               학습일지 상세
-            </h1>
+            </h3>
+
+            <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
+              {['하루', '일주일', '한 달', '세 달'].map(period => (
+                <div key={period} className="form-check form-check-inline m-0">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`header-checkbox-${period}`}
+                    value={period}
+                    checked={formData.selectedPeriods.includes(period)}
+                    onChange={handlePeriodChange}
+                    disabled={!isEditMode}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor={`header-checkbox-${period}`}
+                    style={{ fontSize: '0.9rem' }}
+                  >
+                    {period}
+                  </label>
+                </div>
+              ))}
+            </div>
+            </div>
+            {/* 원래 h1 태그에 있던 margin-top과 margin-left를 div로 옮겼습니다.
+                margin-right를 추가하여 페이지 오른쪽 끝에 너무 붙지 않도록 합니다. */}
+
+                  
             <div className="studylog-boxes">
               <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
@@ -158,26 +192,6 @@ const StudyLogDetailPage = () => {
                     />
                   </div>
 
-                  {/* 새로운 체크박스 그룹 추가 */}
-                  <div className="col-md-6 d-flex align-items-center gap-3"> {/* 남은 공간을 차지하도록 col-md-9 할당 */}
-                    {['하루', '일주일', '한 달', '세 달'].map((period) => (
-                      <div key={period} className="form-check form-check-inline m-0">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id={`period-checkbox-${period}`}
-                          name="selectedPeriods"
-                          value={period}
-                          checked={formData.selectedPeriods.includes(period)} // 상태에 따라 체크 여부 결정
-                          onChange={handlePeriodChange} // 변경 핸들러 연결
-                          disabled={!isEditMode} // 수정 모드일 때만 활성화
-                        />
-                        <label className="form-check-label" htmlFor={`period-checkbox-${period}`} style={{ fontSize: '0.875rem' }}>
-                          {period}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
                 <div className="mb-3">
