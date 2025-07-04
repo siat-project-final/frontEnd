@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './MyPageMain.css';
 import { getUserInfo, updateUserInfo } from '../../api/user';
+import instance from '../../api/axios'; // ✅ axios 인스턴스 import
+
 import badge1 from '../../assets/img/badges/badge1.png';
 import badge2 from '../../assets/img/badges/badge2.png';
 import badge3 from '../../assets/img/badges/badge3.png';
@@ -14,6 +16,7 @@ import badge7 from '../../assets/img/badges/badge7.png';
 import badge8 from '../../assets/img/badges/badge8.png';
 import badge9 from '../../assets/img/badges/badge9.png';
 
+// 레벨별 뱃지 매핑
 const levelBadges = {
   1: badge1,
   2: badge2,
@@ -26,14 +29,30 @@ const levelBadges = {
   9: badge9,
 };
 
+const levelThresholds = {
+  1: 0,
+  2: 100,
+  3: 200,
+  4: 300,
+  5: 400,
+  6: 500,
+  7: 700,
+  8: 1000,
+  9: 1300,
+};
+
 const MyPageMain = () => {
   const [user, setUser] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
   const memberId = localStorage.getItem('memberId');
 
   const fetchData = async () => {
     try {
       const res = await getUserInfo(memberId);
       setUser(res.data);
+      setPreview(res.data.member_image_url || null);
       localStorage.setItem('currentLevel', res.data.currentLevel);
     } catch (err) {
       console.error('회원 정보 불러오기 실패:', err);
@@ -44,15 +63,48 @@ const MyPageMain = () => {
     fetchData();
   }, [memberId]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let imageUrl = user.member_image_url;
+
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      try {
+        const uploadRes = await instance.post(
+          `/myPage/members/${memberId}/upload-image`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        const uploadBody = uploadRes.data;
+        imageUrl = uploadBody.imageUrl;
+        setSelectedFile(null);
+      } catch (err) {
+        console.error('이미지 업로드 오류:', err);
+        alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+        return;
+      }
+    }
+
     const updatedUser = {
       id: e.target.id.value,
       password: e.target.password.value,
       memberName: e.target.name.value,
       nickname: e.target.nickname.value,
       phoneNumber: e.target.phone.value,
-      email: e.target.email.value
+      email: e.target.email.value,
+      member_image_url: imageUrl,
     };
 
     try {
@@ -66,31 +118,21 @@ const MyPageMain = () => {
 
   if (!user) return <div>로딩 중...</div>;
 
-  const levelThresholds = {
-    1: 0,
-    2: 100,
-    3: 200,
-    4: 300,
-    5: 400,
-    6: 500,
-    7: 700,
-    8: 1000,
-    9: 1300
-  };
-
   const totalXp = user.totalXp;
   const levelEntries = Object.entries(levelThresholds);
-
   let currentLevel = 1;
   for (let i = 1; i < levelEntries.length; i++) {
     const [level, xp] = levelEntries[i];
-    if (totalXp >= xp) currentLevel = parseInt(level);
+    if (totalXp >= xp) currentLevel = parseInt(level, 10);
     else break;
   }
 
   const currentThreshold = levelThresholds[currentLevel];
   const nextThreshold = levelThresholds[currentLevel + 1] ?? totalXp;
-  const levelProgressPercent = Math.min(100, ((totalXp - currentThreshold) / (nextThreshold - currentThreshold)) * 100);
+  const levelProgressPercent = Math.min(
+    100,
+    ((totalXp - currentThreshold) / (nextThreshold - currentThreshold)) * 100
+  );
   const badgeImage = levelBadges[currentLevel];
 
   return (
@@ -103,13 +145,39 @@ const MyPageMain = () => {
             <div className="profile-content">
               <div className="profile-left">
                 <div className="profile-image">
-                  <div className="image-placeholder">프로필 이미지</div>
+                  <img
+                    src={preview || '/assets/img/profile/profile.jpg'}
+                    alt="프로필"
+                    style={{
+                      width: '120px',
+                      height: '120px',
+                      objectFit: 'cover',
+                      borderRadius: '50%',
+                    }}
+                  />
                 </div>
-                <button className="upload-btn">upload</button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                />
+                <button
+                  type="button"
+                  className="upload-btn"
+                  style={{ marginTop: '10px', marginLeft: '10px' }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  이미지 선택
+                </button>
+
                 <div className="profile-stats">
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
-                    <p className="stat-value">{user.usablePoints.toLocaleString()}</p>
+                    <p className="stat-value">
+                      {user.usablePoints.toLocaleString()}
+                    </p>
                   </div>
                   <div className="stat-item">
                     <div className="level-info">
@@ -119,14 +187,22 @@ const MyPageMain = () => {
                         <div
                           className="progress-fill"
                           style={{ width: `${levelProgressPercent}%` }}
-                        ></div>
+                        />
                       </div>
-                      <p className="xp-value">{totalXp} / {nextThreshold}</p>
+                      <p className="xp-value">
+                        {totalXp} / {nextThreshold}
+                      </p>
                     </div>
                   </div>
                   <div className="stat-item">
                     <div className="badge-info">
-                      {badgeImage && <img src={badgeImage} alt="최근 뱃지" style={{ width: '48px', height: '48px' }} />}
+                      {badgeImage && (
+                        <img
+                          src={badgeImage}
+                          alt="최근 뱃지"
+                          style={{ width: '48px', height: '48px' }}
+                        />
+                      )}
                       <p className="badge-label">Badges</p>
                     </div>
                   </div>
