@@ -76,16 +76,14 @@ const StudyLogDetailPage = () => {
       memberId: parseInt(memberId), // memberId를 숫자로 변환하여 전송 (API 요구사항에 따라)
     };
     try {
-      await updateStudyLog(id, updateData);
-      const res = await getMyStudyLogById(id);
-      // 서버에서 가져온 데이터로 originalData 및 formData 업데이트
-      const updatedData = {
-        ...res.data,
-        selectedPeriods: res.data.selectedPeriods || [],
-      };
-      setFormData(updatedData);
-      setOriginalData(updatedData);
-      setIsEditMode(false);
+    await updateStudyLog(id, updateData);
+
+    // 🔥 localStorage에 selectedPeriods 저장
+    localStorage.setItem(`selectedPeriods_${id}`, JSON.stringify(formData.selectedPeriods));
+
+    // 🔥 원본 데이터 최신화
+    setOriginalData(formData);
+    setIsEditMode(false);
       alert('수정이 완료되었습니다.');
     } catch (err) {
       console.error('일지 수정 실패:', err);

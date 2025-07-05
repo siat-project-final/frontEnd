@@ -26,6 +26,10 @@ const StudyLogCard = ({ log, onDelete }) => {
     }
   };
 
+  
+  // 🔥 안정 처리: selectedPeriods가 배열인지 확인
+  const periods = Array.isArray(log.selectedPeriods) ? log.selectedPeriods : [];
+
   console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}, selectedPeriods=${log.selectedPeriods}`);
 
   return (
@@ -83,7 +87,7 @@ const StudyLogCard = ({ log, onDelete }) => {
                     className="form-check-input"
                     type="checkbox"
                     id={`card-checkbox-${log.diaryId}-${period}`}
-                    checked={Array.isArray(log.selectedPeriods) && log.selectedPeriods.includes(period)}
+                    checked={periods.includes(period)}
                     readOnly
                     disabled
                   />
