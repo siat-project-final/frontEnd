@@ -85,6 +85,24 @@ const WriteStudyLogPage = () => {
                       placeholder="제목 입력"
                     />
                   </div>
+                  
+                </div>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">과목</label>
+                    <select
+                      className="form-select"
+                      name="subject"
+                      value={form.subject}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">과목 선택</option>
+                      {SUBJECTS.map((subj) => (
+                        <option key={subj} value={subj}>{subj}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="col-md-3">
                     <label className="form-label">공개 여부</label>
                     <select
@@ -108,23 +126,6 @@ const WriteStudyLogPage = () => {
                     />
                   </div>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">과목</label>
-                    <select
-                      className="form-select"
-                      name="subject"
-                      value={form.subject}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">과목 선택</option>
-                      {SUBJECTS.map((subj) => (
-                        <option key={subj} value={subj}>{subj}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
 
                 <div className="mb-3">
                   <label className="form-label">학습일지 내용</label>
@@ -135,6 +136,7 @@ const WriteStudyLogPage = () => {
                     value={form.content}
                     onChange={handleChange}
                   ></textarea>
+                  
                 </div>
 
                 <div className="mb-3">
