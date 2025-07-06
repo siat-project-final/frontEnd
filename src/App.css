@@ -68,8 +68,6 @@
   font-weight: 600;
 }
 
-
-
 /* 요일 텍스트 왼쪽 정렬 */
 /* .fc .fc-col-header-cell-cushion {
   display: block;
@@ -80,7 +78,6 @@
 .fc-header-toolbar {
   margin-top: 15px; /* 원하는 만큼 조절 */
 }
-
 
 .fc-button-myPrev,
 .fc-button-myNext {
@@ -109,4 +106,10 @@
 
 .fc-daygrid-event-dot {
   display: none !important; /* ● 제거 */
+}
+
+th.ranking-header {
+  background-color: #84cc16 !important;
+  color: white !important;
+  font-weight: bold;
 }

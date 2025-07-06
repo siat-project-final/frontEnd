@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import { useNavigate } from 'react-router-dom';
-import {
-  getTodayChallenge,
-  getDailyRanking,
-  checkParticipation,
-} from '../../api/challenge';
+import { getTodayChallenge, getDailyRanking, checkParticipation } from '../../api/challenge';
 import '../../App.css';
 
 const ChallengeMain = () => {
@@ -21,27 +17,27 @@ const ChallengeMain = () => {
     const today = new Date().toISOString().split('T')[0];
 
     getTodayChallenge()
-      .then(res => {
+      .then((res) => {
         setTodayChallenge(res.data[0]);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('챌린지 과목 데이터 불러오기 실패:', err);
         alert('챌린지 과목 데이터를 불러오는 데 실패했습니다.');
       });
 
     getDailyRanking(today)
-      .then(res => {
+      .then((res) => {
         setRanking(res.data);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('랭킹 불러오기 실패:', err);
       });
 
     checkParticipation(memberId, today)
-      .then(res => {
+      .then((res) => {
         setHasParticipated(res.data.participated); // ✅ 서버 응답: { participated: true/false }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('참여 여부 확인 실패:', err);
       });
   }, []);
@@ -52,7 +48,7 @@ const ChallengeMain = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-        <div className="container py-5">
+          <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1
                 className="h3 fw-bold mb-0"
@@ -63,13 +59,12 @@ const ChallengeMain = () => {
             </div>
           </div>
 
-
           <section className="section">
             <div className="container" style={{ paddingTop: '10px', paddingBottom: '40px' }}>
               <div className="row g-4 justify-content-center">
                 {/* 일일 챌린지 */}
                 <div className="col-lg-5">
-                  <div className="card text-center p-4 shadow-sm">
+                  <div className="card text-center p-4 shadow-sm" style={{ minHeight: '250px' }}>
                     <h4 className="mb-3">일일 챌린지</h4>
                     {todayChallenge ? (
                       <>
@@ -112,7 +107,7 @@ const ChallengeMain = () => {
 
                 {/* 종합 챌린지 */}
                 <div className="col-lg-5">
-                  <div className="card text-center p-4 shadow-sm">
+                  <div className="card text-center p-4 shadow-sm" style={{ minHeight: '250px' }}>
                     <h4 className="mb-3">종합 챌린지</h4>
                     <p className="text-muted">
                       복습하고 싶은 과목의 문제를 선택하여 다시 풀어보세요.
@@ -124,6 +119,7 @@ const ChallengeMain = () => {
                         backgroundColor: '#84cc16',
                         color: '#fff',
                         border: 'none',
+                        marginTop: '16px',
                       }}
                     >
                       복습하러 가기
@@ -131,8 +127,6 @@ const ChallengeMain = () => {
                   </div>
                 </div>
               </div>
-              
-
 
               {/* 랭킹 */}
               <div className="row mt-5 justify-content-center">
@@ -145,10 +139,7 @@ const ChallengeMain = () => {
                         .sort((a, b) => a.rank - b.rank)
                         .slice(0, 3)
                         .map((user, idx) => (
-                          <li
-                            key={idx}
-                            className="list-group-item d-flex justify-content-between"
-                          >
+                          <li key={idx} className="list-group-item d-flex justify-content-between">
                             <span>
                               {user.rank}위. {user.memberName}
                             </span>
@@ -163,7 +154,6 @@ const ChallengeMain = () => {
           </section>
         </main>
       </div>
-    
     </>
   );
 };

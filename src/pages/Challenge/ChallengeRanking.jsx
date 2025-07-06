@@ -11,12 +11,12 @@ const ChallengeRanking = () => {
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
-     getDailyRanking(today)
-      .then(res => {
+    getDailyRanking(today)
+      .then((res) => {
         const sorted = res.data.sort((a, b) => b.totalPoints - a.totalPoints); // 점수 내림차순
         setRankingList(sorted);
       })
-      .catch(err => console.error('랭킹 불러오기 실패:', err));
+      .catch((err) => console.error('랭킹 불러오기 실패:', err));
   }, []);
 
   const visibleList = showAll ? rankingList : rankingList.slice(0, 10);
@@ -35,23 +35,24 @@ const ChallengeRanking = () => {
               >
                 일일 챌린지 랭킹
               </h1>
-              
             </div>
-            <p className="text-muted" style={{ fontSize: '20px', marginLeft: '16px', marginTop: '10px' }}>
-             오늘 날짜 기준의 랭킹입니다.
+            <p
+              className="text-muted"
+              style={{ fontSize: '20px', marginLeft: '16px', marginTop: '10px' }}
+            >
+              오늘 날짜 기준의 랭킹입니다.
             </p>
           </div>
 
-
           <section className="section">
-            <div className="container" style={{ padding: '40px 20px' }}>
+            <div className="container" style={{ padding: '10px 20px 40px 20px' }}>
               <table className="table table-bordered text-center">
                 {/* <thead className="table-dark"> */}
-                <thead style={{ backgroundColor: '#BAFFC9', color: '#000' }}>
+                <thead>
                   <tr>
-                    <th>순위</th>
-                    <th>이름</th>
-                    <th>점수</th>
+                    <th className="ranking-header">순위</th>
+                    <th className="ranking-header">이름</th>
+                    <th className="ranking-header">점수</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -67,10 +68,7 @@ const ChallengeRanking = () => {
 
               {rankingList.length > 10 && (
                 <div className="text-center mt-3">
-                  <button
-                    className="btn btn-outline-dark"
-                    onClick={() => setShowAll(!showAll)}
-                  >
+                  <button className="btn btn-outline-dark" onClick={() => setShowAll(!showAll)}>
                     {showAll ? '접기' : '더보기'}
                   </button>
                 </div>
@@ -79,7 +77,6 @@ const ChallengeRanking = () => {
           </section>
         </main>
       </div>
-      
     </>
   );
 };

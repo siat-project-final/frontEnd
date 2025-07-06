@@ -15,9 +15,8 @@ const ChallengeSolve = () => {
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const progress = problems.length > 0
-    ? Math.round(((currentIndex + 1) / problems.length) * 100)
-    : 0;
+  const progress =
+    problems.length > 0 ? Math.round(((currentIndex + 1) / problems.length) * 100) : 0;
 
   useEffect(() => {
     if (!memberId) {
@@ -27,6 +26,7 @@ const ChallengeSolve = () => {
     }
 
     getTodayChallenge()
+
       .then(res => {
         const parsed = (res.data || []).map(p => {
           let options = [];
@@ -48,7 +48,7 @@ const ChallengeSolve = () => {
 
         setProblems(parsed.slice(0, 5)); // ✅ 무조건 5문제까지만 유지
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('문제 불러오기 실패:', err);
         alert('오늘의 챌린지 문제를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
       });
@@ -56,12 +56,12 @@ const ChallengeSolve = () => {
   }, []);
 
   const handleChange = (problemId, value) => {
-    setAnswers(prev => ({ ...prev, [problemId]: value }));
+    setAnswers((prev) => ({ ...prev, [problemId]: value }));
   };
 
   const handleNext = () => {
     if (currentIndex < problems.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
     }
   };
 
@@ -74,6 +74,7 @@ const ChallengeSolve = () => {
     }));
 
     const requestBody = {
+
       memberId: Number(memberId),
       problemIds: submissionData.map(data => data.problemId),
       answers: submissionData.map(data =>
@@ -87,7 +88,7 @@ const ChallengeSolve = () => {
       .then(() => {
         navigate('/challenge/daily/result');
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('제출 실패:', err);
         alert('제출에 실패했습니다. 나중에 다시 시도해주세요.');
       });
@@ -101,7 +102,7 @@ const ChallengeSolve = () => {
       <div className="container-flex">
         <Sidebar menuType="challenge" />
         <main className="main">
-        <div className="container py-5">
+          <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1
                 className="h3 fw-bold mb-0"
@@ -111,7 +112,6 @@ const ChallengeSolve = () => {
               </h1>
             </div>
           </div>
-
 
           <section className="section">
             <div
@@ -127,13 +127,13 @@ const ChallengeSolve = () => {
               }}
             >
               {/*  Progress Bar */}
-              <div style={{ width: 80 }}>
+              <div style={{ width: 80, marginLeft: '40px' }}>
                 <CircularProgressbar
                   value={progress}
                   text={`${progress}%`}
                   strokeWidth={10}
                   styles={buildStyles({
-                    pathColor: '#00c853',
+                    pathColor: '#84cc16',
                     textColor: '#333',
                     trailColor: '#e0e0e0',
                   })}
@@ -167,9 +167,7 @@ const ChallengeSolve = () => {
                       className="form-control mt-2"
                       placeholder="정답을 입력하세요"
                       value={answers[currentProblem.problemId] || ''}
-                      onChange={(e) =>
-                        handleChange(currentProblem.problemId, e.target.value)
-                      }
+                      onChange={(e) => handleChange(currentProblem.problemId, e.target.value)}
                     />
                   ) : (
                     <div className="mt-3">
@@ -182,10 +180,7 @@ const ChallengeSolve = () => {
                             value={option}
                             checked={answers[currentProblem.problemId] === option}
                             onChange={(e) =>
-                              handleChange(
-                                currentProblem.problemId,
-                                parseInt(e.target.value)
-                              )
+                              handleChange(currentProblem.problemId, parseInt(e.target.value))
                             }
                             id={`option-${currentProblem.problemId}-${idx}`}
                           />
@@ -202,19 +197,11 @@ const ChallengeSolve = () => {
 
                   <div className="text-center mt-4">
                     {currentIndex < problems.length - 1 ? (
-                      <button
-                        type="button"
-                        onClick={handleNext}
-                        style={buttonStyle}
-                      >
+                      <button type="button" onClick={handleNext} style={buttonStyle}>
                         다음 문제
                       </button>
                     ) : (
-                      <button
-                        type="submit"
-                        onClick={handleSubmit}
-                        style={buttonStyle}
-                      >
+                      <button type="submit" onClick={handleSubmit} style={buttonStyle}>
                         제출
                       </button>
                     )}
@@ -225,7 +212,6 @@ const ChallengeSolve = () => {
           </section>
         </main>
       </div>
-      
     </>
   );
 };
