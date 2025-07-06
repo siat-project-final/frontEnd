@@ -26,8 +26,9 @@ const ChallengeSolve = () => {
     }
 
     getTodayChallenge()
-      .then((res) => {
-        const parsed = res.data.map((p) => {
+
+      .then(res => {
+        const parsed = (res.data || []).map(p => {
           let options = [];
           try {
             const once = typeof p.choices === 'string' ? JSON.parse(p.choices) : p.choices;
@@ -36,15 +37,22 @@ const ChallengeSolve = () => {
             console.error(`선택지 파싱 실패 (problemId=${p.problemId || p.id}):`, e);
             alert('문제의 선택지를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
           }
-          return { ...p, options, type: 'choice' };
+
+          return {
+            ...p,
+            options,
+            type: 'choice',
+            difficulty: p.difficulty ?? 1, // ✅ 난이도 기본값 처리
+          };
         });
 
-        setProblems(parsed);
+        setProblems(parsed.slice(0, 5)); // ✅ 무조건 5문제까지만 유지
       })
       .catch((err) => {
         console.error('문제 불러오기 실패:', err);
         alert('오늘의 챌린지 문제를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
       });
+
   }, []);
 
   const handleChange = (problemId, value) => {
@@ -58,22 +66,25 @@ const ChallengeSolve = () => {
   };
 
   const handleSubmit = () => {
-    const submissionData = problems.map((p) => ({
+    
+    const submissionData = problems.map(p => ({
       problemId: p.problemId,
       submitAnswer: answers[p.problemId] ?? null,
       memberId,
     }));
 
     const requestBody = {
-      memberId,
-      problemIds: submissionData.map((data) => data.problemId),
-      answers: submissionData.map((data) =>
-        data.submitAnswer !== null ? parseInt(data.submitAnswer) : null
+
+      memberId: Number(memberId),
+      problemIds: submissionData.map(data => data.problemId),
+      answers: submissionData.map(data =>
+        data.submitAnswer !== null ? parseInt(data.submitAnswer) : -1  // ✅ null 방지
       ),
       createdAt: new Date().toISOString(),
     };
 
     submitChallenge(requestBody)
+    
       .then(() => {
         navigate('/challenge/daily/result');
       })
@@ -84,8 +95,8 @@ const ChallengeSolve = () => {
   };
 
   const currentProblem = problems[currentIndex];
-
   return (
+    
     <>
       <Header />
       <div className="container-flex">
@@ -133,7 +144,8 @@ const ChallengeSolve = () => {
               {currentProblem && (
                 <div className="mb-4" style={{ maxWidth: '800px', flex: '1' }}>
                   <h5 className="mb-2">
-                    Q{currentIndex + 1}. (난이도: {currentProblem.difficulty})
+                  
+                    Q{currentIndex + 1}. (난이도: {currentProblem.points}단계)
                   </h5>
 
                   <pre

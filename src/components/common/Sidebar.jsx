@@ -55,9 +55,9 @@ const Sidebar = ({ menuType }) => {
   const hideSidebarPaths = ['/login', '/signup', '/starter'];
 
   // 🔍 디버깅용 로그
-  console.log('✅ [Sidebar] 현재 URL:', location.pathname);
-  console.log('✅ [Sidebar] 전달받은 menuType:', menuType);
-  console.log('✅ [Sidebar] menuMap[menuType]:', menuMap[menuType]);
+  // console.log('✅ [Sidebar] 현재 URL:', location.pathname);
+  // console.log('✅ [Sidebar] 전달받은 menuType:', menuType);
+  // console.log('✅ [Sidebar] menuMap[menuType]:', menuMap[menuType]);
 
   if (hideSidebarPaths.some((path) => location.pathname.startsWith(path))) {
     console.log('⛔ [Sidebar] 숨김 경로에 해당하여 사이드바를 렌더링하지 않습니다.');
