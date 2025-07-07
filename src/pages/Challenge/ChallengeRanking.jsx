@@ -26,7 +26,7 @@ const ChallengeRanking = () => {
       <Header />
       <div className="container-flex">
         <Sidebar menuType="challenge" />
-        <main className="main">
+        <main className="main" data-aos="fade-up">
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1

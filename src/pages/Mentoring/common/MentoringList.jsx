@@ -137,7 +137,7 @@ const MentoringList = () => {
       <Header />
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
-        <main className="main">
+        <main className="main" data-aos="fade-up">
           <h1 className="h3 fw-bold" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
             Mentoring
           </h1>
