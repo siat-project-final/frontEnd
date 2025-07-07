@@ -161,7 +161,13 @@ const CalendarModal = ({ isOpen, onClose, selectionInfo, onSubmitEvent }) => {
         }
       `}</style>
 
-      <div className="modal-overlay">
+      <div className="modal-overlay"
+        onClick={(e) => {
+          if (e.target.classList.contains('modal-overlay')) {
+            onClose();
+          }
+        }}
+      >
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
