@@ -1131,3 +1131,29 @@
     border-radius: 8px;
     padding: 10px 14px;
 }
+
+
+.dark-mode a.fc-event[style*="rgb(186, 255, 201)"] {
+  background-color: #2d6b5f !important; /* 어두운 민트 */
+  border-color: #2d6b5f !important;
+}
+
+.dark-mode a.fc-event[style*="rgb(186, 255, 201)"] .fc-event-main {
+  color: white !important;
+}
+
+.dark-mode a.fc-event[style*="rgb(247, 220, 111)"] {
+  background-color: #776f2d !important; /* 어두운 노랑/카키 */
+  border-color: #776f2d !important;
+}
+
+.dark-mode a.fc-event[style*="rgb(247, 220, 111)"] .fc-event-main {
+  color: white !important;
+}
+
+.dark-mode .detail-content {
+  background-color: transparent;         
+  color: var(--dark-subtext, #e0e0e0);    
+  border-radius: 6px;
+  padding: 4px 6px;
+}
