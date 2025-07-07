@@ -289,7 +289,7 @@ const CalendarView = () => {
     } else if (type === 'UNWRITTEN_DIARY') {
       navigate(`/study/write?date=${clickInfo.event.extendedProps.date}`);
     } else if (type === 'MENTORING') {
-      alert(`멘토링: ${clickInfo.event.title}`);
+      // alert(`멘토링: ${clickInfo.event.title}`);
     }
   };
 
