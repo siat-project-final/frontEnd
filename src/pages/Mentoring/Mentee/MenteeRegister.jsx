@@ -19,7 +19,7 @@ const MenteeRegister = () => {
     const day = String(dateObj.getDate()).padStart(2, '0');
     const hour = String(dateObj.getHours()).padStart(2, '0');
     const minute = String(dateObj.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hour}:${minute}`;
+    return `${year}-${month}-${day}`; // ✅ 시간 제거
   };
 
   useEffect(() => {

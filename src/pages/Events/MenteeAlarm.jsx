@@ -75,6 +75,9 @@ const MenteeAlarm = () => {
                       >
                         <div style={{ flex: 1, marginRight: 16 }}>
                           <b>{alert.title}</b>
+                          <p style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>
+                            {alert.date?.split('T')[0]}
+                          </p>
                           <p style={{ marginTop: 8, whiteSpace: 'pre-line' }}>
                             {alert.contents}
                           </p>

@@ -80,6 +80,9 @@ const MentorAlarm = () => {
         >
           <div style={{ flex: 1 }}>
             <p style={{ fontWeight: 'bold' }}>{alert.title}</p>
+            <p style={{ color: '#666', fontSize: '14px', marginTop: '4px' }}>
+              {alert.date?.split('T')[0]}
+            </p>
             <p>{alert.contents}</p>
           </div>
           <button style={buttonStyle} onClick={() => handleClose(idx)}>
