@@ -8,6 +8,7 @@ export const getAllStickers = async (memberId) => {
     params: { memberId },
     withCredentials: true,
   });
+  
   console.log('✅ getAllStickers 응답:', response.data);
   return response.data; // 배열만 반환
 };
