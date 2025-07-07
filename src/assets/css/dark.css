@@ -889,4 +889,167 @@
     border: 1px solid var(--dark-border) !important;
     padding: 10px 14px !important;
     border-radius: 8px !important;
+}/* FullCalendar 셀 다크모드 스타일 */
+.dark-mode .fc-daygrid-day {
+    background-color: #1e1e1e;
+    border: 1px solid var(--dark-outline);
+    color: var(--dark-subtext);
+}
+
+/* 선택된 날짜 셀 강조 (예: selected-cell) */
+.dark-mode .fc-daygrid-day.selected-cell {
+    background-color: #333333;
+    border: 1px solid #999;
+}
+
+/* 셀 상단 (날짜 숫자 위치) */
+.dark-mode .fc-daygrid-day-top {
+    color: var(--dark-subtext);
+}
+
+/* 셀 안 프레임 */
+.dark-mode .fc-daygrid-day-frame {
+    background-color: transparent;
+}
+
+/* 캘린더 헤더 요일 배경 */
+.dark-mode .fc-col-header-cell {
+    background-color: #2c2c2c;
+    color: var(--dark-subtext);
+    border: 1px solid var(--dark-outline);
+}
+
+/* 캘린더 전체 그리드 */
+.dark-mode .fc-scrollgrid {
+    border-color: var(--dark-outline);
+}
+
+/* 캘린더 셀 hover 효과 */
+.dark-mode .fc-daygrid-day:hover {
+    background-color: #2a2a2a;
+}
+/* 다크모드: 모달 오버레이 (배경 흐림 효과) */
+.dark-mode .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.6); /* 기존보다 더 어둡게 */
+}
+
+/* 다크모드: 모달 콘텐츠 내부 */
+.dark-mode .modal-content {
+    background-color: #2e2e2e;
+    color: var(--dark-subtext); /* 전역 변수로 설정했을 경우 */
+    border: 1px solid var(--dark-outline);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* 다크모드: 닫기 버튼 */
+.dark-mode .close-button {
+    background-color: transparent;
+    color: var(--dark-subtext);
+    border: 1px solid var(--dark-outline);
+}
+
+.dark-mode .close-button:hover {
+    background-color: #444;
+    color: #fff;
+}
+/* 다크모드: 일반 input (날짜 선택 등) */
+.dark-mode input[type="date"],
+.dark-mode input[type="time"] {
+    background-color: #2e2e2e;
+    color: var(--dark-subtext);
+    border: 1px solid var(--dark-outline);
+}
+
+/* 다크모드: disabled된 input (시간 등 비활성화) */
+.dark-mode input[type="date"][disabled],
+.dark-mode input[type="time"][disabled] {
+    background-color: #2e2e2e;
+    color: var(--dark-subtext);
+    border: 1px solid var(--dark-outline);
+    opacity: 1; /* 흐려지는 효과 제거 */
+    cursor: not-allowed;
+}
+.dark-mode .fc-daygrid-day-frame {
+    background-color: #2e2e2e !important; /* 어두운 배경 */
+    color: #e0e0e0 !important;            /* 밝은 텍스트 */
+    border: 1px solid #444 !important;   /* 셀 테두리 */
+}
+.dark-mode .your-popup-class {
+    background-color: #2e2e2e !important;
+    border: 1px solid #666 !important;
+}
+.dark-mode [style*="position: absolute"][style*="grid-template-columns"] {
+    background-color: #2e2e2e !important;
+    border-color: #666 !important;
+}
+.popup-grid {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background-color: white;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 6px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(5, 24px);
+    gap: 8px;
+    z-index: 999;
+}
+
+/* 전체 배경 및 텍스트 컬러 */
+.dark-mode main.content {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+}
+
+/* 사이드바와 헤더도 다크모드 스타일로 일관되게 */
+.dark-mode .sidebar {
+    background-color: #2c2c2c;
+    border-right: 1px solid #444;
+}
+
+.dark-mode .header {
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #444;
+    color: #fff;
+}
+
+/* 내부 컨테이너가 따로 밝은 배경이면 별도 지정 */
+.dark-mode .container {
+    background-color: transparent; /* 또는 필요에 따라 #2a2a2a */
+    color: #f0f0f0;
+}
+/* bg-light → 어두운 회색 톤으로 */
+.dark-mode .bg-light {
+    background-color: #2e2e2e !important;
+}
+
+/* border → 밝은 테두리로 */
+.dark-mode .border {
+    border: 1px solid #aaa !important;
+}
+
+/* text-success → 기본 초록 유지하거나 더 밝게 조정하고 싶다면 아래 추가 */
+.dark-mode .text-success {
+    color: #58d68d !important;  /* 예: 밝은 연두빛 초록 */
+}
+/* === 다크모드: 뱃지 카드 전체 스타일 === */
+.dark-mode .badge-card {
+    background-color: #2b2b2b;  /* 기본 어두운 배경 */
+    border: 1px solid #444;
+    color: #f0f0f0;
+}
+
+/* === 달성된 뱃지 카드 === */
+.dark-mode .badge-card.achieved {
+    background-color: #3d3d3d;  /* 좀 더 강조된 어두운 배경 */
+    border: 1px solid #58d68d;  /* 초록 테두리 등 강조 */
+}
+
+/* === 잠긴 뱃지 카드 === */
+.dark-mode .badge-card.locked {
+    background-color: #1f1f1f;  /* 더 어두운 배경 */
+    border: 1px dashed #888;
+    color: #888;
+    opacity: 0.6;  /* 살짝 비활성 느낌 */
 }
