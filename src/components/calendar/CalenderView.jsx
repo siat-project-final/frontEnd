@@ -578,11 +578,22 @@ const CalendarView = () => {
             }}
             selectable={true} // 드래그 활성화
             select={(info) => {
+              const start = new Date(info.start);
+              const end = new Date(info.end);
+
+              const diffMs = end.getTime() - start.getTime();
+              const diffHours = diffMs / (1000 * 60 * 60);
+
+              if (diffHours <= 24) {
+                // ✅ 하루 이하 선택은 무시 (원클릭 간주)
+                return;
+              }
+
               setSelectionInfo({
                 start: info.startStr.split('T')[0],
                 end: info.endStr.split('T')[0],
               });
-              setIsModalOpen(true);
+              setIsModalOpen(true); // 진짜 드래그일 때만 등록
             }}
           />
           <CalendarModal

@@ -94,7 +94,14 @@ const CalendarDetailModal = ({ isOpen, onClose, eventInfo, onEdit, onDelete, onS
           color: #333;
         }
       `}</style>
-      <div className="modal-overlay">
+      <div
+        className="modal-overlay"
+        onClick={(e) => {
+          if (e.target.classList.contains('modal-overlay')) {
+            onClose();
+          }
+        }}
+      >
         <div className="modal-content">
           <button onClick={onClose} className="close-button">
             <img src="/assets/img/mentors/x.png" alt="닫기" />
