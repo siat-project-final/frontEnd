@@ -60,6 +60,8 @@ export default function FooterBag() {
             stickerId: id,
             name,
             image,
+            align: 'center',     
+            position: 'bottom',
           },
         };
       },
