@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8087';
+const baseURL = process.env.REACT_APP_API_BASE_URL || 'https://api.siathub.com/v1';
 
 // 1. 전체 스티커 목록 (구매 여부 포함)
 export const getAllStickers = async (memberId) => {
