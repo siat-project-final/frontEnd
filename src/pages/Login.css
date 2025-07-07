@@ -2,10 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* 👈 위쪽으로 정렬 */
   min-height: 100vh;
-  padding: 1rem;
+  padding: 8rem 1rem 1rem 1rem; /* 👈 위쪽 패딩 추가 */
   background-color: #f0f7f0;
+  /* background-color: mintcream; */
 }
 
 .login-box {
@@ -95,14 +96,25 @@
   background-color: #66a30b;
 }
 
-.login-button.secondary {
+/* .login-button.secondary {
   color: #84cc16;
   border: 1px solid #84cc16;
 }
 
 .login-button.secondary:hover {
   background-color: #c8e6c9;
+} */
+
+.login-button.secondary {
+  background-color: #b0b8be;
+  color: white;
+  border: none; 
 }
+
+.login-button.secondary:hover {
+  background-color: #868e96;
+}
+
 
 .button-icon {
   font-size: 1.25rem;

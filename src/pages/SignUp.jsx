@@ -29,7 +29,8 @@ function SignUp() {
   };
 
   const isValidId = (id) => /^[a-z0-9]{5,20}$/.test(id);
-  const isValidPassword = (pw) => /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}:"<>?]).{8,20}$/.test(pw);
+  const isValidPassword = (pw) =>
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}:"<>?]).{8,20}$/.test(pw);
 
   const signUpHandler = async (event) => {
     event.preventDefault();
@@ -69,14 +70,15 @@ function SignUp() {
       return;
     }
 
-    instance.post('/auth/signUp', signUpData)
-      .then(response => {
+    instance
+      .post('/auth/signUp', signUpData)
+      .then((response) => {
         if (response.status === 200) {
           alert('회원가입이 완료되었습니다.');
           navigate('/login');
         }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           const msg = error.response.data?.message || '';
 
@@ -99,49 +101,123 @@ function SignUp() {
         <h1 className="signup-title">회원가입</h1>
         <form onSubmit={signUpHandler}>
           <div className="form-group">
-            <label className="form-label" htmlFor="id">아이디</label>
-            <input className="form-input" id="id" name="id" type="text" value={formData.id} onChange={handleChange} required />
-            <p className="form-hint">영문 소문자 + 숫자, 5~20자</p>
+            <label className="form-label" htmlFor="id">
+              아이디 <span className="label-hint">(영문 소문자 + 숫자, 5~20자)</span>
+            </label>
+            <input
+              className="form-input"
+              id="id"
+              name="id"
+              type="text"
+              value={formData.id}
+              onChange={handleChange}
+              required
+            />
+            {/* <p className="form-hint">영문 소문자 + 숫자, 5~20자</p> */}
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="password">비밀번호</label>
-            <input className="form-input" id="password" name="password" type="password" value={formData.password} onChange={handleChange} required />
-            <p className="form-hint">영문, 숫자, 특수문자 포함 8~20자</p>
+            <label className="form-label" htmlFor="password">
+              비밀번호 <span className="label-hint">(영문, 숫자, 특수문자 포함 8~20자)</span>
+            </label>
+            <input
+              className="form-input"
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            {/* <p className="form-hint">영문, 숫자, 특수문자 포함 8~20자</p> */}
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="passwordConfirm">비밀번호 확인</label>
-            <input className="form-input" id="passwordConfirm" name="passwordConfirm" type="password" value={formData.passwordConfirm} onChange={handleChange} required />
+            <label className="form-label" htmlFor="passwordConfirm">
+              비밀번호 확인
+            </label>
+            <input
+              className="form-input"
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              value={formData.passwordConfirm}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="memberName">이름</label>
-            <input className="form-input" id="memberName" name="memberName" type="text" value={formData.memberName} onChange={handleChange} required />
-            <p className="form-hint">2~20자, 한글 또는 영문</p>
+            <label className="form-label" htmlFor="memberName">
+              이름 <span className="label-hint">(2~20자, 한글 또는 영문)</span>
+            </label>
+            <input
+              className="form-input"
+              id="memberName"
+              name="memberName"
+              type="text"
+              value={formData.memberName}
+              onChange={handleChange}
+              required
+            />
+            {/* <p className="form-hint">2~20자, 한글 또는 영문</p> */}
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="nickname">닉네임</label>
-            <input className="form-input" id="nickname" name="nickname" type="text" value={formData.nickname} onChange={handleChange} />
-            <p className="form-hint">한글/영문/숫자 조합, 2~20자 (선택)</p>
+            <label className="form-label" htmlFor="nickname">
+              닉네임{' '}
+              <span className="label-hint">
+                (한글/영문/숫자 조합, 2~20자 <span style={{ fontWeight: 400 }}>(선택)</span>)
+              </span>
+            </label>
+            <input
+              className="form-input"
+              id="nickname"
+              name="nickname"
+              type="text"
+              value={formData.nickname}
+              onChange={handleChange}
+            />
+            {/* <p className="form-hint">한글/영문/숫자 조합, 2~20자 (선택)</p> */}
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="email">이메일</label>
-            <input className="form-input" id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
-            <p className="form-hint">예: example@domain.com</p>
+            <label className="form-label" htmlFor="email">
+              이메일 <span className="label-hint">(예: example@domain.com)</span>
+            </label>
+            <input
+              className="form-input"
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            {/* <p className="form-hint">예: example@domain.com</p> */}
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="phoneNumber">휴대폰 번호</label>
-            <input className="form-input" id="phoneNumber" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required />
-            <p className="form-hint">예: 01012345678</p>
+            <label className="form-label" htmlFor="phoneNumber">
+              휴대폰 번호 <span className="label-hint">(예: 01012345678)</span>
+            </label>
+            <input
+              className="form-input"
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required
+            />
+            {/* <p className="form-hint">예: 01012345678</p> */}
           </div>
 
-          <button className="signup-button" type="submit">가입하기</button>
+          <button className="signup-button" type="submit">
+            가입하기
+          </button>
         </form>
-        <a className="login-link" href="#" onClick={() => navigate('/')}>
+        <a className="login-link" href="/login" onClick={() => navigate('/')}>
           이미 계정이 있으신가요? 로그인
         </a>
       </div>

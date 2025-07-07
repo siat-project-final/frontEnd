@@ -76,16 +76,14 @@ const StudyLogDetailPage = () => {
       memberId: parseInt(memberId), // memberId를 숫자로 변환하여 전송 (API 요구사항에 따라)
     };
     try {
-      await updateStudyLog(id, updateData);
-      const res = await getMyStudyLogById(id);
-      // 서버에서 가져온 데이터로 originalData 및 formData 업데이트
-      const updatedData = {
-        ...res.data,
-        selectedPeriods: res.data.selectedPeriods || [],
-      };
-      setFormData(updatedData);
-      setOriginalData(updatedData);
-      setIsEditMode(false);
+    await updateStudyLog(id, updateData);
+
+    // 🔥 localStorage에 selectedPeriods 저장
+    localStorage.setItem(`selectedPeriods_${id}`, JSON.stringify(formData.selectedPeriods));
+
+    // 🔥 원본 데이터 최신화
+    setOriginalData(formData);
+    setIsEditMode(false);
       alert('수정이 완료되었습니다.');
     } catch (err) {
       console.error('일지 수정 실패:', err);
@@ -117,7 +115,28 @@ const StudyLogDetailPage = () => {
               학습일지 상세
             </h3>
 
-            <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
+            
+            </div>
+            {/* 원래 h1 태그에 있던 margin-top과 margin-left를 div로 옮겼습니다.
+                margin-right를 추가하여 페이지 오른쪽 끝에 너무 붙지 않도록 합니다. */}
+
+                  
+            <div className="studylog-boxes">
+              <form onSubmit={handleSubmit}>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">학습일지 제목</label>
+                    <input
+                      name="title"
+                      type="text"
+                      className="form-control"
+                      value={formData.title || ''}
+                      onChange={handleChange}
+                      readOnly={!isEditMode}
+                    />
+                  </div>
+                  <div className="col-md-3">
+                  <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
               {['하루', '일주일', '한 달', '세 달'].map(period => (
                 <div key={period} className="form-check form-check-inline m-0">
                   <input
@@ -139,21 +158,18 @@ const StudyLogDetailPage = () => {
                 </div>
               ))}
             </div>
-            </div>
-            {/* 원래 h1 태그에 있던 margin-top과 margin-left를 div로 옮겼습니다.
-                margin-right를 추가하여 페이지 오른쪽 끝에 너무 붙지 않도록 합니다. */}
+            </div>
+                </div>
 
-                  
-            <div className="studylog-boxes">
-              <form onSubmit={handleSubmit}>
-                <div className="row mb-3">
+                <div className="row mb-3 align-items-end"> {/* align-items-end 추가 */}
+                  {/* 과목 필드 너비 조정: col-md-3으로 줄임 */}
                   <div className="col-md-6">
-                    <label className="form-label">학습일지 제목</label>
+                    <label className="form-label">과목</label>
                     <input
-                      name="title"
+                      name="subject"
                       type="text"
                       className="form-control"
-                      value={formData.title || ''}
+                      value={formData.subject || ''}
                       onChange={handleChange}
                       readOnly={!isEditMode}
                     />
@@ -176,22 +192,6 @@ const StudyLogDetailPage = () => {
                       readOnly={!isEditMode}
                     />
                   </div>
-                </div>
-
-                <div className="row mb-3 align-items-end"> {/* align-items-end 추가 */}
-                  {/* 과목 필드 너비 조정: col-md-3으로 줄임 */}
-                  <div className="col-md-6">
-                    <label className="form-label">과목</label>
-                    <input
-                      name="subject"
-                      type="text"
-                      className="form-control"
-                      value={formData.subject || ''}
-                      onChange={handleChange}
-                      readOnly={!isEditMode}
-                    />
-                  </div>
-
                 </div>
 
                 <div className="mb-3">

@@ -28,42 +28,24 @@ const StudyLogPage = () => {
   // 1. 최초 로딩: 학습일지 가져오기
   // ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!memberId) {
-      console.warn('❌ memberId 없음 - 로그인 필요');
-      return;
-    }
-
     const fetchLogs = async () => {
-      try {
-        const res = await getMyStudyLogs(memberId);
+      const res = await getMyStudyLogs(memberId);
 
-        // 학습일지 데이터에 selectedPeriods가 없는 경우를 대비하여 초기화
-        const logsWithPeriods = res.data.map(log => ({
+      // 🔥 추가: localStorage에서 selectedPeriods 불러오기
+      const logsWithPeriods = res.data.map(log => {
+        const localPeriods = JSON.parse(localStorage.getItem(`selectedPeriods_${log.diaryId}`)) || [];
+        return {
           ...log,
-          selectedPeriods: log.selectedPeriods || [] // 서버에서 selectedPeriods를 받지 못하면 빈 배열로 설정
-        }));
+          selectedPeriods: localPeriods
+        };
+      });
 
-        // 전체 응답 로그
-        console.log('📥 studyLogs 응답 원본 (처리 후):', logsWithPeriods);
-        // diaryId, subject, selectedPeriods 컬럼 표로 확인
-        console.table(
-          logsWithPeriods.map((l) => ({
-            diaryId: l.diaryId,
-            subject: l.subject,
-            selectedPeriods: l.selectedPeriods, // selectedPeriods 컬럼 추가
-          })),
-        );
-
-        setStudyLogs(logsWithPeriods);
-        setFilteredLogs(logsWithPeriods); // 필터링된 로그도 초기화된 데이터로 설정
-      } catch (err) {
-        console.error('학습일지 목록 실패:', err);
-      }
+      setStudyLogs(logsWithPeriods);
+      setFilteredLogs(logsWithPeriods);
     };
 
     fetchLogs();
   }, [memberId]);
-
   // ─────────────────────────────────────────────────────────────
   // 2. 삭제 시 상태 동기화
   // ─────────────────────────────────────────────────────────────
