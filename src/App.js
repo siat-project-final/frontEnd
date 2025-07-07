@@ -69,25 +69,39 @@ function AppLayout({ isDarkMode, toggleTheme }) {
     <div className={isDarkMode ? 'dark-mode' : ''} style={{ display: 'flex', minHeight: '100vh' }}>
       {/* 전역 다크모드 토글 버튼 — 원하는 위치로 옮겨도 상관없음 */}
       <button
-        onClick={toggleTheme}
-        style={{
-          position: 'fixed',
-          right: '20px',
-          bottom: '20px',
-          zIndex: 2000,
-          backgroundColor: 'rgba(100, 100, 100, 0.6)', // 연한 회색 + 투명도
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '8px 16px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          backdropFilter: 'blur(4px)', // 배경 흐림 효과
-        }}
-        className="btn btn-success"
-      >
-        {isDarkMode ? '☀️' : '🌙'}
-      </button>
+  onClick={toggleTheme}
+  style={{
+    position: 'fixed',
+    right: '20px',
+    bottom: '20px', // 가방 버튼보다 위에 위치하도록 조정
+    zIndex: 2000,
+    backgroundColor: '#ffffff',
+    color: '#333',
+    border: '1px solid #ddd',
+    borderRadius: '50%', // 원형 처리
+    width: 48,
+    height: 48,
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    fontSize: 20,
+    fontWeight: 'normal',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backdropFilter: 'blur(4px)',
+    transition: 'all 0.2s ease-in-out',
+    WebkitTapHighlightColor: 'transparent',
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+  }}
+  title="다크모드 토글"
+>
+  {isDarkMode ? '☀️' : '🌙'}
+</button>
 
       {/* 메인 컨텐츠 */}
       <div style={{ flex: 1 }}>
@@ -160,8 +174,7 @@ function App() {
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
-    console.log('🌑 isDarkMode:', isDarkMode);
-    console.log('🎨 body에 dark-mode 클래스 있음?', document.body.classList.contains('dark-mode'));
+   
   }, [isDarkMode]);
 
   const toggleTheme = () => {
