@@ -75,9 +75,9 @@ export const getMentoringHistory = (memberId) => {
 //   });
 // };
 
-export const completeMentoring = ({ reservationId, mentorId, menteeId }) => {
+export const completeMentoring = ({ reservationId, mentorMemberId, menteeId }) => {
   return axios.post(`/mentoring/mentor/${reservationId}/complete`, {
-    mentorId,
+    mentorMemberId,
     menteeId,
     createdAt: new Date().toISOString().split('T')[0],
   });
