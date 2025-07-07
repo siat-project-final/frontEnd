@@ -16,6 +16,20 @@ import CalendarDetailModal from './CalendarDetailModal';
 import CalendarEditModal from './CalendarEditModal';
 import FooterBag from './FooterBag';
 
+const stickerKey = (memberId) => `calendarSticker_${memberId}`;           // ⭐ 추가
+
+const loadStickerEvents = (memberId) => {                                  // ⭐ 추가
+  try {
+    return JSON.parse(localStorage.getItem(stickerKey(memberId)) || '[]');
+  } catch {
+    return [];
+  }
+};
+
+const saveStickerEvents = (memberId, events) => {                          // ⭐ 추가
+  localStorage.setItem(stickerKey(memberId), JSON.stringify(events));
+};
+
 const CalendarView = () => {
   const calendarRef = useRef(null);
   const navigate = useNavigate();
@@ -37,6 +51,9 @@ const CalendarView = () => {
 
   const memberId = localStorage.getItem('memberId');
   const [writtenDates, setWrittenDates] = useState(null);
+  const [stickerEvents, setStickerEvents] = useState(() =>                 // ⭐ 추가
+    loadStickerEvents(memberId)
+  );
 
   const SUBJECT_COLORS = {
     Python: '#85C1E9',
@@ -290,6 +307,18 @@ const CalendarView = () => {
       navigate(`/study/write?date=${clickInfo.event.extendedProps.date}`);
     } else if (type === 'MENTORING') {
       // alert(`멘토링: ${clickInfo.event.title}`);
+    } else if (type === 'STICKER') {
+      if (window.confirm('스티커를 삭제할까요?')) {
+        // 화면에서 삭제
+        clickInfo.event.remove();
+
+        // localStorage 갱신
+        setStickerEvents((prev) => {
+          const next = prev.filter((e) => e.id !== clickInfo.event.id);
+          saveStickerEvents(memberId, next);
+          return next;
+        });
+      }
     }
   };
 
@@ -308,16 +337,20 @@ const CalendarView = () => {
     }
   };
 
-  const handleEventReceive = (info) => {
+  const handleEventReceive = (info) => {                                   // ⭐ 수정
     const calendarApi = calendarRef.current.getApi();
-    const droppedDate = info.event.startStr;
-    const { stickerId, image } = info.event.extendedProps;
+    const droppedDate   = info.event.startStr;
+    const { stickerId, image, align = 'center', position = 'bottom' } =
+      info.event.extendedProps;
+
     const eventId = `sticker-${stickerId}-${droppedDate}`;
     if (calendarApi.getEventById(eventId)) {
       info.revert();
       return;
     }
-    calendarApi.addEvent({
+
+    // 새 스티커 이벤트 객체
+    const newSticker = {
       id: eventId,
       title: '',
       start: droppedDate,
@@ -325,8 +358,20 @@ const CalendarView = () => {
       backgroundColor: 'transparent',
       borderColor: 'transparent',
       textColor: 'transparent',
-      extendedProps: { type: 'STICKER', stickerId, image },
+      extendedProps: { type: 'STICKER', stickerId, image, align, position },
+    };
+
+    // ① 화면에 추가
+    calendarApi.addEvent(newSticker);
+
+    // ② localStorage에 영구 저장
+    setStickerEvents((prev) => {
+      const next = [...prev, newSticker];
+      saveStickerEvents(memberId, next);
+      return next;
     });
+
+    // ③ 드래그 원본 제거
     info.event.remove();
   };
 
@@ -535,21 +580,43 @@ const CalendarView = () => {
               myNext: { text: '', click: () => calendarRef.current?.getApi().next() },
               today: { text: '오늘', click: () => calendarRef.current?.getApi().today() },
             }}
-            events={[...serverEvents, ...scheduleEvents].sort(
-              (a, b) => eventPriority(b) - eventPriority(a)
-            )}
+            events={[
+              ...serverEvents,
+              ...scheduleEvents,
+              ...stickerEvents,                                                    // ⭐ 추가
+            ].sort((a, b) => eventPriority(b) - eventPriority(a))}
             eventContent={(arg) => {
-              const { type, image } = arg.event.extendedProps;
-              if (type === 'STICKER' && image) {
-                const img = document.createElement('img');
-                img.src = image;
-                img.style.width = '40px';
-                img.style.height = '40px';
-                img.style.objectFit = 'contain';
-                return { domNodes: [img] };
-              }
-              return { html: `<div>${arg.event.title}</div>` };
-            }}
+  const { type, image, align = 'center', position = 'bottom' } = arg.event.extendedProps;
+  if (type === 'STICKER' && image) {
+    let justify = 'center';
+    if (align === 'right') justify = 'flex-end';
+    else if (align === 'left') justify = 'flex-start';
+
+    let alignItems = 'flex-end';
+    if (position === 'top') alignItems = 'flex-start';
+    else if (position === 'center') alignItems = 'center';
+
+    const wrapper = document.createElement('div');
+    wrapper.style.width = '100%';
+    wrapper.style.height = '100%';
+    wrapper.style.display = 'flex';
+    wrapper.style.justifyContent = justify;
+    wrapper.style.alignItems = alignItems;
+    wrapper.style.pointerEvents = 'none';
+
+    const img = document.createElement('img');
+    img.src = image;
+    img.style.width = '40px';
+    img.style.height = '40px';
+    img.style.objectFit = 'contain';
+
+    wrapper.appendChild(img);
+    return { domNodes: [wrapper] };
+  }
+
+  return { html: `<div>${arg.event.title}</div>` };
+}}
+
             dateClick={handleDateClick}
             editable
             droppable
