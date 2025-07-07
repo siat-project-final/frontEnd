@@ -103,7 +103,7 @@ const MentorRegister = () => {
             <Header menuType="mentoring" />
             <div className="container-flex">
                 <Sidebar menuType="mentoring" />
-                <main className="main">
+                <main className="main" data-aos="fade-up">
                     <div className="max-w-2xl mx-auto pt-10 pb-16">
                         <h3 className="text-2xl font-bold mb-8 text-slate-900" style={{ textAlign: 'center' }}>
                             멘토링 예약 관리

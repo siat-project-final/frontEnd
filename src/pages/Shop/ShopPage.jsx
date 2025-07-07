@@ -74,7 +74,7 @@ const ShopPage = () => {
       <div style={{ display: 'flex' }}>
         <Sidebar menuType="shop" />
 
-        <main className="main" style={{ flex: 1 }}>
+        <main className="main" style={{ flex: 1 }} data-aos="fade-up">
           <div className="container py-5">
             <h1 className="h3 fw-bold text-success mb-3">🎁 스티커 상점</h1>
             <p className="text-muted mb-4">나만의 학습 캘린더를 꾸며보세요!</p>

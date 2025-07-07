@@ -132,7 +132,7 @@ export default function InventoryPage() {
         {/* 🔥 강제로 shop 메뉴를 표시하도록 지정 */}
         <Sidebar menuType="shop" />
 
-        <main className="content">
+        <main className="content" data-aos="fade-up">
           <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div className="d-flex align-items-center gap-2">
