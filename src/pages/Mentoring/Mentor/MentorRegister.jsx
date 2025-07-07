@@ -119,7 +119,7 @@ const MentorRegister = () => {
                                     <MentorRegisterCard
                                         key={`${res.reservationId}-${res.status}`}
                                         id={res.reservationId}
-                                        date={res.date}
+                                        date={res.date?.split('T')[0]}
                                         memberName={res.menteeName}
                                         status={res.status}
                                         mentorImg={res.mentorImageUrl}
