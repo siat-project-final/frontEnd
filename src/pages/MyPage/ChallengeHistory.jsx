@@ -4,26 +4,48 @@ import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './ChallengeHistory.css';
-// ✅ axios 연동
 import { getChallengeHistory } from '../../api/challenge';
 
 const ChallengeHistory = () => {
   const memberId = localStorage.getItem('memberId');
   const [historyList, setHistoryList] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date()); // 기준이 되는 날짜
 
-    const fetchHistory = async () => {
-      getChallengeHistory(memberId)
-      .then(res => {
-          console.log('📦 히스토리 API 응답:', res.data);
-          setHistoryList(res.data);
-        })
-        .catch(err => console.error('챌린지 히스토리 조회 실패:', err));;
-    };
+  // 현재 월(숫자) 및 연도
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1;
 
+  // 현재 월로 필터링된 데이터
+  const filteredHistory = historyList
+    .filter((item) => {
+      const date = new Date(item.date);
+      return date.getFullYear() === currentYear && date.getMonth() + 1 === currentMonth;
+    })
+    // 날짜 기준으로 중복 제거 (가장 첫 데이터만 유지)
+    .filter((item, index, self) => index === self.findIndex((i) => i.date === item.date));
+
+  const fetchHistory = async () => {
+    try {
+      const res = await getChallengeHistory(memberId);
+      setHistoryList(res.data);
+    } catch (err) {
+      console.error('챌린지 히스토리 조회 실패:', err);
+    }
+  };
 
   useEffect(() => {
     fetchHistory();
   }, [memberId]);
+
+  // 월 변경 함수
+  const changeMonth = (offset) => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() + offset);
+    setCurrentDate(newDate);
+  };
+
+  // 월 텍스트 출력
+  const getMonthText = () => `${currentYear}년 \u00a0 ${currentMonth}월`;
 
   return (
     <div>
@@ -40,14 +62,18 @@ const ChallengeHistory = () => {
                 CHALLENGE HISTORY
               </h1>
               <div className="month-selector">
-                <span className="current-month">6월</span>
-                <button className="month-btn">이전</button>
-                <button className="month-btn">다음</button>
+                <span className="current-month">{getMonthText()}</span>
+                <button className="month-btn" onClick={() => changeMonth(-1)}>
+                  이전
+                </button>
+                <button className="month-btn" onClick={() => changeMonth(1)}>
+                  다음
+                </button>
               </div>
             </div>
 
             <div className="challenge-list">
-              {historyList.map((item, idx) => (
+              {filteredHistory.map((item, idx) => (
                 <div className="challenge-card" key={idx}>
                   <span className="challenge-date">{item.date}</span>
                   <div className="challenge-info">
@@ -64,10 +90,7 @@ const ChallengeHistory = () => {
                       <p className="info-value">{item.totalPoints}</p>
                     </div>
                   </div>
-                  <Link
-                    to={`/challenge/daily/result?date=${item.date}`}
-                    className="detail-btn"
-                  >
+                  <Link to={`/challenge/daily/result?date=${item.date}`} className="detail-btn">
                     상세보기
                   </Link>
                 </div>
@@ -76,7 +99,6 @@ const ChallengeHistory = () => {
           </section>
         </main>
 
-        {/* 오른쪽: Todo */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>
