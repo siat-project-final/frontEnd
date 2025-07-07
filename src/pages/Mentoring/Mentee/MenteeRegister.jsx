@@ -12,6 +12,10 @@ const MenteeRegister = () => {
   const [reservations, setReservations] = useState([]);
   const memberId = localStorage.getItem('memberId');
 
+  
+  // ✅ 추가: 링크를 location.state 로부터 받기
+  const links = location.state?.links || [];
+
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
     const year = dateObj.getFullYear();
@@ -99,6 +103,21 @@ const MenteeRegister = () => {
                   onCancel={() => handleCancelReservation(res.reservationId)}
                 />
               ))}
+            </div>
+            {/* ✅ 추가: 알림에서 넘어온 링크 출력 */}
+            <div style={{ marginTop: '40px' }}>
+              <h4 style={{ marginBottom: '10px', fontSize: '18px' }}>알림에서 전달된 링크 목록</h4>
+              {links.length === 0 ? (
+                <p>링크가 없습니다.</p>
+              ) : (
+                <ul style={{ paddingLeft: '20px' }}>
+                  {links.map((link, idx) => (
+                    <li key={idx}>
+                      <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </main>

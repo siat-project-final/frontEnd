@@ -4,9 +4,13 @@ import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import { deleteNotification, getNotificationsMentee, getNotificationsMentor } from '../../api/notification';
+import { useNavigate } from 'react-router-dom';  // ✅ 추가
+
 
 const MenteeAlarm = () => {
   const [alerts, setAlerts] = useState([]);
+  const [links, setLinks] = useState([]); // ✅ 추가: 링크 리스트 상태
+  const navigate = useNavigate();          // ✅ 추가
    
   const memberId = localStorage.getItem('memberId');
 
@@ -23,6 +27,20 @@ const MenteeAlarm = () => {
   useEffect(() => {
     fetchAlerts();
   }, []);
+
+   // ✅ 링크 추출 함수
+  const extractLinks = (text) => {
+    const regex = /(https?:\/\/[^\s]+)/g;
+    return text.match(regex) || [];
+  };
+
+  // ✅ 알림이 로딩될 때 링크 추출
+  useEffect(() => {
+    if (alerts.length > 0) {
+      const allLinks = alerts.flatMap(alert => extractLinks(alert.contents));
+      setLinks(allLinks);
+    }
+  }, [alerts]);
 
   const handleDelete = (notificationId) => {
     deleteNotification(notificationId)
@@ -98,6 +116,21 @@ const MenteeAlarm = () => {
                     ))
                     
                   )}
+                  <button
+                    style={{
+                      marginTop: '20px',
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      border: '1px solid #84cc16',
+                      color: '#84cc16',
+                      background: 'white',
+                      cursor: 'pointer',
+                      fontWeight: 'bold'
+                    }}
+                    onClick={() => navigate('/mentoring/register', { state: { links } })}
+                  >
+                    예약 페이지로 링크 보내기
+                  </button>
                 </div>
               </section>
             </main>
