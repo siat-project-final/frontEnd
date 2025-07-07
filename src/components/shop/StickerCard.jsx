@@ -14,7 +14,7 @@ const StickerCard = ({ sticker, onPurchase, purchased, disabled }) => {
         <p className="card-text">💰 {sticker.cost}P</p>
         {purchased ? (
           <button className="btn btn-secondary" disabled>
-            ✅ 구매 완료
+             구매 완료
           </button>
         ) : (
           <button

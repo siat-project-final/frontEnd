@@ -74,7 +74,7 @@ export default function FooterBag() {
   }, [bagItems, isOpen]);
 
   return (
-    <div style={{ position: 'fixed', bottom: 20, left: 20, zIndex: 9999 }}>
+    <div style={{ position: 'fixed', bottom: 20, left: 20, zIndex: 100}}>
       <button
   onClick={() => setIsOpen(!isOpen)}
   style={{
