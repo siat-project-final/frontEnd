@@ -76,24 +76,34 @@ export default function FooterBag() {
   return (
     <div style={{ position: 'fixed', bottom: 20, left: 20, zIndex: 9999 }}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          background: '#fff',
-          color: '#4CAF50',
-          padding: 12,
-          borderRadius: '50%',
-          border: '2px solid #4CAF50',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          cursor: 'pointer',
-          transition: 'transform 0.3s',
-          transform: isOpen ? 'rotate(20deg)' : 'rotate(0deg)',
-          fontSize: 20,
-          lineHeight: 0,
-        }}
-        title={isOpen ? '가방 닫기' : '가방 열기'}
-      >
-        🎒
-      </button>
+  onClick={() => setIsOpen(!isOpen)}
+  style={{
+    background: '#ffffff',
+    border: '1px solid #ddd',
+    borderRadius: '50%',
+    width: 56,
+    height: 56,
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+    fontSize: 22,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: isOpen ? 'scale(1.05)' : 'scale(1)',
+    WebkitTapHighlightColor: 'transparent', // 모바일 클릭 하이라이트 제거
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+  }}
+  title={isOpen ? '가방 닫기' : '가방 열기'}
+>
+  🎒
+</button>
+
 
       <div
         style={{
