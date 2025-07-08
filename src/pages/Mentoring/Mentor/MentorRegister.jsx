@@ -79,17 +79,17 @@ const MentorRegister = () => {
     const handleComplete = async (reservationId) => {
         try {
             const reservation = reservations.find(res => res.reservationId === reservationId);
-            const mentorId = localStorage.getItem('memberId');
+            const mentorMemberId = localStorage.getItem('memberId');
             const menteeId = reservation.menteeId;
 
-            console.log(' 멘토링 완료 요청 정보:', { reservationId, mentorId, menteeId });
+            console.log(' 멘토링 완료 요청 정보:', { reservationId, mentorMemberId, menteeId });
 
             if (!mentorId || !menteeId) {
                 alert('멘토링 완료를 위한 필수 정보가 누락되었습니다.');
                 return;
             }
 
-            await completeMentoring({ reservationId, mentorId, menteeId });
+            await completeMentoring({ reservationId, mentorMemberId, menteeId });
             const updated = reservations.filter(res => res.reservationId !== reservationId);
             setReservations(updated);
         } catch (error) {

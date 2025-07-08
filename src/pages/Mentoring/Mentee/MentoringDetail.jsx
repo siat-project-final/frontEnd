@@ -24,7 +24,7 @@ const MentoringDetail = () => {
     name: mentorData.name,
     position: mentorData.position,
     company: mentorData.company,
-    mentor_image_url: mentorData.mentor_image_url,
+    mentor_image_url: mentorData.mentorImageUrl,
     description: [
       `${mentorData.company} ${mentorData.position}`,
       '백엔드 개발 경력 8년, 대규모 앱 애플리케이션 설계 및 구축 경험',

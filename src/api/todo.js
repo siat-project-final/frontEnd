@@ -14,7 +14,7 @@ export const addTodo = (memberId, contents, date) => {
 
 /** 투두리스트 수정 */
 export const updateTodo = (memberId, todoId, contents, date) => {
-  return axios.patch(`/todos/${memberId}/${todoId}`, {
+  return axios.put(`/todos/${memberId}/${todoId}`, {
     contents,
     date,
   });

@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8087/v1';
+
+const baseURL = 'https://api.siathub.com/v1';
+
 
 // 1. 전체 스티커 목록 (구매 여부 포함)
 export const getAllStickers = async (memberId) => {
@@ -8,6 +10,7 @@ export const getAllStickers = async (memberId) => {
     params: { memberId },
     withCredentials: true,
   });
+  
   console.log('✅ getAllStickers 응답:', response.data);
   return response.data; // 배열만 반환
 };
