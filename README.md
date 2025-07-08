@@ -1,80 +1,102 @@
-# Getting Started with Create React App
+# SIATHUB - Front
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+본 프로젝트는 교육생과 멘토 간의 학습 교류를 돕기 위해 설계된 웹 기반 커뮤니티 플랫폼의 프론트엔드입니다. React 기반으로 구현되었으며, 다양한 학습 도구와 AI 챌린지, 멘토링 기능을 제공합니다.
 
-## Available Scripts
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🔧 기술 스택
 
+* **프레임워크**: React (Vite 기반), React Router
+* **스타일링**: Bootstrap, Tailwind, Custom CSS
+* **상태 관리**: useState, useEffect, localStorage
+* **HTTP 통신**: Axios
+* **캘린더 라이브러리**: FullCalendar
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🧩 주요 기능
 
+### 1. 학습일지
 
+* 학습 내용 등록/수정/삭제
+* 공개 여부 설정 및 공개 일지 목록 조회
+* 댓글 기능 (등록/조회)
 
-### `npm test`
+### 2. Todo & 캘린더 통합
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Todo를 localStorage 기반으로 저장 및 캘린더와 연동
+* 일정 클릭 시 모달 오픈 및 수정 가능
 
-### `npm run build`
+### 3. AI 챌린지
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* 매일 5문제 자동 생성 및 풀이
+* 제출 결과 저장 및 히스토리/랭킹 확인
+* 재참여 제한 및 점수 환산
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 4. 멘토링
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* 멘토/멘티 역할 분리된 예약 시스템
+* 수락/거절/완료 상태 관리
+* 알림 기능 연동
 
-### `npm run eject`
+### 5. 알림 시스템
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+* 멘토/멘티별 알림 조회 및 삭제 가능
+* 예약, 수락, 완료, 댓글 등 주요 이벤트 기반 알림 발송
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🛠️ 프로젝트 실행 방법
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+> 백엔드(Spring Boot 기반) 서버는 별도로 구동되어야 합니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🚨 트러블슈팅 (Troubleshooting)
 
-### Code Splitting
+### 1. FullCalendar 일정 병합 이슈
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* **문제**: localStorage Todo + 백엔드 일정 통합 시 UI 충돌
+* **해결**: dev/axios 브랜치의 UI 구조를 기준으로 feature/shop 브랜치 기능 통합
 
-### Analyzing the Bundle Size
+### 2. 챌린지 정답 비교 오류
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* **문제**: 정답 비교 시 타입 불일치 (`number` vs `string`)
+* **해결**: 비교 대상 타입 통일 후 정확히 매칭되도록 수정
 
-### Making a Progressive Web App
+### 3. 멘토링 상태값 반영 누락
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* **문제**: 수락/거절/완료 상태가 캘린더, 목록, 알림 등에 반영되지 않음
+* **해결**: 각 상태 전환 시 모든 관련 뷰에 동기 적용
 
-### Advanced Configuration
+### 4. 댓글 등록 시 diaryId 누락
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+* **문제**: 댓글 등록 시 `diaryId`가 전달되지 않아 400 에러 발생
+* **해결**: props 및 API 연결 구조 점검 및 수정
 
-### Deployment
+### 5. 알림 삭제 후 UI 미반영
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+* **문제**: 알림 삭제 후 목록이 즉시 갱신되지 않음
+* **해결**: 상태 업데이트 후 `fetchAlerts()` 재호출로 반영
 
-### `npm run build` fails to minify
+### 6. 새로고침 시 상태 초기화
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* **문제**: 챌린지 또는 멘토링 진행 중 새로고침 시 모든 상태 초기화
+* **해결**: localStorage에 필요한 값 저장 후 초기 마운트 시 복원
 
-resourceTimelinePlugin: 시간 리소스 기반 스케줄링. 멘토별 스케줄 타임라인에 유용.
+### 7. Axios 중복 요청 및 버튼 연타 처리
 
-timeGridPlugin: 시간 단위 주간/일간 스케줄 보기.
+* **문제**: 빠른 클릭 시 중복 요청 발생
+* **해결**: 요청 중 disable 처리 및 중복 방지 로직 추가
 
-listPlugin: 일정을 리스트 형태로 보여주는 뷰.
+### 8. 멘토링 완료 요청 실패
 
-event/resource: 실제 백엔드에서 불러올 수 있도록 API 연동 가능 (추후 fetchEvents 설정 가능).
+* **문제**: 백엔드에 `menteeId` 누락되어 완료 처리 실패
+* **해결**: Axios 요청 값 명확히 점검 및 프론트 로직 보완
+
+---
