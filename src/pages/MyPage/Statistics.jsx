@@ -97,7 +97,7 @@ const Statistics = () => {
                 >
                   <div className="stats-icon">📝</div>
                   <p className="stats-value">{stats.studyDiaryCount}</p>
-                  <p className="stats-label">learning journals created</p>
+                  <p className="stats-label">학습일지 작성 수</p>
                 </div>
 
                 <div
@@ -115,7 +115,7 @@ const Statistics = () => {
                 >
                   <div className="stats-icon">🏆</div>
                   <p className="stats-value">{stats.challengeCount}</p>
-                  <p className="stats-label">challenges completed</p>
+                  <p className="stats-label">챌린지 완료 총 횟수 </p>
                 </div>
 
                 <div
@@ -133,7 +133,7 @@ const Statistics = () => {
                 >
                   <div className="stats-icon">💬</div>
                   <p className="stats-value">{stats.mentoringCount}</p>
-                  <p className="stats-label">mentoring total</p>
+                  <p className="stats-label">멘토링 횟수</p>
                 </div>
 
                 <div
@@ -152,7 +152,7 @@ const Statistics = () => {
                   <div className="stats-icon">⭐</div>
                   <p className="stats-value">{stats.challengeCount?.toLocaleString()}</p>
                   {/* 평균성적 averageRank 필요 */}
-                  <p className="stats-label">challenge score</p>
+                  <p className="stats-label">챌린지 점수 통계</p>
                 </div>
               </div>
             )}
