@@ -463,8 +463,12 @@ const CalendarView = () => {
               padding: 0 !important;
             }
             .fc .fc-daygrid-day-frame {
-              height: 100% !important;
+              height: 130px !important;
+              min-height: 130px !important;
+              max-height: 130px !important;
+              position: relative !important;
               padding: 4px !important;
+              overflow: hidden !important;
             }
             .fc .fc-scrollgrid-sync-table {
               height: auto !important;
@@ -479,6 +483,7 @@ const CalendarView = () => {
               position: relative !important;
               height: 60px !important;
             }
+
 
             .fc .fc-toolbar-title {
               font-size: 24px !important;
@@ -583,39 +588,58 @@ const CalendarView = () => {
             events={[
               ...serverEvents,
               ...scheduleEvents,
-              ...stickerEvents,                                                    // ⭐ 추가
-            ].sort((a, b) => eventPriority(b) - eventPriority(a))}
+              ...stickerEvents,
+            ].sort((a, b) => {
+              const getPriority = (ev) => ev.extendedProps?.type === 'STICKER' ? 99 : 0;
+              return getPriority(a) - getPriority(b);
+            })}
             eventContent={(arg) => {
-  const { type, image, align = 'center', position = 'bottom' } = arg.event.extendedProps;
-  if (type === 'STICKER' && image) {
-    let justify = 'center';
-    if (align === 'right') justify = 'flex-end';
-    else if (align === 'left') justify = 'flex-start';
+              const { type, image } = arg.event.extendedProps;
+              if (type === 'STICKER' && image) {
+                // 날짜 셀 내 여러 스티커가 겹치지 않게 left 오프셋 계산
+                // 같은 날짜의 스티커 개수와 인덱스를 구함
+                const allEvents = arg.view.calendar.getEvents();
+                const sameDayStickers = allEvents.filter(ev =>
+                  ev.extendedProps?.type === 'STICKER' &&
+                  ev.startStr === arg.event.startStr
+                );
+                const myIdx = sameDayStickers.findIndex(ev => ev.id === arg.event.id);
+                const total = sameDayStickers.length;
+                // -20, 0, +20 등으로 분산 (최대 5개까지)
+                const offset = (myIdx - (total - 1) / 2) * 44;
 
-    let alignItems = 'flex-end';
-    if (position === 'top') alignItems = 'flex-start';
-    else if (position === 'center') alignItems = 'center';
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'absolute';
+                wrapper.style.left = `calc(50% + ${offset}px)`;
+                wrapper.style.bottom = '4px';
+                wrapper.style.transform = 'translateX(-50%)';
+                wrapper.style.width = '40px';
+                wrapper.style.height = '40px';
+                wrapper.style.pointerEvents = 'auto';
 
-    const wrapper = document.createElement('div');
-    wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.display = 'flex';
-    wrapper.style.justifyContent = justify;
-    wrapper.style.alignItems = alignItems;
-    wrapper.style.pointerEvents = 'none';
+                // 클릭 이벤트: FullCalendar의 eventClick 트리거
+                wrapper.onclick = (e) => {
+                  e.stopPropagation();
+                  if (arg.view.calendar) {
+                    arg.view.calendar.trigger('eventClick', {
+                      el: wrapper,
+                      event: arg.event,
+                      jsEvent: e,
+                      view: arg.view,
+                    });
+                  }
+                };
 
-    const img = document.createElement('img');
-    img.src = image;
-    img.style.width = '40px';
-    img.style.height = '40px';
-    img.style.objectFit = 'contain';
-
-    wrapper.appendChild(img);
-    return { domNodes: [wrapper] };
-  }
-
-  return { html: `<div>${arg.event.title}</div>` };
-}}
+                const img = document.createElement('img');
+                img.src = image;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'contain';
+                wrapper.appendChild(img);
+                return { domNodes: [wrapper] };
+              }
+              return { html: `<div>${arg.event.title}</div>` };
+            }}
 
             dateClick={handleDateClick}
             editable

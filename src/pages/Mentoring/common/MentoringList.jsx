@@ -10,87 +10,12 @@ const MentoringList = () => {
   const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
 
-  // 더미 데이터
-  const dummyMentors = [
-    {
-      mentorName: 'Walter White',
-      position: 'Business Analyst',
-      company: 'SK 쉴더스',
-      mentor_image_url: '/assets/img/mentors/형규.png',
-    },
-    {
-      mentorName: 'Sarah Jhonson',
-      position: 'Software Engineer',
-      company: 'SK C&C',
-      mentor_image_url: '/assets/img/mentors/수현.png',
-    },
-    {
-      mentorName: 'William Anderson',
-      position: 'Cloud Engineer',
-      company: 'AWS',
-      mentor_image_url: '/assets/img/mentors/신형.png',
-    },
-    {
-      mentorName: 'Amanda Jepson',
-      position: 'Software Developer',
-      company: 'TVING',
-      mentor_image_url: '/assets/img/mentors/은정.png',
-    },
-    {
-      mentorName: 'Brian Doe',
-      position: 'Software Developer',
-      company: 'MEGAZONE CLOUD',
-      mentor_image_url: '/assets/img/mentors/태현.png',
-    },
-    {
-      mentorName: 'Josepha Palas',
-      position: 'Cloud Engineer',
-      company: 'AWS',
-      mentor_image_url: '/assets/img/mentors/영석.png',
-    },
-    {
-      mentorName: 'Emily Chen',
-      position: 'Data Scientist',
-      company: 'Google',
-      mentor_image_url: '/assets/img/mentors/형규.png',
-    },
-    {
-      mentorName: 'Michael Park',
-      position: 'AI Engineer',
-      company: 'Naver',
-      mentor_image_url: '/assets/img/mentors/수현.png',
-    },
-    {
-      mentorName: 'Sophie Kim',
-      position: 'Frontend Developer',
-      company: 'Kakao',
-      mentor_image_url: '/assets/img/mentors/신형.png',
-    },
-    {
-      mentorName: 'David Lee',
-      position: 'Backend Developer',
-      company: 'LINE',
-      mentor_image_url: '/assets/img/mentors/은정.png',
-    },
-    {
-      mentorName: 'Lisa Wang',
-      position: 'DevOps Engineer',
-      company: 'Coupang',
-      mentor_image_url: '/assets/img/mentors/태현.png',
-    },
-    {
-      mentorName: 'James Kim',
-      position: 'Security Engineer',
-      company: 'Kakao Security',
-      mentor_image_url: '/assets/img/mentors/영석.png',
-    },
-  ];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getMentors(); // 실제 백엔드 API 호출
-        setMentors(res.data);          // 응답 데이터 state에 저장
+        const res = await getMentors();   // 실제 백엔드 API 호출
+        console.log('[멘토 API 응답]', res.data);
+        setMentors(res.data);             // 응답 데이터 state에 저장
       } catch (err) {
         console.error('멘토 목록 불러오기 실패:', err);
       }
@@ -101,35 +26,22 @@ const MentoringList = () => {
 
   const handleMentorClick = (mentor) => {
     const role = localStorage.getItem('role');
-    if (role === 'MENTOR') {
-      // 멘토는 OtherMentoringDetail.jsx로 이동
-      navigate('/mentoring/other-detail', {
-        state: {
-          mentor: {
-            mentorId: mentor.mentorId,
-            mentorMemberId: mentor.mentorMemberId,
-            name: mentor.mentorName,
-            position: mentor.position,
-            company: mentor.company,
-            mentor_image_url: mentor.mentor_image_url,
-          },
-        },
-      });
-      return;
-    }
-    // 멘티 등은 기존 detail 페이지로 이동
-    navigate('/mentoring/detail', {
-      state: {
-        mentor: {
-          mentorId: mentor.mentorId,
-          mentorMemberId: mentor.mentorMemberId,
-          name: mentor.mentorName,
-          position: mentor.position,
-          company: mentor.company,
-          mentor_image_url: mentor.mentor_image_url,
-        },
+    const stateObj = {
+      mentor: {
+        mentorId: mentor.mentorId,
+        mentorMemberId: mentor.mentorMemberId,
+        name: mentor.mentorName,
+        position: mentor.position,
+        company: mentor.company,
+        mentorImageUrl: mentor.mentorImageUrl,
       },
-    });
+    };
+
+    if (role === 'MENTOR') {
+      navigate('/mentoring/other-detail', { state: stateObj });
+    } else {
+      navigate('/mentoring/detail', { state: stateObj });
+    }
   };
 
   return (
@@ -138,7 +50,10 @@ const MentoringList = () => {
       <div className="container-flex">
         <Sidebar menuType="mentoring" />
         <main className="main" data-aos="fade-up">
-          <h1 className="h3 fw-bold" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
+          <h1
+            className="h3 fw-bold"
+            style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
+          >
             Mentoring
           </h1>
           <p style={{ marginTop: '16px', marginLeft: '16px', whiteSpace: 'pre-line' }}>
@@ -156,6 +71,7 @@ const MentoringList = () => {
                     data-aos="fade-up"
                     data-aos-delay={100 * (index + 1)}
                   >
+                    {/* ---------- 프로필 이미지 ---------- */}
                     <div
                       className="member-img"
                       style={{
@@ -169,18 +85,12 @@ const MentoringList = () => {
                       onMouseEnter={(e) => {
                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
                         const img = e.currentTarget.querySelector('img');
-                        if (img) {
-                          img.style.transform = 'scale(1.05)';
-                          img.style.filter = 'none';
-                          img.style.opacity = '1';
-                        }
+                        if (img) img.style.transform = 'scale(1.05)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.boxShadow = 'none';
                         const img = e.currentTarget.querySelector('img');
-                        if (img) {
-                          img.style.transform = 'scale(1)';
-                        }
+                        if (img) img.style.transform = 'scale(1)';
                       }}
                       onClick={() => handleMentorClick(mentor)}
                     >
@@ -194,13 +104,13 @@ const MentoringList = () => {
                         }}
                       >
                         <img
-                          src={mentor.mentor_image_url}
+                          src={mentor.mentorImageUrl}
                           className="img-fluid"
                           alt={mentor.mentorName}
                           style={{
                             position: 'absolute',
-                            top: '0',
-                            left: '0',
+                            top: 0,
+                            left: 0,
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
@@ -211,11 +121,13 @@ const MentoringList = () => {
                           }}
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = '/assets/img/team/team-1.jpg';
+                            e.target.src = '/assets/img/team/team-1.jpg'; // 기본 이미지
                           }}
                         />
                       </div>
                     </div>
+
+                    {/* ---------- 텍스트 정보 ---------- */}
                     <div className="member-info text-center">
                       <h4>{mentor.mentorName}</h4>
                       <p>{mentor.position}</p>
@@ -227,6 +139,7 @@ const MentoringList = () => {
             </div>
           </section>
         </main>
+
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>
