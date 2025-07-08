@@ -34,6 +34,7 @@ const MenteeRegister = () => {
         const formatted = response.data.map((res) => ({
           ...res,
           date: formatDate(res.date),
+          link: localStorage.getItem(`reservationLink_${res.reservationId}`) || null,  // ✅ 핵심
         }));
 
         setReservations(formatted);
@@ -100,6 +101,7 @@ const MenteeRegister = () => {
                 <MenteeRegisterCard
                   key={res.reservationId}
                   {...res}
+                  link={res.link} // ✅ 반드시 link props 전달
                   onCancel={() => handleCancelReservation(res.reservationId)}
                 />
               ))}

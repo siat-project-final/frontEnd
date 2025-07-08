@@ -18,12 +18,20 @@ const MenteeAlarm = () => {
     getNotificationsMentor(memberId)
       .then((res) => {
         setAlerts(res.data);
+
+        // ✅ 여기 추가 : 알람 데이터에서 reservationId-link 저장
+        res.data.forEach(alert => {
+          if (alert.reservationId && alert.link) {
+            localStorage.setItem(`reservationLink_${alert.reservationId}`, alert.link);
+          }
+        });
       })
       .catch((err) => {
         console.error('멘토알림 조회 실패:', err);
       });
   };
 
+  
   useEffect(() => {
     fetchAlerts();
   }, []);
