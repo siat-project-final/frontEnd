@@ -4,10 +4,10 @@ import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
 import './Statistics.css';
 import { getUserStats } from '../../api/user';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale } from 'chart.js';
 
-ChartJS.register(ArcElement);
+ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale);
 
 const Statistics = () => {
   const [stats, setStats] = useState(null);
@@ -40,6 +40,17 @@ const Statistics = () => {
       ],
     };
   };
+
+  const getBarChartData = (labels, data) => ({
+    labels: labels,
+    datasets: [
+      {
+        label: '활동 통계',
+        data: data,
+        backgroundColor: ['#84cc16', '#d1d5db', '#f87171', '#60a5fa'],
+      },
+    ],
+  });
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -154,6 +165,24 @@ const Statistics = () => {
                   {/* 평균성적 averageRank 필요 */}
                   <p className="stats-label">챌린지 점수 통계</p>
                 </div>
+
+                <div
+                  className="stat-card"
+                  style={{ width: '350px', transition: 'all 0.3s ease' }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 0 0 2px #84cc16';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                  onClick={() => handleCardClick('barChart')}
+                >
+                  <div className="stats-icon">📊</div>
+                  <p className="stats-value">활동 통계</p>
+                  <p className="stats-label">바 차트 보기</p>
+                </div>
               </div>
             )}
 
@@ -164,15 +193,17 @@ const Statistics = () => {
                   <div className="pie-block">
                     <Pie data={getPieChartData(stats.studyDiaryCount, totalDays)} />
                     <p className="stats-value" style={{ marginTop: '1rem' }}>
-                      <p style={{ fontSize: '2rem' }}>전체 수업기간</p>
-                      {stats.studyDiaryCount} / {totalDays}
+                      <span style={{ fontSize: '2rem' }}>전체 수업기간</span>
+                      <br />
+                      {stats.studyDiaryCount} / {totalDays}일 ({((stats.studyDiaryCount / totalDays) * 100).toFixed(2)}%)
                     </p>
                   </div>
                   <div className="pie-block">
                     <Pie data={getPieChartData(stats.studyDiaryCount, 30)} />
                     <p className="stats-value" style={{ marginTop: '1rem' }}>
-                      <p style={{ fontSize: '2rem' }}>최근 30일</p>
-                      {stats.studyDiaryCount} / 30 {/* 30일, 또는 한 달 기준의 집계 필요 */}
+                      <span style={{ fontSize: '2rem' }}>최근 30일</span>
+                      <br />
+                      {stats.studyDiaryCount} / 30일 ({((stats.studyDiaryCount / 30) * 100).toFixed(2)}%)
                     </p>
                   </div>
                 </div>
@@ -181,7 +212,7 @@ const Statistics = () => {
 
             {selectedCard === 'challenge' && (
               <div className="stat-card">
-                <p className="stats-value">🏆 참여 횟수</p>
+                <p className="stats-value">🏆 챌린지 참여 횟수</p>
                 <div className="pie-wrapper">
                   <div className="pie-block">
                     <Pie data={getPieChartData(stats.challengeCount, totalDays)} />
@@ -204,55 +235,15 @@ const Statistics = () => {
             {selectedCard === 'mentoring' && (
               <div className="stat-card">
                 <p className="stats-value">💬 멘토링 기록</p>
-                <div className="pie-wrapper">
-                  <div className="pie-block">
-                    <img
-                      src={
-                        {
-                          /* 첫 멘토 이미지 */
-                        }
-                      }
-                      alt={
-                        {
-                          /* 첫 멘토 이름 */
-                        }
-                      }
-                      style={{
-                        width: '120px',
-                        height: '120px',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        marginBottom: '1rem',
-                      }}
-                    />
-                    <p className="stats-value" style={{ marginTop: '1rem' }}>
-                      <p style={{ fontSize: '2rem' }}>최초 멘토링 : </p>
-                      {/* 첫 멘토 이름 */}
-                    </p>
+                <div className="mentoring-info">
+                  <div className="mentoring-block">
+                    <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>최초 멘토링</p>
+                    <p>{stats.firstMentorName || '데이터 없음'}</p>
                   </div>
-                  <div className="pie-block">
-                    <img
-                      src={
-                        {
-                          /* 최다 멘토 이미지 */
-                        }
-                      }
-                      alt={
-                        {
-                          /* 최다 멘토 이름 */
-                        }
-                      }
-                      style={{
-                        width: '120px',
-                        height: '120px',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        marginBottom: '1rem',
-                      }}
-                    />
-                    <p className="stats-value" style={{ marginTop: '1rem' }}>
-                      <p style={{ fontSize: '2rem' }}>최다 멘토링 : </p>
-                      {/* 최다 멘토 이름 */}
+                  <div className="mentoring-block">
+                    <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>최다 멘토링</p>
+                    <p>
+                      {stats.topMentorName || '데이터 없음'} ({stats.topMentorSessions || 0}회)
                     </p>
                   </div>
                 </div>
@@ -261,7 +252,7 @@ const Statistics = () => {
 
             {selectedCard === 'ranking' && (
               <div className="stat-card">
-                <p className="stats-value">⭐ 평균 점수</p>
+                <p className="stats-value">⭐ 챌린지 평균 점수</p>
                 <div className="pie-wrapper">
                   <div className="pie-block">
                     <Pie data={getPieChartData(stats.challengeCount, totalDays)} />
@@ -278,6 +269,20 @@ const Statistics = () => {
                       {stats.challengeCount} / 30 {/* 30일, 또는 한 달 기준의 집계 필요 */}
                     </p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {selectedCard === 'barChart' && (
+              <div className="stat-card">
+                <p className="stats-value">📊 활동 통계</p>
+                <div className="bar-wrapper">
+                  <Bar
+                    data={getBarChartData(
+                      ['학습일지', '챌린지', '멘토링', '평균 점수'],
+                      [stats.studyDiaryCount, stats.challengeCount, stats.mentoringCount, stats.averageScore]
+                    )}
+                  />
                 </div>
               </div>
             )}
