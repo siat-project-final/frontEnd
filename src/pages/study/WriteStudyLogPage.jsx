@@ -19,6 +19,7 @@ const WriteStudyLogPage = () => {
     content: '',
     summary: '',
   });
+  const [isLoading, setIsLoading] = useState(false); // ✅ 추가
   const memberId = localStorage.getItem('memberId');
   const navigate = useNavigate();
 
@@ -29,14 +30,17 @@ const WriteStudyLogPage = () => {
 
   const handleSummary = async () => {
     alert('AI 요약을 실행합니다. 잠시 기다려주세요...');
-    summarizeContent(form.content)
-      .then(res => {
-        setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
-        alert('AI 요약이 완료되었습니다. 결과를 확인해주세요.');
-      })
-      .catch(err => {
-        console.error('요약 실패:', err);
-      });
+    setIsLoading(true); // ✅ 시작 시 true
+    try {
+      const res = await summarizeContent(form.content);
+      setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
+      alert('AI 요약이 완료되었습니다. 결과를 확인해주세요.');
+    } catch (err) {
+      console.error('요약 실패:', err);
+      alert('요약에 실패했습니다.');
+    } finally {
+      setIsLoading(false); // ✅ 완료 시 false
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -85,8 +89,8 @@ const WriteStudyLogPage = () => {
                       placeholder="제목 입력"
                     />
                   </div>
-                  
                 </div>
+
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label className="form-label">과목</label>
@@ -136,10 +140,10 @@ const WriteStudyLogPage = () => {
                     value={form.content}
                     onChange={handleChange}
                   ></textarea>
-                  
                 </div>
 
-                <div className="mb-3">
+                {/* ✅ 요약 textarea + 로딩 오버레이 */}
+                <div className="mb-3" style={{ position: 'relative' }}>
                   <label className="form-label">AI 요약</label>
                   <textarea
                     className="form-control"
@@ -147,7 +151,30 @@ const WriteStudyLogPage = () => {
                     rows="3"
                     onChange={handleChange}
                     value={form.summary}
+                    style={{ position: 'relative', zIndex: 1 }}
                   ></textarea>
+
+                  {isLoading && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '32px',
+                        left: '0',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 2,
+                        borderRadius: '4px',
+                      }}
+                    >
+                      <div className="spinner-border text-success" role="status" style={{ width: '1.5rem', height: '1.5rem'}}>
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="d-flex justify-content-end gap-3">
