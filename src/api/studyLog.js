@@ -55,3 +55,18 @@ export const commentOnStudyLog = (diaryId, memberId, contents) => {
     contents,
   });
 };
+
+/** 댓글 수정 */
+export const updateStudyLogComment = (commentId, memberId, contents) => {
+  return axios.put(`/study-diary/comments/${commentId}`, {
+    memberId,
+    contents,
+  });
+};
+
+/** 댓글 삭제 */
+export const deleteStudyLogComment = (commentId, memberId) => {
+  return axios.put(`/study-diary/comments/${commentId}/delete`, {
+    memberId,
+  });
+};
