@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8087';
+const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8087/v1';
 
 // 1. 전체 스티커 목록 (구매 여부 포함)
 export const getAllStickers = async (memberId) => {
@@ -24,12 +24,16 @@ export const getUserPoint = async (memberId) => {
 
 // 3. 스티커 구매
 export const purchaseSticker = (memberId, stickerId) =>
-  axios.post(`${baseURL}/shop/purchase`, {
-    memberId,
-    stickerId,
-  }, {
-    withCredentials: true,
-  });
+  axios.post(
+    `${baseURL}/shop/purchase`,
+    {
+      memberId,
+      stickerId,
+    },
+    {
+      withCredentials: true,
+    }
+  );
 
 // 4. 인벤토리 조회
 export const getInventory = async (memberId) => {
@@ -51,13 +55,17 @@ export const getBagItems = async (memberId) => {
 
 // 6. 가방에 추가
 export const addToBag = (memberId, stickerId, slotIndex) =>
-  axios.post(`${baseURL}/shop/bag/add`, {
-    memberId,
-    stickerId,
-    slotIndex,
-  }, {
-    withCredentials: true,
-  });
+  axios.post(
+    `${baseURL}/shop/bag/add`,
+    {
+      memberId,
+      stickerId,
+      slotIndex,
+    },
+    {
+      withCredentials: true,
+    }
+  );
 
 // 7. 가방에서 제거
 export const removeFromBag = (memberId, slotIndex) =>
@@ -66,11 +74,15 @@ export const removeFromBag = (memberId, slotIndex) =>
     withCredentials: true,
   });
 
-  // 8. 가방 전체 저장
+// 8. 가방 전체 저장
 export const saveBagItemsToServer = (memberId, bagItems) =>
-  axios.post(`${baseURL}/shop/bag`, {
-    memberId,
-    bagItems, // 배열: [{ id, name, image }, ...]
-  }, {
-    withCredentials: true,
-  });
+  axios.post(
+    `${baseURL}/shop/bag`,
+    {
+      memberId,
+      bagItems, // 배열: [{ id, name, image }, ...]
+    },
+    {
+      withCredentials: true,
+    }
+  );
