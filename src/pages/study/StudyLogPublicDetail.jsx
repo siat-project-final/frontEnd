@@ -97,9 +97,9 @@ const StudyLogPublicDetail = () => {
         return;
       }
   
-      console.log("수정 요청 commentId:", commentId);
-      console.log("memberId:", memberId);
-      console.log("contents:", editContent);
+      // console.log("수정 요청 commentId:", commentId);
+      // console.log("memberId:", memberId);
+      // console.log("contents:", editContent);
   
       await updateStudyLogComment(commentId, parseInt(memberId), editContent);
       setEditIndex(null);
@@ -183,7 +183,7 @@ const StudyLogPublicDetail = () => {
             <div className="mb-4">
   <h6 className="fw-bold mb-4">등록된 댓글</h6>
   {comments.map((c, i) => {
-    console.log(`index ${i}의 댓글`, c); // ✅ 콘솔 찍기
+    // console.log(`index ${i}의 댓글`, c); // ✅ 콘솔 찍기
 
     return (
       <div
