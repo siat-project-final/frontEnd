@@ -54,7 +54,7 @@ const ShopPage = () => {
     try {
       await purchaseSticker(memberId, sticker.id);
       alert(`🎉 '${sticker.name}' 스티커를 구매했어요!`);
-      fetchData(); 
+      fetchData();
     } catch (err) {
       console.error('❌ 스티커 구매 실패:', err);
       alert('⚠️ 구매에 실패했습니다.');
@@ -65,8 +65,8 @@ const ShopPage = () => {
     fetchData();
   }, [memberId]);
 
-  const jabSimSeries = stickers.filter(s => s.id >= 1 && s.id <= 4);
-  const basicSeries = stickers.filter(s => s.id >= 11 && s.id <= 15);
+  const jabSimSeries = stickers.filter((s) => s.id >= 1 && s.id <= 4);
+  const basicSeries = stickers.filter((s) => s.id >= 11 && s.id <= 15);
 
   return (
     <div>
@@ -76,9 +76,11 @@ const ShopPage = () => {
 
         <main className="main" style={{ flex: 1 }} data-aos="fade-up">
           <div className="container py-5">
-            <h1 className="h3 fw-bold text-success mb-3">🎁 스티커 상점</h1>
+            <h1 className="h3 fw-bold mb-3" style={{ color: '#84cc16' }}>
+              🎁 스티커 상점
+            </h1>
             <p className="text-muted mb-4">나만의 학습 캘린더를 꾸며보세요!</p>
-            <div className="mb-5 p-2 px-3 rounded bg-light border text-success fw-bold w-fit">
+            <div className="mb-5 p-2 px-3 rounded bg-light border fw-bold w-fit">
               🪙 내 포인트: {myPoint}P
             </div>
 

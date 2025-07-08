@@ -96,7 +96,10 @@ export default function InventoryPage() {
                 className={`sticker-card position-relative p-3 rounded-4 shadow-sm h-100 bg-white cursor-pointer ${
                   active ? 'border-primary border-3' : 'border border-secondary-subtle'
                 }`}
-                style={{ transition: 'transform .25s', transform: active ? 'translateY(-6px)' : 'none' }}
+                style={{
+                  transition: 'transform .25s',
+                  transform: active ? 'translateY(-6px)' : 'none',
+                }}
                 onClick={() => handleSelect(sticker.id)}
               >
                 <img
@@ -138,7 +141,9 @@ export default function InventoryPage() {
               <div className="d-flex align-items-center gap-2">
                 <i className="bi bi-backpack-fill text-warning fs-2" />
                 <div>
-                  <h1 className="h3 fw-bold text-primary mb-1">내 인벤토리</h1>
+                  <h1 className="h3 fw-bold mb-1" style={{ color: '#84cc16' }}>
+                    내 인벤토리
+                  </h1>
                   <p className="text-muted mb-0">스티커를 가방(퀵슬롯)에 관리하세요!</p>
                 </div>
               </div>
@@ -146,6 +151,7 @@ export default function InventoryPage() {
                 className="btn btn-success d-flex align-items-center gap-2 px-3 shadow"
                 disabled={!selectedId}
                 onClick={addToBag}
+                style={{ backgroundColor: '#84cc16', border: '1px solid #84cc16' }}
               >
                 <i className="bi bi-bag-plus-fill fs-5" />
                 가방에 담기
@@ -165,9 +171,15 @@ export default function InventoryPage() {
                     title={item ? '클릭하여 제거' : ''}
                   >
                     {item ? (
-                      <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                      />
                     ) : (
-                      <span className="text-muted fw-bold" style={{ fontSize: 14 }}>{idx + 1}</span>
+                      <span className="text-muted fw-bold" style={{ fontSize: 14 }}>
+                        {idx + 1}
+                      </span>
                     )}
                   </div>
                 );

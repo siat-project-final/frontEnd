@@ -26,7 +26,7 @@ const StudyLogDetailPage = () => {
     const fetchLog = async () => {
       try {
         const res = await getMyStudyLogById(id);
-        console.log('🔥 getMyStudyLogById 응답:', res);
+        // console.log('🔥 getMyStudyLogById 응답:', res);
         // 서버 응답에 selectedPeriods가 없다면 빈 배열로 초기화
         const initialData = {
           ...res.data,
