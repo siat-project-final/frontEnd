@@ -21,6 +21,7 @@ const StickerCard = ({ sticker, onPurchase, purchased, disabled }) => {
             className="btn btn-success"
             onClick={() => onPurchase(sticker)}
             disabled={disabled}
+            style={{ backgroundColor: '#84cc16', border: '1px solid #84cc16' }}
           >
             구매하기
           </button>

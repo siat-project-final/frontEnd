@@ -80,10 +80,7 @@ const ShopPage = () => {
               🎁 스티커 상점
             </h1>
             <p className="text-muted mb-4">나만의 학습 캘린더를 꾸며보세요!</p>
-            <div
-              className="mb-5 p-2 px-3 rounded bg-light border fw-bold w-fit"
-              style={{ color: '#84cc16' }}
-            >
+            <div className="mb-5 p-2 px-3 rounded bg-light border fw-bold w-fit">
               🪙 내 포인트: {myPoint}P
             </div>
 

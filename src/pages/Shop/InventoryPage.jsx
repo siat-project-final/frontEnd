@@ -151,6 +151,7 @@ export default function InventoryPage() {
                 className="btn btn-success d-flex align-items-center gap-2 px-3 shadow"
                 disabled={!selectedId}
                 onClick={addToBag}
+                style={{ backgroundColor: '#84cc16', border: '1px solid #84cc16' }}
               >
                 <i className="bi bi-bag-plus-fill fs-5" />
                 가방에 담기
