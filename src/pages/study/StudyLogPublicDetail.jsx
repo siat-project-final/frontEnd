@@ -113,8 +113,6 @@ const StudyLogPublicDetail = () => {
     }
   };
   
-
-  
   
   const handleStartEdit = (index, content, commentId) => {
     setEditIndex(index);
@@ -202,7 +200,7 @@ const StudyLogPublicDetail = () => {
                 className="form-control"
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                style={{ maxWidth: '600px', flex: 1, marginRight: '10px' }}
+                style={{ minWidth: '0', flex: 1, marginRight: '10px' }}
               />
               <div className="d-flex flex-column align-items-end" style={{ minWidth: '80px' }}>
                 <button
@@ -214,6 +212,7 @@ const StudyLogPublicDetail = () => {
                     fontSize: '0.75rem',
                     padding: '0',
                     border: 'none',
+                    marginRight: '20px'
                   }}
                 >
                   취소
