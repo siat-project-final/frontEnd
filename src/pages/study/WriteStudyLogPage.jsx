@@ -29,7 +29,7 @@ const WriteStudyLogPage = () => {
 
   const handleSummary = async () => {
     alert('AI 요약을 실행합니다. 잠시 기다려주세요...');
-    summarizeContent(form.content)
+    summarizeContent(form.content.replace(/\n/g, ''))
       .then(res => {
         setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
         alert('AI 요약이 완료되었습니다. 결과를 확인해주세요.');
