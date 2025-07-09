@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; // useMemo 필요 없음
 import Header from '../../../components/common/Header';
 import Sidebar from '../../../components/common/Sidebar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -12,9 +12,8 @@ const MenteeRegister = () => {
   const [reservations, setReservations] = useState([]);
   const memberId = localStorage.getItem('memberId');
 
-  
-  // ✅ 추가: 링크를 location.state 로부터 받기
-  const links = location.state?.links || [];
+  // 🟢🟢🟢 제거: localStorage에서 링크를 가져오는 useMemo 로직은 이제 필요 없음 🟢🟢🟢
+  // const mentoringLinksMap = useMemo(() => { /* ... */ }, []);
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
@@ -30,13 +29,21 @@ const MenteeRegister = () => {
     const fetchReservations = async () => {
       try {
         const response = await getMentoringReservations(memberId);
+        console.log('MenteeRegister: Raw Reservations API Response:', response.data);
 
-        const formatted = response.data.map((res) => ({
-          ...res,
-          date: formatDate(res.date),
-          link: localStorage.getItem(`reservationLink_${res.reservationId}`) || null,  // ✅ 핵심
-        }));
+        const formatted = response.data.map((res) => {
+          // 🟢🟢🟢 핵심 수정: res.openChatUrl 필드에서 직접 링크 가져오기 🟢🟢🟢
+          // API 응답에 openChatUrl 필드가 이미 존재하므로 이를 사용합니다.
+          const link = res.openChatUrl || null; 
 
+          return {
+            ...res,
+            date: formatDate(res.date),
+            link: link, // 이제 올바른 링크가 할당됩니다.
+          };
+        });
+
+        console.log('MenteeRegister: Formatted reservations with links:', formatted);
         setReservations(formatted);
       } catch (error) {
         console.error('❌ 예약 조회 실패:', error);
@@ -44,9 +51,9 @@ const MenteeRegister = () => {
     };
 
     if (memberId) fetchReservations();
-  }, [memberId]);
+  }, [memberId]); // mentoringLinksMap 의존성 제거
 
-  // "닫기" 후 목록에서 제거
+  // "닫기" 후 목록에서 제거 로직은 동일
   useEffect(() => {
     if (location.state?.cancelledReservationId && !location.state?.alreadyRemoved) {
       setReservations((prev) =>
@@ -101,25 +108,10 @@ const MenteeRegister = () => {
                 <MenteeRegisterCard
                   key={res.reservationId}
                   {...res}
-                  link={res.link} // ✅ 반드시 link props 전달
+                  link={res.link} // 이제 res.link에 openChatUrl 값이 들어갑니다.
                   onCancel={() => handleCancelReservation(res.reservationId)}
                 />
               ))}
-            </div>
-            {/* ✅ 추가: 알림에서 넘어온 링크 출력 */}
-            <div style={{ marginTop: '40px' }}>
-              <h4 style={{ marginBottom: '10px', fontSize: '18px' }}>알림에서 전달된 링크 목록</h4>
-              {links.length === 0 ? (
-                <p>링크가 없습니다.</p>
-              ) : (
-                <ul style={{ paddingLeft: '20px' }}>
-                  {links.map((link, idx) => (
-                    <li key={idx}>
-                      <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </div>
         </main>

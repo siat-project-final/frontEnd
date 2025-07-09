@@ -1,62 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import Todo from '../../components/common/Todo';
-import { deleteNotification, getNotificationsMentee, getNotificationsMentor } from '../../api/notification';
-import { useNavigate } from 'react-router-dom';  // ✅ 추가
-
+import { deleteNotification, getNotificationsMentor } from '../../api/notification';
+import { useNavigate } from 'react-router-dom';
 
 const MenteeAlarm = () => {
   const [alerts, setAlerts] = useState([]);
-  const [links, setLinks] = useState([]); // ✅ 추가: 링크 리스트 상태
-  const navigate = useNavigate();          // ✅ 추가
-   
+  // ❌ 삭제: linksToStore 상태는 더 이상 필요 없음
+  // const [linksToStore, setLinksToStore] = useState([]);
+
+  const navigate = useNavigate();
   const memberId = localStorage.getItem('memberId');
 
   const fetchAlerts = () => {
     getNotificationsMentor(memberId)
       .then((res) => {
         setAlerts(res.data);
+        console.log('MenteeAlarm: Raw API Response for Notifications:', res.data);
 
-        // ✅ 여기 추가 : 알람 데이터에서 reservationId-link 저장
-        res.data.forEach(alert => {
-          if (alert.reservationId && alert.link) {
-            localStorage.setItem(`reservationLink_${alert.reservationId}`, alert.link);
-          }
-        });
+        // ❌ 삭제: linksToStore를 위한 링크 추출 로직은 더 이상 필요 없음
+        // const allLinks = res.data.flatMap(alert => {
+        //   const currentReservationId = alert.notificationId;
+        //   const regex = /(https?:\/\/[^\s]+)/g;
+        //   const foundLinks = (alert.contents.match(regex) || []);
+        //
+        //   console.log(`MenteeAlarm: Processing alert for reservationId ${currentReservationId}`);
+        //   console.log(`  Contents: "${alert.contents}"`);
+        //   console.log(`  Found links (from regex):`, foundLinks);
+        //
+        //   return foundLinks.map(link => ({
+        //     reservationId: currentReservationId,
+        //     link: link
+        //   }));
+        // });
+        //
+        // console.log('MenteeAlarm: Extracted allLinks before storing:', allLinks);
+        // setLinksToStore(allLinks); // 이 줄도 제거
       })
       .catch((err) => {
         console.error('멘토알림 조회 실패:', err);
       });
   };
 
-  
   useEffect(() => {
     fetchAlerts();
   }, []);
 
-   // ✅ 링크 추출 함수
-  const extractLinks = (text) => {
-    const regex = /(https?:\/\/[^\s]+)/g;
-    return text.match(regex) || [];
-  };
-
-  // ✅ 알림이 로딩될 때 링크 추출
-  useEffect(() => {
-    if (alerts.length > 0) {
-      const allLinks = alerts.flatMap(alert => extractLinks(alert.contents));
-      setLinks(allLinks);
-    }
-  }, [alerts]);
+  // ❌ 삭제: linksToStore가 업데이트될 때 localStorage에 저장하는 useEffect는 더 이상 필요 없음
+  // useEffect(() => {
+  //   if (linksToStore.length > 0) {
+  //     localStorage.setItem('mentoringLinks', JSON.stringify(linksToStore));
+  //     console.log('MenteeAlarm: Mentoring links saved to localStorage:', JSON.parse(localStorage.getItem('mentoringLinks')));
+  //   } else {
+  //     console.log('MenteeAlarm: No links to store, localStorage not updated or cleared.');
+  //     // 필요하다면 localStorage.removeItem('mentoringLinks'); 를 호출하여 이전 데이터를 지울 수 있습니다.
+  //   }
+  // }, [linksToStore]);
 
   const handleDelete = (notificationId) => {
     deleteNotification(notificationId)
       .then(() => {
-        setAlerts((prev) =>
-          prev.filter((alert) => alert.notificationId !== notificationId)
-        );
-        fetchAlerts();
+        setAlerts((prev) => prev.filter((alert) => alert.notificationId !== notificationId));
       })
       .catch((err) => {
         console.error('알림 삭제 실패:', err);
@@ -72,10 +77,10 @@ const MenteeAlarm = () => {
             <Sidebar menuType="alarm" />
             <main className="main">
               <h1
-              className="h3 fw-bold"
-              style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', color: '#84cc16' }}
+                className="h3 fw-bold"
+                style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', color: '#84cc16' }}
               >
-              Alarm
+                Alarm
               </h1>
               <section className="alerts-section">
                 <div className="container" style={{ maxWidth: '700px', width: '100%' }}>
@@ -102,7 +107,16 @@ const MenteeAlarm = () => {
                         <div style={{ flex: 1, marginRight: 16 }}>
                           <b>{alert.title}</b>
                           <p style={{ marginTop: 8, whiteSpace: 'pre-line' }}>
-                            {alert.contents}
+                            {/* 알림 내용에서 링크를 감지하여 <a> 태그로 변환 */}
+                            {alert.contents.split(/(https?:\/\/[^\s]+)/g).map((part, index) =>
+                              part.match(/(https?:\/\/[^\s]+)/) ? (
+                                <a key={index} href={part} target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', textDecoration: 'underline' }}>
+                                  {part}
+                                </a>
+                              ) : (
+                                <span key={index}>{part}</span>
+                              )
+                            )}
                           </p>
                         </div>
                         <button
@@ -122,23 +136,8 @@ const MenteeAlarm = () => {
                         </button>
                       </div>
                     ))
-                    
                   )}
-                  <button
-                    style={{
-                      marginTop: '20px',
-                      padding: '10px 20px',
-                      borderRadius: '8px',
-                      border: '1px solid #84cc16',
-                      color: '#84cc16',
-                      background: 'white',
-                      cursor: 'pointer',
-                      fontWeight: 'bold'
-                    }}
-                    onClick={() => navigate('/mentoring/register', { state: { links } })}
-                  >
-                    예약 페이지로 링크 보내기
-                  </button>
+                  
                 </div>
               </section>
             </main>
