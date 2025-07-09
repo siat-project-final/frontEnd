@@ -16,9 +16,10 @@ import CalendarDetailModal from './CalendarDetailModal';
 import CalendarEditModal from './CalendarEditModal';
 import FooterBag from './FooterBag';
 
-const stickerKey = (memberId) => `calendarSticker_${memberId}`;           // ⭐ 추가
+const stickerKey = (memberId) => `calendarSticker_${memberId}`; // ⭐ 추가
 
-const loadStickerEvents = (memberId) => {                                  // ⭐ 추가
+const loadStickerEvents = (memberId) => {
+  // ⭐ 추가
   try {
     return JSON.parse(localStorage.getItem(stickerKey(memberId)) || '[]');
   } catch {
@@ -26,7 +27,8 @@ const loadStickerEvents = (memberId) => {                                  // �
   }
 };
 
-const saveStickerEvents = (memberId, events) => {                          // ⭐ 추가
+const saveStickerEvents = (memberId, events) => {
+  // ⭐ 추가
   localStorage.setItem(stickerKey(memberId), JSON.stringify(events));
 };
 
@@ -51,7 +53,8 @@ const CalendarView = () => {
 
   const memberId = localStorage.getItem('memberId');
   const [writtenDates, setWrittenDates] = useState(null);
-  const [stickerEvents, setStickerEvents] = useState(() =>                 // ⭐ 추가
+  const [stickerEvents, setStickerEvents] = useState(() =>
+    // ⭐ 추가
     loadStickerEvents(memberId)
   );
 
@@ -337,11 +340,11 @@ const CalendarView = () => {
     }
   };
 
-  const handleEventReceive = (info) => {                                   // ⭐ 수정
+  const handleEventReceive = (info) => {
+    // ⭐ 수정
     const calendarApi = calendarRef.current.getApi();
-    const droppedDate   = info.event.startStr;
-    const { stickerId, image, align = 'center', position = 'bottom' } =
-      info.event.extendedProps;
+    const droppedDate = info.event.startStr;
+    const { stickerId, image, align = 'center', position = 'bottom' } = info.event.extendedProps;
 
     const eventId = `sticker-${stickerId}-${droppedDate}`;
     if (calendarApi.getEventById(eventId)) {
@@ -468,7 +471,6 @@ const CalendarView = () => {
               max-height: 130px !important;
               position: relative !important;
               padding: 4px !important;
-              overflow: hidden !important;
             }
             .fc .fc-scrollgrid-sync-table {
               height: auto !important;
@@ -585,12 +587,8 @@ const CalendarView = () => {
               myNext: { text: '', click: () => calendarRef.current?.getApi().next() },
               today: { text: '오늘', click: () => calendarRef.current?.getApi().today() },
             }}
-            events={[
-              ...serverEvents,
-              ...scheduleEvents,
-              ...stickerEvents,
-            ].sort((a, b) => {
-              const getPriority = (ev) => ev.extendedProps?.type === 'STICKER' ? 99 : 0;
+            events={[...serverEvents, ...scheduleEvents, ...stickerEvents].sort((a, b) => {
+              const getPriority = (ev) => (ev.extendedProps?.type === 'STICKER' ? 99 : 0);
               return getPriority(a) - getPriority(b);
             })}
             eventContent={(arg) => {
@@ -599,11 +597,10 @@ const CalendarView = () => {
                 // 날짜 셀 내 여러 스티커가 겹치지 않게 left 오프셋 계산
                 // 같은 날짜의 스티커 개수와 인덱스를 구함
                 const allEvents = arg.view.calendar.getEvents();
-                const sameDayStickers = allEvents.filter(ev =>
-                  ev.extendedProps?.type === 'STICKER' &&
-                  ev.startStr === arg.event.startStr
+                const sameDayStickers = allEvents.filter(
+                  (ev) => ev.extendedProps?.type === 'STICKER' && ev.startStr === arg.event.startStr
                 );
-                const myIdx = sameDayStickers.findIndex(ev => ev.id === arg.event.id);
+                const myIdx = sameDayStickers.findIndex((ev) => ev.id === arg.event.id);
                 const total = sameDayStickers.length;
                 // -20, 0, +20 등으로 분산 (최대 5개까지)
                 const offset = (myIdx - (total - 1) / 2) * 44;
@@ -640,7 +637,6 @@ const CalendarView = () => {
               }
               return { html: `<div>${arg.event.title}</div>` };
             }}
-
             dateClick={handleDateClick}
             editable
             droppable
