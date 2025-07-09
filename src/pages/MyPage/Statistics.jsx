@@ -138,11 +138,7 @@ const Statistics = () => {
                   onClick={() => handleCardClick('diary')}
                 >
                   <div className="stats-icon">📝</div>
-                  <p className="stats-value">
-                    {stats.studyDiaryCount !== undefined
-                      ? stats.studyDiaryCount
-                      : '데이터 없음'}
-                  </p>
+                  <p className="stats-value">{stats.studyDiaryCount ?? '데이터 없음'}</p>
                   <p className="stats-label">학습일지 작성 수</p>
                 </div>
 
@@ -161,7 +157,7 @@ const Statistics = () => {
                 >
                   <div className="stats-icon">🏆</div>
                   <p className="stats-value">{stats.challengeCount}</p>
-                  <p className="stats-label">챌린지 완료 총 횟수 </p>
+                  <p className="stats-label">챌린지 완료 총 횟수</p>
                 </div>
 
                 <div
@@ -199,24 +195,6 @@ const Statistics = () => {
                   <p className="stats-value">{stats.challengeCount?.toLocaleString()}</p>
                   <p className="stats-label">챌린지 점수 통계</p>
                 </div>
-
-                <div
-                  className="stat-card"
-                  style={{ width: '350px', transition: 'all 0.3s ease' }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 0 0 2px #84cc16';
-                    e.currentTarget.style.transform = 'scale(1.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }}
-                  onClick={() => handleCardClick('barChart')}
-                >
-                  <div className="stats-icon">📊</div>
-                  <p className="stats-value">활동 통계</p>
-                  <p className="stats-label">바 차트 보기</p>
-                </div>
               </div>
             )}
 
@@ -234,9 +212,9 @@ const Statistics = () => {
             )}
 
             {selectedCard === 'challenge' && (
-              <div className="stat-card" style={{ width: '1000px', margin: '0 auto', textAlign: 'center' }}>
+              <div className="stat-card stat-wide">
                 <p className="stats-value">🏆 과목별 챌린지 완료 총 횟수</p>
-                <div className="bar-wrapper" style={{ height: '400px', margin: '0 auto' }}>
+                <div className="bar-wrapper bar-centered">
                   <Bar
                     data={{
                       labels: ['JAVA', 'JAVASCRIPT', 'PYTHON', 'REACT', 'AWS', 'CI/CD', 'Springboot', 'HTML/CSS', 'Docker', 'Kubernetes'],
@@ -246,7 +224,7 @@ const Statistics = () => {
                           data: [20, 25, 15, 18, 10, 12, 22, 30, 8, 5],
                           backgroundColor: [
                             '#84cc16', '#60a5fa', '#f87171', '#fbbf24', '#a78bfa',
-                            '#34d399', '#f472b6', '#fb923c', '#93c5fd', '#e879f9'
+                            '#34d399', '#f472b6', '#fb923c', '#93c5fd', '#e879f9',
                           ],
                         },
                       ],
@@ -285,41 +263,70 @@ const Statistics = () => {
             )}
 
             {selectedCard === 'ranking' && (
-              <div className="stat-card" style={{ width: '1200px', margin: '0 auto', textAlign: 'center' }}>
-                <p className="stats-value">⭐ 챌린지 평균 점수</p>
-                <div className="line-wrapper" style={{ height: '400px', margin: '0 auto' }}>
-                  <Line
-                    data={getLineChartData(challengeScores)}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          display: true,
-                          position: 'top',
-                        },
-                      },
-                      scales: {
-                        x: {
-                          ticks: {
-                            font: {
-                              size: 14,
-                            },
-                          },
-                        },
-                        y: {
-                          ticks: {
-                            font: {
-                              size: 14,
-                            },
-                          },
-                        },
-                      },
+                <div
+                  className="stat-card"
+                  style={{
+                    width: '100%',
+                    maxWidth: '1400px',
+                    margin: '0 auto',
+                    padding: '2rem',
+                    borderRadius: '1rem',
+                    backgroundColor: 'white',
+                    boxShadow: '0 0 0 1px #e5e7eb',
+                    textAlign: 'center',
+                  }}
+                >
+                  <p className="stats-value" style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+                    ⭐ 챌린지 평균 점수
+                  </p>
+                  <div
+                    style={{
+                      height: '500px',
+                      width: '100%',
+                      maxWidth: '1200px',
+                      margin: '0 auto',
                     }}
-                  />
+                  >
+                    <Line
+                      data={getLineChartData(challengeScores)}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            display: true,
+                            position: 'top',
+                          },
+                        },
+                        scales: {
+                          x: {
+                            ticks: {
+                              font: {
+                                size: 16,
+                              },
+                            },
+                            grid: {
+                              display: false,
+                            },
+                          },
+                          y: {
+                            beginAtZero: true,
+                            ticks: {
+                              font: {
+                                size: 16,
+                              },
+                            },
+                            grid: {
+                              drawBorder: false,
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
 
             {selectedCard === 'barChart' && (
               <div className="stat-card">
