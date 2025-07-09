@@ -143,6 +143,10 @@ const StudyLogPublicDetail = () => {
 
   if (!log) return <div>로딩 중...</div>;
 
+
+  // studyDate를 날짜만 표시하도록 포맷합니다.
+  const formattedStudyDate = log.studyDate ? new Date(log.studyDate).toLocaleDateString() : '';
+
   return (
     <div>
       <Header />
@@ -168,7 +172,7 @@ const StudyLogPublicDetail = () => {
                 </div>
               </div>
               <div className="d-flex gap-3 mb-3">
-                <input className="form-control" value={log.studyDate} disabled style={{ backgroundColor: 'white' }} />
+                <input className="form-control" value={formattedStudyDate} disabled style={{ backgroundColor: 'white' }} />
                 <input className="form-control" value={log.subject} disabled style={{ backgroundColor: 'white' }} />
               </div>
               <textarea
