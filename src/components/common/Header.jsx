@@ -324,6 +324,23 @@ const Header = ({ menuType }) => {
           <NavLink
             className="btn-getstarted"
             to="/login"
+            onClick={() => {
+              // localStorage에서 삭제
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
+              localStorage.removeItem('memberId');
+              localStorage.removeItem('id');
+              localStorage.removeItem('memberName');
+              localStorage.removeItem('role');
+              localStorage.removeItem('mentorId'); // 멘토일 경우
+
+              // sessionStorage에서도 삭제
+              sessionStorage.removeItem('memberId');
+              sessionStorage.removeItem('userRole');
+              sessionStorage.removeItem('memberName');
+
+              console.log('🧹 로그아웃: 저장소 초기화 완료');
+            }}
             style={{
               fontSize: '16px',
               color: '#334155',

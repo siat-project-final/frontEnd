@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 import { postStudyLog, summarizeContent } from '../../api/studyLog';
 
-const SUBJECTS = [
-  'Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'
-];
+const SUBJECTS = ['Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'];
 
 const WriteStudyLogPage = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialDate = queryParams.get('date') || ''; // URL에 date 있으면 세팅
+
   const [form, setForm] = useState({
     title: '',
     isPublic: true,
-    date: '',
+    date: initialDate,
     subject: '',
     content: '',
     summary: '',
   });
+  const [isLoading, setIsLoading] = useState(false); // ✅ 추가
   const memberId = localStorage.getItem('memberId');
   const navigate = useNavigate();
 
@@ -85,8 +87,8 @@ const WriteStudyLogPage = () => {
                       placeholder="제목 입력"
                     />
                   </div>
-                  
                 </div>
+
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label className="form-label">과목</label>
@@ -99,7 +101,9 @@ const WriteStudyLogPage = () => {
                     >
                       <option value="">과목 선택</option>
                       {SUBJECTS.map((subj) => (
-                        <option key={subj} value={subj}>{subj}</option>
+                        <option key={subj} value={subj}>
+                          {subj}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -136,10 +140,10 @@ const WriteStudyLogPage = () => {
                     value={form.content}
                     onChange={handleChange}
                   ></textarea>
-                  
                 </div>
 
-                <div className="mb-3">
+                {/* ✅ 요약 textarea + 로딩 오버레이 */}
+                <div className="mb-3" style={{ position: 'relative' }}>
                   <label className="form-label">AI 요약</label>
                   <textarea
                     className="form-control"
@@ -147,7 +151,34 @@ const WriteStudyLogPage = () => {
                     rows="3"
                     onChange={handleChange}
                     value={form.summary}
+                    style={{ position: 'relative', zIndex: 1 }}
                   ></textarea>
+
+                  {isLoading && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '32px',
+                        left: '0',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 2,
+                        borderRadius: '4px',
+                      }}
+                    >
+                      <div
+                        className="spinner-border text-success"
+                        role="status"
+                        style={{ width: '1.5rem', height: '1.5rem' }}
+                      >
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="d-flex justify-content-end gap-3">

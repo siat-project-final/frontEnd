@@ -30,7 +30,7 @@ const StudyLogCard = ({ log, onDelete }) => {
   // 🔥 안정 처리: selectedPeriods가 배열인지 확인
   const periods = Array.isArray(log.selectedPeriods) ? log.selectedPeriods : [];
 
-  console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}, selectedPeriods=${log.selectedPeriods}`);
+  // console.log(`🪪 Card 렌더: diaryId=${log.diaryId}, subject=${log.subject}, selectedPeriods=${log.selectedPeriods}`);
 
   return (
     <div className="card mb-4">

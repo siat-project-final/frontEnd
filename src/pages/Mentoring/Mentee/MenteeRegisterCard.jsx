@@ -10,9 +10,13 @@ const MenteeRegisterCard = ({
   mentorImageUrl,
   subject,
   onCancel,
+  link,  // ✅ 여기 추가
 }) => {
   const navigate = useNavigate();
   const [isClosed, setIsClosed] = useState(false); // ✅ UI 제거용 상태
+
+  // 🔥 여기 넣으면 좋음
+  // console.log("MenteeRegisterCard link 확인:", link, "for reservationId:", reservationId);
 
   const handleClose = async () => {
     try {
@@ -134,10 +138,12 @@ const MenteeRegisterCard = ({
           />
           <span style={{ fontSize: '14px', fontWeight: '500', marginRight: '6px' }}>{mentorName}</span>
 
-          {status === 'ACCEPTED' && (
-            <button
-              onClick={handleProfileClick}
-              title="프로필 보기"
+          {status === 'ACCEPTED' && link && (
+            <a
+               href={link} // ✅ navigate 대신 a 태그로 링크 걸기
+              target="_blank"
+              rel="noopener noreferrer"
+              title="오픈채팅방으로 이동"
               style={{
                 fontSize: '14px',
                 color: '#0ea5e9',
@@ -145,11 +151,13 @@ const MenteeRegisterCard = ({
                 border: 'none',
                 cursor: 'pointer',
                 textDecoration: 'underline',
+                
               }}
             >
               🔗
-            </button>
+            </a>
           )}
+          
         </div>
 
         <div style={{ marginTop: '8px', fontSize: '14px', color: '#475569' }}>

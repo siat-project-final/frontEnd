@@ -53,7 +53,7 @@ const MentorAlarm = () => {
                   color: '#84cc16',
                 }}
               >
-                Alarm
+                알람
               </h1>
 
               <section className="alerts-section">

@@ -100,9 +100,9 @@ const StudyLogPage = () => {
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <h1
                     className="h3 fw-bold mb-0"
-                    style={{ marginTop: '16px', marginLeft: '16px' }}
+                    style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
                   >
-                    MY STUDY LOG
+                    학습일지 목록
                   </h1>
 
                   <div className="d-flex align-items-center">
@@ -122,8 +122,9 @@ const StudyLogPage = () => {
 
                     {/* 작성 버튼 */}
                     <Link
-                      to="./write"
-                      className="btn border-0 text-white write-button"
+                      to="../study/write"
+                      className="btn border-0 text-white"
+                      style={{ backgroundColor: '#84cc16' }}
                     >
                       일지 작성하기
                     </Link>

@@ -1,14 +1,14 @@
 # SIATHUB - Front
 
-본 프로젝트는 교육생과 멘토 간의 학습 교류를 돕기 위해 설계된 웹 기반 커뮤니티 플랫폼의 프론트엔드입니다. React 기반으로 구현되었으며, 다양한 학습 도구와 AI 챌린지, 멘토링 기능을 제공합니다.
+본 프로젝트는 교육생과 멘토 간의 학습 교류를 돕고, 교육생들의 학습을 도와주기 위해 설계된 웹 기반 커뮤니티 플랫폼의 프론트엔드입니다. React 기반으로 구현되었으며, 다양한 학습 도구와 AI 챌린지, 멘토링 기능을 제공합니다.
 
 ---
 
 ## 🔧 기술 스택
 
-* **프레임워크**: React (Vite 기반), React Router
+* **프레임워크**: React, React Router
 * **스타일링**: Bootstrap, Tailwind, Custom CSS
-* **상태 관리**: useState, useEffect, localStorage
+* **상태 관리**: useState, useEffect, localStorage, sessionStorage
 * **HTTP 통신**: Axios
 * **캘린더 라이브러리**: FullCalendar
 
@@ -98,5 +98,13 @@ npm run dev
 
 * **문제**: 백엔드에 `menteeId` 누락되어 완료 처리 실패
 * **해결**: Axios 요청 값 명확히 점검 및 프론트 로직 보완
+
+### 9. 스티커 드래그 기능 충돌
+
+* **문제**: 스티커 기능 추가 후 일정 드래그/수정 시 충돌 발생
+
+* **원인**: FullCalendar와 스티커 드래그 DOM 영역이 겹치며 이벤트 버블링 간섭
+
+* **해결**: 스티커 드래그 가능 영역을 특정 컨테이너로 제한하고, 드래그 중 일정 이벤트를 일시적으로 disable 처리함으로써 충돌 방지
 
 ---

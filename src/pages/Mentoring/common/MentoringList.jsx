@@ -54,7 +54,7 @@ const MentoringList = () => {
             className="h3 fw-bold"
             style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
           >
-            Mentoring
+            멘토링
           </h1>
           <p style={{ marginTop: '16px', marginLeft: '16px', whiteSpace: 'pre-line' }}>
             멘토와 함께 성장할 수 있는 기회{'\n'}SIAT 멘토링은 SIAT 과정을 수료한 선배와의 1:1

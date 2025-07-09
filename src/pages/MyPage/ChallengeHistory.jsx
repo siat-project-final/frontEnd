@@ -59,7 +59,7 @@ const ChallengeHistory = () => {
                 className="h3 fw-bold mb-0"
                 style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
               >
-                CHALLENGE HISTORY
+                챌린지 히스토리
               </h1>
               <div className="month-selector">
                 <span className="current-month">{getMonthText()}</span>
