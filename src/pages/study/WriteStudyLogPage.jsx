@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
 import { postStudyLog, summarizeContent } from '../../api/studyLog';
 
-const SUBJECTS = [
-  'Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'
-];
+const SUBJECTS = ['Java', 'JavaScript', 'Python', 'React', 'AWS', 'CI/CD', 'Springboot', '기타'];
 
 const WriteStudyLogPage = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialDate = queryParams.get('date') || ''; // URL에 date 있으면 세팅
+
   const [form, setForm] = useState({
     title: '',
     isPublic: true,
-    date: '',
+    date: initialDate,
     subject: '',
     content: '',
     summary: '',
@@ -103,7 +105,9 @@ const WriteStudyLogPage = () => {
                     >
                       <option value="">과목 선택</option>
                       {SUBJECTS.map((subj) => (
-                        <option key={subj} value={subj}>{subj}</option>
+                        <option key={subj} value={subj}>
+                          {subj}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -170,7 +174,11 @@ const WriteStudyLogPage = () => {
                         borderRadius: '4px',
                       }}
                     >
-                      <div className="spinner-border text-success" role="status" style={{ width: '1.5rem', height: '1.5rem'}}>
+                      <div
+                        className="spinner-border text-success"
+                        role="status"
+                        style={{ width: '1.5rem', height: '1.5rem' }}
+                      >
                         <span className="visually-hidden">Loading...</span>
                       </div>
                     </div>
