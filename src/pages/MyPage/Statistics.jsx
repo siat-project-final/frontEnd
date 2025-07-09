@@ -20,8 +20,19 @@ const Statistics = () => {
     const fetchStats = async () => {
       try {
         const res = await getUserStats(memberId);
-        console.log('[통계 데이터]', res.data); // 디버깅용 로그 추가
-        setStats(res.data);
+        console.log('[통계 데이터]', res.data); // 디버깅용 로그
+
+        // 가데이터 추가
+        const mockMentoringData = {
+          mentoringCount: 12, // 멘토링 횟수
+          firstMentorName: '이수현', // 최초 멘토링 이름
+          topMentorName: '최은정', // 최다 멘토링 이름
+          topMentorSessions: 5, // 최다 멘토링 횟수
+        };
+
+        // 기존 데이터에 가데이터 병합
+        const updatedStats = { ...res.data, ...mockMentoringData };
+        setStats(updatedStats);
 
         // 예시 데이터: 실제 API 호출로 대체 가능
         const mockChallengeScores = [
