@@ -16,7 +16,7 @@ const MenteeRegisterCard = ({
   const [isClosed, setIsClosed] = useState(false); // ✅ UI 제거용 상태
 
   // 🔥 여기 넣으면 좋음
-  console.log("MenteeRegisterCard link 확인:", link, "for reservationId:", reservationId);
+  // console.log("MenteeRegisterCard link 확인:", link, "for reservationId:", reservationId);
 
   const handleClose = async () => {
     try {

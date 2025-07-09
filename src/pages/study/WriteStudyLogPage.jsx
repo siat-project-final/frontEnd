@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import Sidebar from '../../components/common/Sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Todo from '../../components/common/Todo';
