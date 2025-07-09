@@ -31,17 +31,14 @@ const WriteStudyLogPage = () => {
 
   const handleSummary = async () => {
     alert('AI 요약을 실행합니다. 잠시 기다려주세요...');
-    setIsLoading(true); // ✅ 시작 시 true
-    try {
-      const res = await summarizeContent(form.content);
-      setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
-      alert('AI 요약이 완료되었습니다. 결과를 확인해주세요.');
-    } catch (err) {
-      console.error('요약 실패:', err);
-      alert('요약에 실패했습니다.');
-    } finally {
-      setIsLoading(false); // ✅ 완료 시 false
-    }
+    summarizeContent(form.content.replace(/\n/g, ''))
+      .then(res => {
+        setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
+        alert('AI 요약이 완료되었습니다. 결과를 확인해주세요.');
+      })
+      .catch(err => {
+        console.error('요약 실패:', err);
+      });
   };
 
   const handleSubmit = async (e) => {
