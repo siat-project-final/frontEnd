@@ -80,7 +80,7 @@ const MenteeAlarm = () => {
                 className="h3 fw-bold"
                 style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', color: '#84cc16' }}
               >
-                Alarm
+                알람
               </h1>
               <section className="alerts-section">
                 <div className="container" style={{ maxWidth: '700px', width: '100%' }}>

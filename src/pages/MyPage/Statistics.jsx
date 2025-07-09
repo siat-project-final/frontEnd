@@ -99,7 +99,7 @@ const Statistics = () => {
                 className="h3 fw-bold mb-0"
                 style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
               >
-                STATISTICS
+                통계
               </h1>
             </div>
 
