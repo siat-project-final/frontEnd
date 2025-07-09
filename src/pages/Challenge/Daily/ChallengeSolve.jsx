@@ -26,9 +26,8 @@ const ChallengeSolve = () => {
     }
 
     getTodayChallenge()
-
-      .then(res => {
-        const parsed = (res.data || []).map(p => {
+      .then((res) => {
+        const parsed = (res.data || []).map((p) => {
           let options = [];
           try {
             const once = typeof p.choices === 'string' ? JSON.parse(p.choices) : p.choices;
@@ -52,7 +51,6 @@ const ChallengeSolve = () => {
         console.error('문제 불러오기 실패:', err);
         alert('오늘의 챌린지 문제를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.');
       });
-
   }, []);
 
   const handleChange = (problemId, value) => {
@@ -66,25 +64,22 @@ const ChallengeSolve = () => {
   };
 
   const handleSubmit = () => {
-    
-    const submissionData = problems.map(p => ({
+    const submissionData = problems.map((p) => ({
       problemId: p.problemId,
       submitAnswer: answers[p.problemId] ?? null,
       memberId,
     }));
 
     const requestBody = {
-
       memberId: Number(memberId),
-      problemIds: submissionData.map(data => data.problemId),
-      answers: submissionData.map(data =>
-        data.submitAnswer !== null ? parseInt(data.submitAnswer) : -1  // ✅ null 방지
+      problemIds: submissionData.map((data) => data.problemId),
+      answers: submissionData.map(
+        (data) => (data.submitAnswer !== null ? parseInt(data.submitAnswer) : -1) // ✅ null 방지
       ),
       createdAt: new Date().toISOString(),
     };
 
     submitChallenge(requestBody)
-    
       .then(() => {
         navigate('/challenge/daily/result');
       })
@@ -96,7 +91,6 @@ const ChallengeSolve = () => {
 
   const currentProblem = problems[currentIndex];
   return (
-    
     <>
       <Header />
       <div className="container-flex">
@@ -144,7 +138,6 @@ const ChallengeSolve = () => {
               {currentProblem && (
                 <div className="mb-4" style={{ maxWidth: '800px', flex: '1' }}>
                   <h5 className="mb-2">
-                  
                     Q{currentIndex + 1}. (난이도: {currentProblem.points}단계)
                   </h5>
 
@@ -177,11 +170,9 @@ const ChallengeSolve = () => {
                             className="form-check-input"
                             type="radio"
                             name={`question-${currentProblem.problemId}`}
-                            value={option}
-                            checked={answers[currentProblem.problemId] === option}
-                            onChange={(e) =>
-                              handleChange(currentProblem.problemId, parseInt(e.target.value))
-                            }
+                            value={String(option)}
+                            checked={answers[currentProblem.problemId] === String(option)}
+                            onChange={(e) => handleChange(currentProblem.problemId, e.target.value)}
                             id={`option-${currentProblem.problemId}-${idx}`}
                           />
                           <label
