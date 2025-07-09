@@ -199,7 +199,7 @@ const StudyLogDetailPage = () => {
                   <textarea
                     name="contents"
                     className="form-control"
-                    rows="5"
+                    rows="10"
                     value={formData.contents || ''}
                     onChange={handleChange}
                     readOnly={!isEditMode}
@@ -211,7 +211,7 @@ const StudyLogDetailPage = () => {
                   <textarea
                     name="summary"
                     className="form-control"
-                    rows="3"
+                    rows="7"
                     value={formData.summary || ''}
                     readOnly // AI 요약은 수정 불가
                   ></textarea>

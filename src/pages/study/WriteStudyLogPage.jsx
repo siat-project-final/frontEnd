@@ -136,7 +136,7 @@ const WriteStudyLogPage = () => {
                   <textarea
                     className="form-control"
                     name="content"
-                    rows="5"
+                    rows="9"
                     value={form.content}
                     onChange={handleChange}
                   ></textarea>
@@ -148,7 +148,7 @@ const WriteStudyLogPage = () => {
                   <textarea
                     className="form-control"
                     name="summary"
-                    rows="3"
+                    rows="7"
                     onChange={handleChange}
                     value={form.summary}
                     style={{ position: 'relative', zIndex: 1 }}
