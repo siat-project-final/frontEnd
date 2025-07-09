@@ -33,7 +33,7 @@ const MentoringHistory = () => {
               className="h3 fw-bold mb-0"
               style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}
             >
-              MENTORING HISTORY
+              멘토링 히스토리
             </h1>
 
             <div className="mentoring-boxes">

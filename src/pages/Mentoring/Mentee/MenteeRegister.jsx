@@ -98,7 +98,7 @@ const MenteeRegister = () => {
         <Sidebar menuType="mentoring" />
         <main className="main" data-aos="fade-up">
           <div className="max-w-2xl mx-auto pt-10 pb-16">
-            <h3 className="text-2xl font-bold mb-8 text-slate-900" style={{ textAlign: 'center' }}>
+            <h3 className="text-2xl fw-bold mb-8 text-slate-900" style={{ marginTop: '16px', marginLeft: '16px', color: '#84cc16' }}>
               예약된 멘토링
             </h3>
             <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '20px 0' }}></div>
