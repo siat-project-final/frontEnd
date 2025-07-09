@@ -122,8 +122,9 @@ const StudyLogPage = () => {
 
                     {/* 작성 버튼 */}
                     <Link
-                      to="./write"
-                      className="btn border-0 text-white write-button"
+                      to="../study/write"
+                      className="btn border-0 text-white"
+                      style={{ backgroundColor: '#84cc16' }}
                     >
                       일지 작성하기
                     </Link>
