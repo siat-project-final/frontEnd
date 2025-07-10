@@ -461,14 +461,13 @@ const CalendarView = () => {
             {`
             
             .fc .fc-daygrid-day {
-              height: 130px !important;
-              
+              height: auto !important;
               padding: 0 !important;
             }
             .fc .fc-daygrid-day-frame {
-              height: 130px !important;
+              height: auto !important;
               min-height: 130px !important;
-              max-height: 130px !important;
+              max-height: none !important;
               position: relative !important;
               padding: 4px !important;
             }
