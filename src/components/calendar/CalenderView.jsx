@@ -585,6 +585,9 @@ const CalendarView = () => {
               myNext: { text: '', click: () => calendarRef.current?.getApi().next() },
               today: { text: '오늘', click: () => calendarRef.current?.getApi().today() },
             }}
+            // ... 기존 설정들 ...
+            eventOrder="extendedProps.scheduleId" // scheduleId를 기준으로 오름차순 정렬
+            // 또는 내림차순으로 하려면 "-extendedProps.scheduleId"
             events={[
               ...serverEvents,
               ...scheduleEvents,
