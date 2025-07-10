@@ -1157,3 +1157,92 @@
   border-radius: 6px;
   padding: 4px 6px;
 }
+/* === 다크모드: 통계 값 스타일 === */
+.dark-mode .stats-value {
+    color: #f0f0f0;  /* 밝은 텍스트 */
+    background-color: transparent;  /* 배경 유지 또는 필요시 조정 */
+}
+/* === 다크모드: 통계 카드 === */
+.dark-mode .stat-card {
+    background-color: #2e2e2e;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+    color: #f0f0f0;
+}
+
+/* === 다크모드: 통계 값 텍스트 === */
+.dark-mode .stat-card .stats-value {
+    color: #ffffff;
+}
+
+/* === 다크모드: canvas 주변 조정 필요시 (배경 투명하게 유지됨) === */
+.dark-mode canvas {
+    background-color: transparent; /* 필요 시 rgba(255,255,255,0.05) 등으로 변경 */
+}
+/* === 다크모드 전역 강제 적용 === */
+.dark-mode {
+    background-color: #1e1e1e !important;
+    color: #f0f0f0 !important;
+}
+
+.dark-mode * {
+    background-color: transparent !important;
+    color: #f0f0f0 !important;
+    border-color: #444 !important;
+}
+
+/* === 특정 카드 스타일 === */
+.dark-mode .card,
+.dark-mode .stat-card,
+.dark-mode .badge-card,
+.dark-mode .fc-daygrid-day-frame,
+.dark-mode .modal-content,
+.dark-mode .form-control[disabled],
+.dark-mode input[disabled],
+.dark-mode textarea[disabled],
+.dark-mode .login-box,
+.dark-mode .sidebar,
+.dark-mode .content {
+    background-color: #2e2e2e !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #555 !important;
+}
+
+/* === 버튼 스타일 강제 지정 === */
+.dark-mode button,
+.dark-mode .btn,
+.dark-mode .login-button {
+    background-color: #444 !important;
+    color: #fff !important;
+    border: 1px solid #666 !important;
+}
+
+.dark-mode .login-button.primary {
+    background-color: #5a5a5a !important;
+}
+
+.dark-mode .login-button.secondary {
+    background-color: #3c3c3c !important;
+}
+
+/* === FullCalendar day cell 스타일 === */
+.dark-mode .fc-daygrid-day-frame {
+    background-color: #2a2a2a !important;
+    border: 1px solid #444 !important;
+}
+
+/* === 테이블 짝수줄 회색 줄무늬 === */
+.dark-mode tr:nth-child(even) {
+    background-color: #2a2a2a !important;
+}
+.dark-mode tr:nth-child(odd) {
+    background-color: #1e1e1e !important;
+}
+
+/* === 배지 카드 === */
+.dark-mode .badge-card.achieved {
+    background-color: #3a3a3a !important;
+}
+.dark-mode .badge-card.locked {
+    background-color: #1e1e1e !important;
+    opacity: 0.6 !important;
+}
