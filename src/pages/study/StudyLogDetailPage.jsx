@@ -73,8 +73,13 @@ const StudyLogDetailPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updateData = {
-      ...formData,
+      title: formData.title,
+      contents: formData.contents,
+      subject: formData.subject,
+      studyDate: formData.date, // ✅ 필드명 맞추기
+      aiSummary: formData.summary, // ✅ 백엔드 필드명
       memberId: parseInt(memberId),
+      selectedPeriods: formData.selectedPeriods,
     };
     try {
       await updateStudyLog(id, updateData);
