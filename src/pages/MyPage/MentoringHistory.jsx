@@ -10,13 +10,13 @@ const MentoringHistory = () => {
   const [mentoringList, setMentoringList] = useState([]);
   const memberId = localStorage.getItem('memberId');
 
-    const fetchMentoring = async () => {
-      getMentoringHistory(memberId)
-      .then(res => {
-          setMentoringList(res.data);
-        })
-        .catch(err => console.error('멘토링 히스토리 조회 실패:', err));;
-    };
+  const fetchMentoring = async () => {
+    getMentoringHistory(memberId)
+      .then((res) => {
+        setMentoringList(res.data);
+      })
+      .catch((err) => console.error('멘토링 히스토리 조회 실패:', err));
+  };
 
   useEffect(() => {
     fetchMentoring();
@@ -42,7 +42,16 @@ const MentoringHistory = () => {
                   <h3 className="mentoring-date">{item.date}</h3>
                   <div className="mentoring-content">
                     <div className="mentor-image">
-                      <div className="mentoring-image-placeholder">멘토 이미지</div>
+                      <img
+                        src={item.imageUrl}
+                        className="img-fluid"
+                        alt={item.mentorName}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/assets/img/team/team-1.jpg';
+                          e.target.src = '/assets/img/team/team-1.jpg'; // 기본 이미지
+                        }}
+                      />
                     </div>
                     <div className="mentoring-form-group">
                       <label>멘토 성함</label>
