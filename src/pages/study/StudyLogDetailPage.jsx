@@ -16,21 +16,26 @@ const StudyLogDetailPage = () => {
     date: '',
     contents: '',
     summary: '',
-    // 새로운 필드 추가: 선택된 기간 (예: ['하루', '일주일'] )
-    selectedPeriods: [], // 초기값은 빈 배열
+    selectedPeriods: [],
   });
   const [originalData, setOriginalData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const todayStr = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const fetchLog = async () => {
       try {
         const res = await getMyStudyLogById(id);
-        // console.log('🔥 getMyStudyLogById 응답:', res);
-        // 서버 응답에 selectedPeriods가 없다면 빈 배열로 초기화
+        console.log('🔥 백엔드 응답:', JSON.stringify(res.data, null, 2));
+
         const initialData = {
-          ...res.data,
-          selectedPeriods: res.data.selectedPeriods || [], // 서버 응답에 이 필드가 포함되어야 합니다.
+          title: res.data.title,
+          subject: res.data.subject,
+          date: res.data.studyDate?.split(' ')[0],
+          contents: res.data.contents,
+          summary: res.data.aiSummary,
+          selectedPeriods: res.data.selectedPeriods || [],
         };
         setFormData(initialData);
         setOriginalData(initialData);
@@ -47,19 +52,16 @@ const StudyLogDetailPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 체크박스 변경 핸들러 추가
   const handlePeriodChange = (e) => {
     const { value, checked } = e.target;
     setFormData((prev) => {
-      const currentPeriods = prev.selectedPeriods || []; // 안전하게 빈 배열로 시작
+      const currentPeriods = prev.selectedPeriods || [];
       if (checked) {
-        // 체크박스 선택 시 추가
         return {
           ...prev,
           selectedPeriods: [...currentPeriods, value],
         };
       } else {
-        // 체크박스 해제 시 제거
         return {
           ...prev,
           selectedPeriods: currentPeriods.filter((period) => period !== value),
@@ -70,20 +72,15 @@ const StudyLogDetailPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // memberId와 formData를 함께 전송할 데이터 생성
     const updateData = {
       ...formData,
-      memberId: parseInt(memberId), // memberId를 숫자로 변환하여 전송 (API 요구사항에 따라)
+      memberId: parseInt(memberId),
     };
     try {
-    await updateStudyLog(id, updateData);
-
-    // 🔥 localStorage에 selectedPeriods 저장
-    localStorage.setItem(`selectedPeriods_${id}`, JSON.stringify(formData.selectedPeriods));
-
-    // 🔥 원본 데이터 최신화
-    setOriginalData(formData);
-    setIsEditMode(false);
+      await updateStudyLog(id, updateData);
+      localStorage.setItem(`selectedPeriods_${id}`, JSON.stringify(formData.selectedPeriods));
+      setOriginalData(formData);
+      setIsEditMode(false);
       alert('수정이 완료되었습니다.');
     } catch (err) {
       console.error('일지 수정 실패:', err);
@@ -105,22 +102,19 @@ const StudyLogDetailPage = () => {
         <Sidebar menuType="studylog" />
         <main className="main">
           <div className="container py-5">
-          <div className="d-flex align-items-center justify-content-between flex-nowrap mb-4">
-            <h3 className="fw-bold mb-0" style={{ 
-              color: '#84cc16',
-              whiteSpace: 'nowrap', 
-              minWidth: 'auto', marginTop: '16px', marginLeft: '16px'  }}>
-              
-              
-              학습일지 상세
-            </h3>
-
-            
-            </div>
-            {/* 원래 h1 태그에 있던 margin-top과 margin-left를 div로 옮겼습니다.
-                margin-right를 추가하여 페이지 오른쪽 끝에 너무 붙지 않도록 합니다. */}
-
-                  
+            <div className="d-flex align-items-center justify-content-between flex-nowrap mb-4">
+              <h3
+                className="fw-bold mb-0"
+                style={{
+                  color: '#84cc16',
+                  whiteSpace: 'nowrap',
+                  marginTop: '16px',
+                  marginLeft: '16px',
+                }}
+              >
+                학습일지 상세
+              </h3>
+            </div>
             <div className="studylog-boxes">
               <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
@@ -136,33 +130,31 @@ const StudyLogDetailPage = () => {
                     />
                   </div>
                   <div className="col-md-3">
-                  <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
-              {['하루', '일주일', '한 달', '세 달'].map(period => (
-                <div key={period} className="form-check form-check-inline m-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id={`header-checkbox-${period}`}
-                    value={period}
-                    checked={formData.selectedPeriods.includes(period)}
-                    onChange={handlePeriodChange}
-                    disabled={!isEditMode}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor={`header-checkbox-${period}`}
-                    style={{ fontSize: '0.9rem' }}
-                  >
-                    {period}
-                  </label>
+                    <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
+                      {['하루', '일주일', '한 달', '세 달'].map((period) => (
+                        <div key={period} className="form-check form-check-inline m-0">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`header-checkbox-${period}`}
+                            value={period}
+                            checked={formData.selectedPeriods.includes(period)}
+                            onChange={handlePeriodChange}
+                            disabled={!isEditMode}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`header-checkbox-${period}`}
+                            style={{ fontSize: '0.9rem' }}
+                          >
+                            {period}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
-            </div>
-                </div>
-
-                <div className="row mb-3 align-items-end"> {/* align-items-end 추가 */}
-                  {/* 과목 필드 너비 조정: col-md-3으로 줄임 */}
+                <div className="row mb-3 align-items-end">
                   <div className="col-md-6">
                     <label className="form-label">과목</label>
                     <input
@@ -190,10 +182,10 @@ const StudyLogDetailPage = () => {
                       value={formData.date || ''}
                       onChange={handleChange}
                       readOnly={!isEditMode}
+                      max={todayStr}
                     />
                   </div>
                 </div>
-
                 <div className="mb-3">
                   <label className="form-label">학습일지 내용</label>
                   <textarea
@@ -205,7 +197,6 @@ const StudyLogDetailPage = () => {
                     readOnly={!isEditMode}
                   ></textarea>
                 </div>
-
                 <div className="mb-3">
                   <label className="form-label">AI 요약</label>
                   <textarea
@@ -213,10 +204,9 @@ const StudyLogDetailPage = () => {
                     className="form-control"
                     rows="7"
                     value={formData.summary || ''}
-                    readOnly // AI 요약은 수정 불가
+                    readOnly
                   ></textarea>
                 </div>
-
                 <div className="d-flex justify-content-end gap-3">
                   {!isEditMode ? (
                     <button

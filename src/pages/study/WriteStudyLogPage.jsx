@@ -20,9 +20,12 @@ const WriteStudyLogPage = () => {
     content: '',
     summary: '',
   });
-  const [isLoading, setIsLoading] = useState(false); // ✅ 추가
+
+  const [isLoading, setIsLoading] = useState(false);
   const memberId = localStorage.getItem('memberId');
   const navigate = useNavigate();
+
+  const todayStr = new Date().toISOString().split('T')[0]; // 🔥 오늘 날짜 제한용
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +34,7 @@ const WriteStudyLogPage = () => {
 
   const handleSummary = async () => {
     alert('AI 요약을 실행합니다. 잠시 기다려주세요...');
-    setIsLoading(true); // ✅ 로딩 시작
+    setIsLoading(true);
     try {
       const res = await summarizeContent(form.content.replace(/\n/g, ''));
       setForm((prev) => ({ ...prev, summary: res.data.result.replace(/\\n/g, '\n') }));
@@ -40,7 +43,7 @@ const WriteStudyLogPage = () => {
       console.error('요약 실패:', err);
       alert('요약에 실패했습니다.');
     } finally {
-      setIsLoading(false); // ✅ 로딩 종료
+      setIsLoading(false);
     }
   };
 
@@ -53,11 +56,11 @@ const WriteStudyLogPage = () => {
     };
     console.log('📤 전송 데이터:', data);
     postStudyLog(data)
-      .then((res) => {
+      .then(() => {
         alert('학습일지가 작성되었습니다.');
         navigate('/study');
       })
-      .catch((err) => {
+      .catch(() => {
         alert('학습일지 작성에 실패했습니다. 다시 시도해주세요.');
       });
   };
@@ -67,7 +70,6 @@ const WriteStudyLogPage = () => {
       <Header />
       <div className="container-flex" style={{ display: 'flex' }}>
         <Sidebar menuType="studylog" />
-
         <main className="main">
           <div className="container py-5">
             <h1
@@ -130,6 +132,7 @@ const WriteStudyLogPage = () => {
                       name="date"
                       value={form.date}
                       onChange={handleChange}
+                      max={todayStr} // 🔥 오늘까지 선택 가능
                     />
                   </div>
                 </div>
@@ -145,7 +148,6 @@ const WriteStudyLogPage = () => {
                   ></textarea>
                 </div>
 
-                {/* ✅ 요약 textarea + 로딩 오버레이 */}
                 <div className="mb-3" style={{ position: 'relative' }}>
                   <label className="form-label">AI 요약</label>
                   <textarea
@@ -201,7 +203,6 @@ const WriteStudyLogPage = () => {
           </div>
         </main>
 
-        {/* 오른쪽: Todo 사이드바 */}
         <div style={{ width: '300px', borderLeft: '1px solid #eee' }}>
           <Todo />
         </div>
