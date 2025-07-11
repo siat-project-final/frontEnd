@@ -52,7 +52,7 @@ const MyPageMain = () => {
       memberName: e.target.name.value,
       nickname: e.target.nickname.value,
       phoneNumber: e.target.phone.value,
-      email: e.target.email.value
+      email: e.target.email.value,
     };
 
     try {
@@ -75,7 +75,7 @@ const MyPageMain = () => {
     6: 500,
     7: 700,
     8: 1000,
-    9: 1300
+    9: 1300,
   };
 
   const totalXp = user.totalXp;
@@ -90,7 +90,10 @@ const MyPageMain = () => {
 
   const currentThreshold = levelThresholds[currentLevel];
   const nextThreshold = levelThresholds[currentLevel + 1] ?? totalXp;
-  const levelProgressPercent = Math.min(100, ((totalXp - currentThreshold) / (nextThreshold - currentThreshold)) * 100);
+  const levelProgressPercent = Math.min(
+    100,
+    ((totalXp - currentThreshold) / (nextThreshold - currentThreshold)) * 100
+  );
   const badgeImage = levelBadges[currentLevel];
 
   return (
@@ -103,9 +106,8 @@ const MyPageMain = () => {
             <div className="profile-content">
               <div className="profile-left">
                 <div className="profile-image">
-                  <div className="image-placeholder">프로필 이미지</div>
+                  <img src="/assets/img/mentors/mentor1.jpg" />
                 </div>
-                <button className="upload-btn">upload</button>
                 <div className="profile-stats">
                   <div className="stat-item">
                     <div className="stat-icon">P</div>
@@ -121,12 +123,20 @@ const MyPageMain = () => {
                           style={{ width: `${levelProgressPercent}%` }}
                         ></div>
                       </div>
-                      <p className="xp-value">{totalXp} / {nextThreshold}</p>
+                      <p className="xp-value">
+                        {totalXp} / {nextThreshold}
+                      </p>
                     </div>
                   </div>
                   <div className="stat-item">
                     <div className="badge-info">
-                      {badgeImage && <img src={badgeImage} alt="최근 뱃지" style={{ width: '48px', height: '48px' }} />}
+                      {badgeImage && (
+                        <img
+                          src={badgeImage}
+                          alt="최근 뱃지"
+                          style={{ width: '48px', height: '48px' }}
+                        />
+                      )}
                       <p className="badge-label">Badges</p>
                     </div>
                   </div>
